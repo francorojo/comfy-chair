@@ -1,4 +1,4 @@
-import { multiplicateValues, divideValues } from "../app/Dummy";
+import { multiplicateNumbers, divideNumbers } from "../app/Dummy";
 
 describe('set of math test', () => {
   
@@ -12,12 +12,12 @@ describe('set of math test', () => {
     
     test('multiplicateValues same positive number should be equal to apply the square exponent to it', () => {
       const randomNumber = Math.floor(Math.random() * 10 + 1);
-      expect(multiplicateValues(randomNumber,randomNumber)).toEqual(randomNumber**2);
+      expect(multiplicateNumbers(randomNumber,randomNumber)).toEqual(randomNumber**2);
     });
 
     test('divideValues same positive number should be equal to 1', () => {
       const randomNumber = Math.floor(Math.random() * 10 + 1);
-      expect(divideValues(randomNumber,randomNumber)).toEqual(1);
+      expect(divideNumbers(randomNumber,randomNumber)).toEqual(1);
     });
     
   });
