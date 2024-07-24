@@ -7,7 +7,13 @@ const config : Config.InitialOptions={
 }
 
 module.exports = {
-    collectCoverage: true,
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  transform: {
+    '^.+\\.ts$': 'ts-jest', // Transform TypeScript files using ts-jest
+  },
+  moduleFileExtensions: ['js', 'ts'], // Extend module file extensions to include TypeScript
+  collectCoverage: true,
     coverageThreshold: {
       global: {
         branches: 80,
@@ -16,6 +22,6 @@ module.exports = {
         statements: 80,
       },
     },
-  };
+};
 
 export default config
