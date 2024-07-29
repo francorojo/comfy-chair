@@ -22,13 +22,21 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14' # Specify Node.js version you want to use
+          node-version: '18' # Specify Node.js version you want to use
 
       - name: Install dependencies
         run: npm install
 
       - name: Run tests with coverage
         run: npm run test:coverage
+
+      - name: Validate coverage
+        run: |
+          COVERAGE=$(npx coverage-summary -t 80) # Replace 80 with your coverage threshold
+          if [ $COVERAGE -eq 0 ]; then
+            echo "Coverage threshold not met"
+            exit 1
+          fi
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v2
