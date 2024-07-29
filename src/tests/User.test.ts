@@ -1,4 +1,4 @@
-import { User, Rol } from "../app/user";
+import { User, Rol } from "@app/user";
 
 describe('test user case use', () => {
   
@@ -29,7 +29,7 @@ describe('test user case use', () => {
         expect(Rol.REVIEWER).toEqual(user.getRol());
     });
 
-    test('Create a new author user with a shor password', () => {
+    test('Create a new author user with a short password', () => {
         expect( () => {new User("Jane", "UTN-FRBA", "jane@utn.frba.edu.ar", "test", Rol.REVIEWER)} ).toThrow(new Error("This value is required and must to be greater 8 caracters"));
     });
 
