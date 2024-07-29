@@ -76,7 +76,7 @@ describe("Regular Article tests ", () => {
         const authors = ["Author 1", "Author 2"]
         const article = new RegularArticle(abstract, title, authors)
 
-        expect(article.validate()).toBeFalsy()
+        expect(article.validate()).toBeTruthy()
     })
 
     test("Regular article is invalid when it doesnt have a title", () => {
@@ -86,7 +86,7 @@ describe("Regular Article tests ", () => {
         const authors = ["Author 1", "Author 2"]
         const article = new RegularArticle(abstract, title, authors)
 
-        expect(article.validate()).toBeTruthy()
+        expect(article.validate()).toBeFalsy()
     })
 })
 
