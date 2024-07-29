@@ -8,6 +8,7 @@ export class User {
     public constructor(name: string, membership: string, email: string, password: string, rol: Rol) {
         if( password.length < 8)
             throw new Error('This value is required and must to be greater 8 caracters');
+        
         this.name = name;
         this.membership =  membership;
         this.email = email;

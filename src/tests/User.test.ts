@@ -1,4 +1,4 @@
-import { User, Rol } from "../app/User";
+import { User, Rol } from "../app/user";
 
 describe('test user case use', () => {
   
