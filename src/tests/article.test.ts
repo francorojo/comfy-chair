@@ -1,3 +1,5 @@
+import { RegularArticle } from "@app/article"
+
 describe("Regular Article tests ", () => {
     test("Regular article is valid when abstract is not empty", () => {
         const abstract =
