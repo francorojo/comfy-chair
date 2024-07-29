@@ -1,4 +1,3 @@
-# .github/workflows/run-tests.yml
 name: Run Jest Tests with Coverage
 
 on:
@@ -22,7 +21,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18' # Specify Node.js version you want to use
+          node-version-file: '.nvmrc' # Ensure the Node.js version specified in .nvmrc is used
 
       - name: Install dependencies
         run: npm install
@@ -30,12 +29,20 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:coverage
 
-      - name: Validate coverage
+      - name: Check coverage
         run: |
-          COVERAGE=$(npx coverage-summary -t 80) # Replace 80 with your coverage threshold
-          if [ $COVERAGE -eq 0 ]; then
+          npx jest --coverage --coverageReporters=text-summary --passWithNoTests
+          coverage=$(npx jest --coverage --coverageReporters=json-summary --passWithNoTests | jq '.total')
+          branches=$(echo $coverage | jq '.branches.pct')
+          functions=$(echo $coverage | jq '.functions.pct')
+          lines=$(echo $coverage | jq '.lines.pct')
+          statements=$(echo $coverage | jq '.statements.pct')
+
+          if (( $(echo "$branches < 80" |bc -l) )) || (( $(echo "$functions < 80" |bc -l) )) || (( $(echo "$lines < 80" |bc -l) )) || (( $(echo "$statements < 80" |bc -l) )); then
             echo "Coverage threshold not met"
             exit 1
+          else
+            echo "Coverage threshold met"
           fi
 
       - name: Upload coverage report
