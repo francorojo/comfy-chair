@@ -1,10 +1,12 @@
 abstract class Article {
     title: string
     authors: string[]
+    fileURL: string
 
-    constructor(title: string, authors: string[]) {
+    constructor(title: string, authors: string[], fileURL: string) {
         this.title = title
         this.authors = authors
+        this.fileURL = fileURL
     }
 
     abstract validate(): boolean
@@ -13,8 +15,13 @@ abstract class Article {
 export class RegularArticle extends Article {
     abstract: string
 
-    constructor(abstract: string, title: string, authors: string[]) {
-        super(title, authors)
+    constructor(
+        abstract: string,
+        title: string,
+        authors: string[],
+        fileURL: string
+    ) {
+        super(title, authors, fileURL)
         this.abstract = abstract
     }
 
@@ -40,6 +47,18 @@ export class RegularArticle extends Article {
 }
 
 export class Poster extends Article {
+    sourceURL: string
+
+    constructor(
+        title: string,
+        authors: string[],
+        fileURL: string,
+        sourceURL: string
+    ) {
+        super(title, authors, fileURL)
+        this.sourceURL = sourceURL
+    }
+
     validate(): boolean {
         if (this.authors.length === 0) {
             return false
