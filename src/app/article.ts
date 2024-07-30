@@ -1,15 +1,32 @@
 abstract class Article {
     title: string
     authors: string[]
+    notificationAuthor: string
     fileURL: string
 
-    constructor(title: string, authors: string[], fileURL: string) {
+    constructor(
+        title: string,
+        authors: string[],
+        fileURL: string,
+        notificationAuthor: string
+    ) {
         this.title = title
         this.authors = authors
         this.fileURL = fileURL
+        this.notificationAuthor = notificationAuthor
     }
 
-    abstract validate(): boolean
+    validate(): boolean {
+        if (this.authors.length === 0 || this.notificationAuthor === "") {
+            return false
+        }
+
+        if (this.title.trim().length === 0) {
+            return false
+        }
+
+        return true
+    }
 }
 
 export class RegularArticle extends Article {
@@ -19,9 +36,10 @@ export class RegularArticle extends Article {
         abstract: string,
         title: string,
         authors: string[],
+        notificationAuthor: string,
         fileURL: string
     ) {
-        super(title, authors, fileURL)
+        super(title, authors, fileURL, notificationAuthor)
         this.abstract = abstract
     }
 
@@ -34,15 +52,7 @@ export class RegularArticle extends Article {
             return false
         }
 
-        if (this.authors.length === 0) {
-            return false
-        }
-
-        if (this.title.trim().length === 0) {
-            return false
-        }
-
-        return true
+        return super.validate()
     }
 }
 
@@ -52,23 +62,12 @@ export class Poster extends Article {
     constructor(
         title: string,
         authors: string[],
+        notificationAuthor: string,
         fileURL: string,
         sourceURL: string
     ) {
-        super(title, authors, fileURL)
+        super(title, authors, fileURL, notificationAuthor)
         this.sourceURL = sourceURL
-    }
-
-    validate(): boolean {
-        if (this.authors.length === 0) {
-            return false
-        }
-
-        if (this.title.trim().length === 0) {
-            return false
-        }
-
-        return true
     }
 }
 

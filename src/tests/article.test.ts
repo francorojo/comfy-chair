@@ -6,8 +6,15 @@ describe("Regular Article tests ", () => {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
         const authors = ["Author 1", "Author 2"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-article.pdf"
-        const article = new RegularArticle(abstract, title, authors, fileURL)
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            fileURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeTruthy()
     })
@@ -16,8 +23,15 @@ describe("Regular Article tests ", () => {
         const abstract = ""
         const title = "Sample Article Title"
         const authors = ["Author 1", "Author 2"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-article.pdf"
-        const article = new RegularArticle(abstract, title, authors, fileURL)
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            fileURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeFalsy()
     })
@@ -26,8 +40,15 @@ describe("Regular Article tests ", () => {
         const abstract = Array(299).fill("a").join(" ")
         const title = "Sample Article Title"
         const authors = ["Author 1", "Author 2"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-article.pdf"
-        const article = new RegularArticle(abstract, title, authors, fileURL)
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            fileURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeTruthy()
     })
@@ -36,8 +57,15 @@ describe("Regular Article tests ", () => {
         const abstract = Array(301).fill("a").join(" ")
         const title = "Sample Article Title"
         const authors = ["Author 1", "Author 2", "Author 3"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-article.pdf"
-        const article = new RegularArticle(abstract, title, authors, fileURL)
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            fileURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeFalsy()
     })
@@ -47,8 +75,15 @@ describe("Regular Article tests ", () => {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
         const authors = ["Author 1"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-article.pdf"
-        const article = new RegularArticle(abstract, title, authors, fileURL)
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            fileURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeTruthy()
     })
@@ -58,8 +93,15 @@ describe("Regular Article tests ", () => {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
         const authors: string[] = []
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-article.pdf"
-        const article = new RegularArticle(abstract, title, authors, fileURL)
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            fileURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeFalsy()
     })
@@ -69,8 +111,15 @@ describe("Regular Article tests ", () => {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
         const authors = ["Author 1", "Author 2", "Author 3"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-article.pdf"
-        const article = new RegularArticle(abstract, title, authors, fileURL)
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            fileURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeTruthy()
         expect(article.authors.length).toBeGreaterThan(1)
@@ -81,8 +130,15 @@ describe("Regular Article tests ", () => {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
         const authors = ["Author 1", "Author 2"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-article.pdf"
-        const article = new RegularArticle(abstract, title, authors, fileURL)
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            fileURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeTruthy()
     })
@@ -92,8 +148,15 @@ describe("Regular Article tests ", () => {
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = ""
         const authors = ["Author 1", "Author 2"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-article.pdf"
-        const article = new RegularArticle(abstract, title, authors, fileURL)
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            fileURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeFalsy()
     })
@@ -103,9 +166,16 @@ describe("Poster Article tests ", () => {
     test("Poster article is valid when it has at least one author", () => {
         const title = "Sample Poster Title"
         const authors = ["Author 1"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
-        const article = new Poster(title, authors, fileURL, sourceURL)
+        const article = new Poster(
+            title,
+            authors,
+            fileURL,
+            sourceURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeTruthy()
     })
@@ -113,9 +183,16 @@ describe("Poster Article tests ", () => {
     test("Poster article is invalid when it doesnt have at least one author", () => {
         const title = "Sample Poster Title"
         const authors: string[] = []
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
-        const article = new Poster(title, authors, fileURL, sourceURL)
+        const article = new Poster(
+            title,
+            authors,
+            fileURL,
+            sourceURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeFalsy()
     })
@@ -123,9 +200,16 @@ describe("Poster Article tests ", () => {
     test("Poster article can have more than one author", () => {
         const title = "Sample Poster Title"
         const authors = ["Author 1", "Author 2", "Author 3"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
-        const article = new Poster(title, authors, fileURL, sourceURL)
+        const article = new Poster(
+            title,
+            authors,
+            fileURL,
+            sourceURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeTruthy()
         expect(article.authors.length).toBeGreaterThan(1)
@@ -134,9 +218,16 @@ describe("Poster Article tests ", () => {
     test("Poster article is valid when it has a title", () => {
         const title = "Sample Poster Title"
         const authors = ["Author 1", "Author 2"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
-        const article = new Poster(title, authors, fileURL, sourceURL)
+        const article = new Poster(
+            title,
+            authors,
+            fileURL,
+            sourceURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeTruthy()
     })
@@ -144,9 +235,16 @@ describe("Poster Article tests ", () => {
     test("Poster article is invalid when it doesnt have a title", () => {
         const title = ""
         const authors = ["Author 1", "Author 2"]
+        const notificationAuthor = "Notification Author"
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
-        const article = new Poster(title, authors, fileURL, sourceURL)
+        const article = new Poster(
+            title,
+            authors,
+            fileURL,
+            sourceURL,
+            notificationAuthor
+        )
 
         expect(article.validate()).toBeFalsy()
     })
