@@ -34,3 +34,25 @@ export class RegularArticle implements IArticle {
     }
 }
 
+export class Poster implements IArticle {
+    title: string
+    authors: string[]
+
+    constructor(title: string, authors: string[]) {
+        this.title = title
+        this.authors = authors
+    }
+
+    validate(): boolean {
+        if (this.authors.length === 0) {
+            return false
+        }
+
+        if (this.title.trim().length === 0) {
+            return false
+        }
+
+        return true
+    }
+}
+
