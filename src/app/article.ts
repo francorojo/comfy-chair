@@ -1,16 +1,21 @@
-interface IArticle {
-    validate(): boolean
-}
-
-export class RegularArticle implements IArticle {
-    abstract: string
+abstract class Article {
     title: string
     authors: string[]
 
-    constructor(abstract: string, title: string, authors: string[]) {
-        this.abstract = abstract
+    constructor(title: string, authors: string[]) {
         this.title = title
         this.authors = authors
+    }
+
+    abstract validate(): boolean
+}
+
+export class RegularArticle extends Article {
+    abstract: string
+
+    constructor(abstract: string, title: string, authors: string[]) {
+        super(title, authors)
+        this.abstract = abstract
     }
 
     validate(): boolean {
@@ -34,15 +39,7 @@ export class RegularArticle implements IArticle {
     }
 }
 
-export class Poster implements IArticle {
-    title: string
-    authors: string[]
-
-    constructor(title: string, authors: string[]) {
-        this.title = title
-        this.authors = authors
-    }
-
+export class Poster extends Article {
     validate(): boolean {
         if (this.authors.length === 0) {
             return false
