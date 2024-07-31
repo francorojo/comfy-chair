@@ -1,6 +1,6 @@
 import { Rol, User } from '@app/user';
 
-abstract class Article {
+export abstract class Article {
 	title: string;
 	authors: User[];
 	notificationAuthor: User;

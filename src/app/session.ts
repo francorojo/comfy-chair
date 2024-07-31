@@ -1,11 +1,11 @@
-import { RegularArticle } from './article';
+import { Article } from '@app/article';
 
 export class Session {
 	private theme: string;
 	private state: SessionState;
 	private maxArticlesAccept: number;
 	private selectionForm: Map<SessionType, SessionSelection>;
-	private articles: RegularArticle[];
+	private articles: Article[];
 
 	public constructor(
 		theme: string,
@@ -37,7 +37,7 @@ export class Session {
 		return this.selectionForm;
 	}
 
-	public addArticle(article: RegularArticle) {
+	public addArticle(article: Article) {
 		//Validations to add a new article
 		if (this.articles.length == this.maxArticlesAccept)
 			throw new Error('The number of items exceeds the maximum allowed');
