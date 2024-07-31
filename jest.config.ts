@@ -25,6 +25,8 @@ module.exports = {
             statements: 80,
         },
     },
+    collectCoverageFrom: ["src/**/*.{ts,js}"],
 }
 
 export default config
+
