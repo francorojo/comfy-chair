@@ -1,4 +1,4 @@
-import { RegularArticle } from '@app/article';
+import { Poster, RegularArticle } from '@app/article';
 import { SessionType, SessionSelection } from '@app/session';
 import { Rol, User } from '@app/user';
 
@@ -57,4 +57,15 @@ export const regularArticleDummy = new RegularArticle(
 	authors,
 	notificationAuthor,
 	fileURL
+);
+
+const posterTitle = 'Sample Poster Title';
+const sourceURL = 'https://example.com/sample-poster.pdf';
+
+export const posterArticleDummy = new Poster(
+	posterTitle,
+	authors,
+	notificationAuthor,
+	fileURL,
+	sourceURL
 );
