@@ -1,23 +1,32 @@
+import { Rol, User } from "@app/user"
+
 abstract class Article {
     title: string
-    authors: string[]
-    notificationAuthor: string
+    authors: User[]
+    notificationAuthor: User
     fileURL: string
 
     constructor(
         title: string,
-        authors: string[],
+        authors: User[],
         fileURL: string,
-        notificationAuthor: string
+        notificationAuthor: User
     ) {
         this.title = title
+
+        // validate authors have author role
+        authors.forEach((author) => {
+            if (author.getRol() !== Rol.AUTHOR) {
+                throw new Error("Authors must have the Author role")
+            }
+        })
         this.authors = authors
         this.fileURL = fileURL
         this.notificationAuthor = notificationAuthor
     }
 
     validate(): boolean {
-        if (this.authors.length === 0 || this.notificationAuthor === "") {
+        if (this.authors.length === 0) {
             return false
         }
 
@@ -35,8 +44,8 @@ export class RegularArticle extends Article {
     constructor(
         abstract: string,
         title: string,
-        authors: string[],
-        notificationAuthor: string,
+        authors: User[],
+        notificationAuthor: User,
         fileURL: string
     ) {
         super(title, authors, fileURL, notificationAuthor)
@@ -61,8 +70,8 @@ export class Poster extends Article {
 
     constructor(
         title: string,
-        authors: string[],
-        notificationAuthor: string,
+        authors: User[],
+        notificationAuthor: User,
         fileURL: string,
         sourceURL: string
     ) {

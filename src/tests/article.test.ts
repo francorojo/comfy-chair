@@ -1,19 +1,54 @@
 import { RegularArticle, Poster } from "@app/article"
+import { Rol, User } from "@app/user"
+
+const dummyOrganizer = new User(
+    "Jane",
+    "UTN-FRBA",
+    "jane@utn.frba.edu.ar",
+    "test-2024-UTN",
+    Rol.ORGANIZER
+)
+
+const dummyAuthor1 = new User(
+    "Jane",
+    "UTN-FRBA",
+    "jane@utn.frba.edu.ar",
+    "test-2024-UTN",
+    Rol.AUTHOR
+)
+
+const dummyAuthor2 = new User(
+    "John",
+    "UTN-FRBA",
+    "john@utn.frba.edu.ar",
+    "test-2024-UTN",
+    Rol.AUTHOR
+)
+
+const dummyAuthor3 = new User(
+    "Bob",
+    "UTN-FRBA",
+    "bob@utn.frba.edu.ar",
+    "test-2024-UTN",
+    Rol.AUTHOR
+)
+
+const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
 describe("Regular Article tests ", () => {
     test("Regular article is valid when abstract is not empty", () => {
         const abstract =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
-        const authors = ["Author 1", "Author 2"]
-        const notificationAuthor = "Notification Author"
+        const authors = dummyAuthors
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-article.pdf"
         const article = new RegularArticle(
             abstract,
             title,
             authors,
-            fileURL,
-            notificationAuthor
+            notificationAuthor,
+            fileURL
         )
 
         expect(article.validate()).toBeTruthy()
@@ -22,15 +57,15 @@ describe("Regular Article tests ", () => {
     test("Regular article is invalid when abstract is empty", () => {
         const abstract = ""
         const title = "Sample Article Title"
-        const authors = ["Author 1", "Author 2"]
-        const notificationAuthor = "Notification Author"
+        const authors = dummyAuthors
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-article.pdf"
         const article = new RegularArticle(
             abstract,
             title,
             authors,
-            fileURL,
-            notificationAuthor
+            notificationAuthor,
+            fileURL
         )
 
         expect(article.validate()).toBeFalsy()
@@ -39,15 +74,15 @@ describe("Regular Article tests ", () => {
     test("Regular article is valid when abstract is less than 300 words", () => {
         const abstract = Array(299).fill("a").join(" ")
         const title = "Sample Article Title"
-        const authors = ["Author 1", "Author 2"]
-        const notificationAuthor = "Notification Author"
+        const authors = dummyAuthors
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-article.pdf"
         const article = new RegularArticle(
             abstract,
             title,
             authors,
-            fileURL,
-            notificationAuthor
+            notificationAuthor,
+            fileURL
         )
 
         expect(article.validate()).toBeTruthy()
@@ -56,15 +91,15 @@ describe("Regular Article tests ", () => {
     test("Regular article is invalid when abstract is more than 300 words", () => {
         const abstract = Array(301).fill("a").join(" ")
         const title = "Sample Article Title"
-        const authors = ["Author 1", "Author 2", "Author 3"]
-        const notificationAuthor = "Notification Author"
+        const authors = [dummyAuthor1, dummyAuthor2, dummyAuthor3]
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-article.pdf"
         const article = new RegularArticle(
             abstract,
             title,
             authors,
-            fileURL,
-            notificationAuthor
+            notificationAuthor,
+            fileURL
         )
 
         expect(article.validate()).toBeFalsy()
@@ -74,15 +109,15 @@ describe("Regular Article tests ", () => {
         const abstract =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
-        const authors = ["Author 1"]
-        const notificationAuthor = "Notification Author"
+        const authors = [dummyAuthor1]
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-article.pdf"
         const article = new RegularArticle(
             abstract,
             title,
             authors,
-            fileURL,
-            notificationAuthor
+            notificationAuthor,
+            fileURL
         )
 
         expect(article.validate()).toBeTruthy()
@@ -92,15 +127,15 @@ describe("Regular Article tests ", () => {
         const abstract =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
-        const authors: string[] = []
-        const notificationAuthor = "Notification Author"
+        const authors: User[] = []
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-article.pdf"
         const article = new RegularArticle(
             abstract,
             title,
             authors,
-            fileURL,
-            notificationAuthor
+            notificationAuthor,
+            fileURL
         )
 
         expect(article.validate()).toBeFalsy()
@@ -110,15 +145,15 @@ describe("Regular Article tests ", () => {
         const abstract =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
-        const authors = ["Author 1", "Author 2", "Author 3"]
-        const notificationAuthor = "Notification Author"
+        const authors = [dummyAuthor1, dummyAuthor2, dummyAuthor3]
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-article.pdf"
         const article = new RegularArticle(
             abstract,
             title,
             authors,
-            fileURL,
-            notificationAuthor
+            notificationAuthor,
+            fileURL
         )
 
         expect(article.validate()).toBeTruthy()
@@ -129,15 +164,15 @@ describe("Regular Article tests ", () => {
         const abstract =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = "Sample Article Title"
-        const authors = ["Author 1", "Author 2"]
-        const notificationAuthor = "Notification Author"
+        const authors = dummyAuthors
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-article.pdf"
         const article = new RegularArticle(
             abstract,
             title,
             authors,
-            fileURL,
-            notificationAuthor
+            notificationAuthor,
+            fileURL
         )
 
         expect(article.validate()).toBeTruthy()
@@ -147,34 +182,72 @@ describe("Regular Article tests ", () => {
         const abstract =
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
         const title = ""
-        const authors = ["Author 1", "Author 2"]
-        const notificationAuthor = "Notification Author"
+        const authors = dummyAuthors
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-article.pdf"
         const article = new RegularArticle(
             abstract,
             title,
             authors,
-            fileURL,
-            notificationAuthor
+            notificationAuthor,
+            fileURL
         )
 
         expect(article.validate()).toBeFalsy()
+    })
+
+    test("Regular article is valid when it has a user is an author", () => {
+        const abstract =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
+        const title = "Sample Article Title"
+        const authors = [dummyAuthor1, dummyAuthor2, dummyAuthor3]
+        const notificationAuthor = dummyAuthor1
+        const fileURL = "https://example.com/sample-article.pdf"
+        const article = new RegularArticle(
+            abstract,
+            title,
+            authors,
+            notificationAuthor,
+            fileURL
+        )
+
+        expect(article.validate()).toBeTruthy()
+        expect(article.authors.length).toBeGreaterThan(1)
+    })
+
+    test("Regular article is invalid when it doesnt have a user is not an author", () => {
+        const abstract =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim"
+        const title = "Sample Article Title"
+        const authors = [dummyOrganizer]
+        const notificationAuthor = dummyAuthor1
+        const fileURL = "https://example.com/sample-article.pdf"
+
+        expect(() => {
+            new RegularArticle(
+                abstract,
+                title,
+                authors,
+                notificationAuthor,
+                fileURL
+            )
+        }).toThrow(new Error("Authors must have the Author role"))
     })
 })
 
 describe("Poster Article tests ", () => {
     test("Poster article is valid when it has at least one author", () => {
         const title = "Sample Poster Title"
-        const authors = ["Author 1"]
-        const notificationAuthor = "Notification Author"
+        const authors = [dummyAuthor1]
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
         const article = new Poster(
             title,
             authors,
+            notificationAuthor,
             fileURL,
-            sourceURL,
-            notificationAuthor
+            sourceURL
         )
 
         expect(article.validate()).toBeTruthy()
@@ -182,16 +255,16 @@ describe("Poster Article tests ", () => {
 
     test("Poster article is invalid when it doesnt have at least one author", () => {
         const title = "Sample Poster Title"
-        const authors: string[] = []
-        const notificationAuthor = "Notification Author"
+        const authors: User[] = []
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
         const article = new Poster(
             title,
             authors,
+            notificationAuthor,
             fileURL,
-            sourceURL,
-            notificationAuthor
+            sourceURL
         )
 
         expect(article.validate()).toBeFalsy()
@@ -199,16 +272,16 @@ describe("Poster Article tests ", () => {
 
     test("Poster article can have more than one author", () => {
         const title = "Sample Poster Title"
-        const authors = ["Author 1", "Author 2", "Author 3"]
-        const notificationAuthor = "Notification Author"
+        const authors = [dummyAuthor1, dummyAuthor2, dummyAuthor3]
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
         const article = new Poster(
             title,
             authors,
+            notificationAuthor,
             fileURL,
-            sourceURL,
-            notificationAuthor
+            sourceURL
         )
 
         expect(article.validate()).toBeTruthy()
@@ -217,16 +290,16 @@ describe("Poster Article tests ", () => {
 
     test("Poster article is valid when it has a title", () => {
         const title = "Sample Poster Title"
-        const authors = ["Author 1", "Author 2"]
-        const notificationAuthor = "Notification Author"
+        const authors = dummyAuthors
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
         const article = new Poster(
             title,
             authors,
+            notificationAuthor,
             fileURL,
-            sourceURL,
-            notificationAuthor
+            sourceURL
         )
 
         expect(article.validate()).toBeTruthy()
@@ -234,16 +307,16 @@ describe("Poster Article tests ", () => {
 
     test("Poster article is invalid when it doesnt have a title", () => {
         const title = ""
-        const authors = ["Author 1", "Author 2"]
-        const notificationAuthor = "Notification Author"
+        const authors = dummyAuthors
+        const notificationAuthor = dummyAuthor1
         const fileURL = "https://example.com/sample-poster.pdf"
         const sourceURL = "https://example.com/sample-poster.pdf"
         const article = new Poster(
             title,
             authors,
+            notificationAuthor,
             fileURL,
-            sourceURL,
-            notificationAuthor
+            sourceURL
         )
 
         expect(article.validate()).toBeFalsy()
