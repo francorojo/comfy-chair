@@ -1,7 +1,9 @@
+import { Poster } from '@app/article';
 import { Session, SessionState } from '@app/session';
 import {
 	dummyAuthor1,
 	dummyAuthor2,
+	posterArticleDummy,
 	regularArticleDummy,
 	top3SelectionDummy,
 } from '@tests/dummies';
@@ -68,6 +70,39 @@ describe('test session case use', () => {
 		session.updateState(SessionState.ASIGMENTANDREVIEW);
 		expect(() => {
 			session.addArticle(regularArticleDummy);
+		}).toThrow(new Error('This session can not recive more articles'));
+	});
+
+	test('Session should be able to receive a PosterArticle in RECEPTION state', () => {
+		const session = new Session('Test', 1, top3SelectionDummy);
+		session.updateState(SessionState.RECEPTION);
+		session.addArticle(posterArticleDummy);
+
+		expect(1).toEqual(session.getArticles().length);
+		expect(Poster).toEqual(session.getArticles()[0].constructor);
+	});
+
+	test('Session should not be able to receive a PosterArticle in BIDDING state', () => {
+		const session = new Session('Test', 1, top3SelectionDummy);
+		session.updateState(SessionState.BIDDING);
+		expect(() => {
+			session.addArticle(posterArticleDummy);
+		}).toThrow(new Error('This session can not recive more articles'));
+	});
+
+	test('Session should not be able to receive a PosterArticle in SELECTION state', () => {
+		const session = new Session('Test', 1, top3SelectionDummy);
+		session.updateState(SessionState.SELECTION);
+		expect(() => {
+			session.addArticle(posterArticleDummy);
+		}).toThrow(new Error('This session can not recive more articles'));
+	});
+
+	test('Session should not be able to receive a PosterArticle in ASIGMENTANDREVIEW state', () => {
+		const session = new Session('Test', 1, top3SelectionDummy);
+		session.updateState(SessionState.ASIGMENTANDREVIEW);
+		expect(() => {
+			session.addArticle(posterArticleDummy);
 		}).toThrow(new Error('This session can not recive more articles'));
 	});
 });
