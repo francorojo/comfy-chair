@@ -6,15 +6,18 @@ export class Session {
 	private maxArticlesAccept: number;
 	private selectionForm: Map<SessionType, SessionSelection>;
 	private articles: Article[];
+	private deadline: Date;
 
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
-		selectionForm: Map<SessionType, SessionSelection>
+		selectionForm: Map<SessionType, SessionSelection>,
+		deadline: Date
 	) {
 		this.theme = theme;
 		this.maxArticlesAccept = maxArticlesAccept;
 		this.selectionForm = selectionForm;
+		this.deadline = deadline;
 
 		//Init default
 		this.state = SessionState.RECEPTION;
@@ -37,14 +40,35 @@ export class Session {
 		return this.selectionForm;
 	}
 
+	public getDeadline(): Date {
+		return this.deadline;
+	}
+
 	public addArticle(article: Article) {
+		this.canReceiveArticle();
+		return this.articles.push(article);
+	}
+
+	private canReceiveArticle(): void {
 		//Validations to add a new article
+		this.validateMaxAllowed();
+		this.validateReceptionState();
+		this.validateDeadline();
+	}
+
+	private validateMaxAllowed(): void {
 		if (this.articles.length == this.maxArticlesAccept)
 			throw new Error('The number of items exceeds the maximum allowed');
+	}
+
+	private validateReceptionState(): void {
 		if (this.state != SessionState.RECEPTION)
 			throw new Error('This session can not recive more articles');
+	}
 
-		return this.articles.push(article);
+	private validateDeadline(): void {
+		if (this.deadline < new Date())
+			throw new Error('This session has passed its deadline');
 	}
 
 	public getArticles() {
