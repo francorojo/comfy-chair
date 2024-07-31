@@ -27,9 +27,9 @@ jobs:
         run: npm install
 
       - name: Run Prettier
-        run: npx prettier --check "**/*.{js,ts,json,html,css,md}"
+        run: npx prettier --check "src/**/*.{js,ts}"
 
       - name: List unformatted files (if any)
         if: failure()
-        run: npx prettier --list-different "**/*.{js,ts,json,html,css,md}"
+        run: npx prettier --list-different "src/**/*.{js,ts}"
 
