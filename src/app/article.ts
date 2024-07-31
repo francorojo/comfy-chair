@@ -1,16 +1,55 @@
-interface IArticle {
-    validate(): boolean
+import { Rol, User } from "@app/user"
+
+abstract class Article {
+    title: string
+    authors: User[]
+    notificationAuthor: User
+    fileURL: string
+
+    constructor(
+        title: string,
+        authors: User[],
+        fileURL: string,
+        notificationAuthor: User
+    ) {
+        this.title = title
+
+        // validate authors have author role
+        authors.forEach((author) => {
+            if (author.getRol() !== Rol.AUTHOR) {
+                throw new Error("Authors must have the Author role")
+            }
+        })
+        this.authors = authors
+        this.fileURL = fileURL
+        this.notificationAuthor = notificationAuthor
+    }
+
+    validate(): boolean {
+        if (this.authors.length === 0) {
+            return false
+        }
+
+        if (this.title.trim().length === 0) {
+            return false
+        }
+
+        return true
+    }
 }
 
-export class RegularArticle implements IArticle {
+export class RegularArticle extends Article {
     abstract: string
-    title: string
-    authors: string[]
 
-    constructor(abstract: string, title: string, authors: string[]) {
+    constructor(
+        abstract: string,
+        title: string,
+        authors: User[],
+        notificationAuthor: User,
+        fileURL: string
+    ) {
+        super(title, authors, fileURL, notificationAuthor)
         this.abstract = abstract
-        this.title = title
-        this.authors = authors
     }
 
     validate(): boolean {
@@ -22,15 +61,22 @@ export class RegularArticle implements IArticle {
             return false
         }
 
-        if (this.authors.length === 0) {
-            return false
-        }
+        return super.validate()
+    }
+}
 
-        if (this.title.trim().length === 0) {
-            return false
-        }
+export class Poster extends Article {
+    sourceURL: string
 
-        return true
+    constructor(
+        title: string,
+        authors: User[],
+        notificationAuthor: User,
+        fileURL: string,
+        sourceURL: string
+    ) {
+        super(title, authors, fileURL, notificationAuthor)
+        this.sourceURL = sourceURL
     }
 }
 
