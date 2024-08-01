@@ -14,6 +14,7 @@ module.exports = {
     },
     moduleNameMapper: {
         "^@app/(.*)$": "<rootDir>/src/app/$1",
+        "^@tests/(.*)$": "<rootDir>/src/tests/$1",
     },
     moduleFileExtensions: ["js", "ts"], // Extend module file extensions to include TypeScript
     collectCoverage: true,
@@ -25,7 +26,7 @@ module.exports = {
             statements: 80,
         },
     },
-    collectCoverageFrom: ["src/**/*.{ts,js}"],
+    collectCoverageFrom: ["src/app/**/*.{ts,js}"],
 }
 
 export default config

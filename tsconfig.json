@@ -12,6 +12,9 @@
       "@app/*": [
         "src/app/*"
       ],
+      "@tests/*": [
+        "src/tests/*"
+      ]
     }
   },
   "include": [
