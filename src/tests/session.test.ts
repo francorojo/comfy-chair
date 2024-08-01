@@ -5,6 +5,9 @@ import {
 	SessionState,
 } from '@app/session';
 import { RegularArticle } from '@app/article';
+import { dummyAuthor1, dummyAuthor2 } from '@tests/dummies';
+
+export const dummyAuthors = [dummyAuthor1, dummyAuthor2];
 
 describe('test session case use', () => {
 	test('Create a new session correctly', () => {
@@ -13,8 +16,16 @@ describe('test session case use', () => {
 		const abstract =
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim';
 		const title = 'Sample Article Title';
-		const authors = ['Author 1', 'Author 2'];
-		const article = new RegularArticle(abstract, title, authors);
+		const authors = dummyAuthors;
+		const notificationAuthor = dummyAuthor1;
+		const fileURL = 'https://example.com/sample-article.pdf';
+		const article = new RegularArticle(
+			abstract,
+			title,
+			authors,
+			notificationAuthor,
+			fileURL
+		);
 		const session = new Session('Test', 2, map);
 		session.addArticle(article);
 		expect('Test').toEqual(session.getTheme());
@@ -29,8 +40,16 @@ describe('test session case use', () => {
 		const abstract =
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim';
 		const title = 'Sample Article Title';
-		const authors = ['Author 1', 'Author 2'];
-		const article = new RegularArticle(abstract, title, authors);
+		const authors = dummyAuthors;
+		const notificationAuthor = dummyAuthor1;
+		const fileURL = 'https://example.com/sample-article.pdf';
+		const article = new RegularArticle(
+			abstract,
+			title,
+			authors,
+			notificationAuthor,
+			fileURL
+		);
 		const session = new Session('Test', 0, map);
 		expect(() => {
 			session.addArticle(article);
@@ -45,8 +64,16 @@ describe('test session case use', () => {
 		const abstract =
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim';
 		const title = 'Sample Article Title';
-		const authors = ['Author 1', 'Author 2'];
-		const article = new RegularArticle(abstract, title, authors);
+		const authors = dummyAuthors;
+		const notificationAuthor = dummyAuthor1;
+		const fileURL = 'https://example.com/sample-article.pdf';
+		const article = new RegularArticle(
+			abstract,
+			title,
+			authors,
+			notificationAuthor,
+			fileURL
+		);
 		const session = new Session('Test', 1, map);
 		session.updateState(SessionState.BIDDING);
 		expect(() => {
