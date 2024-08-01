@@ -1,69 +1,69 @@
-import { RegularArticle } from './article';
+import {RegularArticle} from './article'
 
 export class Session {
-	private theme: string;
-	private state: SessionState;
-	private maxArticlesAccept: number;
-	private selectionForm: Map<SessionType, SessionSelection>;
-	private articles: RegularArticle[];
+	private theme: string
+	private state: SessionState
+	private maxArticlesAccept: number
+	private selectionForm: Map<SessionType, SessionSelection>
+	private articles: RegularArticle[]
 
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
 		selectionForm: Map<SessionType, SessionSelection>
 	) {
-		this.theme = theme;
-		this.maxArticlesAccept = maxArticlesAccept;
-		this.selectionForm = selectionForm;
+		this.theme = theme
+		this.maxArticlesAccept = maxArticlesAccept
+		this.selectionForm = selectionForm
 
 		//Init default
-		this.state = SessionState.RECEPTION;
-		this.articles = [];
+		this.state = SessionState.RECEPTION
+		this.articles = []
 	}
 
 	public getTheme(): string {
-		return this.theme;
+		return this.theme
 	}
 
 	public getState(): SessionState {
-		return this.state;
+		return this.state
 	}
 
 	public getMaxArticlesAccept(): number {
-		return this.maxArticlesAccept;
+		return this.maxArticlesAccept
 	}
 
 	public getSelectionForm(): Map<SessionType, SessionSelection> {
-		return this.selectionForm;
+		return this.selectionForm
 	}
 
 	public addArticle(article: RegularArticle) {
 		//Validations to add a new article
 		if (this.articles.length == this.maxArticlesAccept)
-			throw new Error('The number of items exceeds the maximum allowed');
+			throw new Error('The number of items exceeds the maximum allowed')
 		if (this.state != SessionState.RECEPTION)
-			throw new Error('This session can not recive more articles');
+			throw new Error('This session can not recive more articles')
 
-		return this.articles.push(article);
+		return this.articles.push(article)
 	}
 
 	public getArticles() {
-		return this.articles;
+		return this.articles
 	}
 
 	public updateState(state: SessionState) {
-		return (this.state = state);
+		return (this.state = state)
 	}
 }
 
 export enum SessionSelection {
 	TOP3,
-	MINVALUE,
+	MINVALUE
 }
 
 export enum SessionType {
 	REGULAR,
-	POSTER,
+	POSTER
 }
 
 //Maybe in future this enum can be a state pattern for delegate logic
@@ -71,5 +71,5 @@ export enum SessionState {
 	RECEPTION,
 	BIDDING,
 	ASIGMENTANDREVIEW,
-	SELECTION,
+	SELECTION
 }

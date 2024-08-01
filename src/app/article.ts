@@ -1,10 +1,10 @@
-import { Rol, User } from '@app/user';
+import {Rol, User} from '@app/user'
 
 abstract class Article {
-	title: string;
-	authors: User[];
-	notificationAuthor: User;
-	fileURL: string;
+	title: string
+	authors: User[]
+	notificationAuthor: User
+	fileURL: string
 
 	constructor(
 		title: string,
@@ -12,34 +12,34 @@ abstract class Article {
 		fileURL: string,
 		notificationAuthor: User
 	) {
-		this.title = title;
+		this.title = title
 
 		// validate authors have author role
 		authors.forEach((author) => {
 			if (author.getRol() !== Rol.AUTHOR) {
-				throw new Error('Authors must have the Author role');
+				throw new Error('Authors must have the Author role')
 			}
-		});
-		this.authors = authors;
-		this.fileURL = fileURL;
-		this.notificationAuthor = notificationAuthor;
+		})
+		this.authors = authors
+		this.fileURL = fileURL
+		this.notificationAuthor = notificationAuthor
 	}
 
 	validate(): boolean {
 		if (this.authors.length === 0) {
-			return false;
+			return false
 		}
 
 		if (this.title.trim().length === 0) {
-			return false;
+			return false
 		}
 
-		return true;
+		return true
 	}
 }
 
 export class RegularArticle extends Article {
-	abstract: string;
+	abstract: string
 
 	constructor(
 		abstract: string,
@@ -48,25 +48,25 @@ export class RegularArticle extends Article {
 		notificationAuthor: User,
 		fileURL: string
 	) {
-		super(title, authors, fileURL, notificationAuthor);
-		this.abstract = abstract;
+		super(title, authors, fileURL, notificationAuthor)
+		this.abstract = abstract
 	}
 
 	validate(): boolean {
 		if (this.abstract.trim().length === 0) {
-			return false;
+			return false
 		}
 
 		if (this.abstract.split(' ').length > 300) {
-			return false;
+			return false
 		}
 
-		return super.validate();
+		return super.validate()
 	}
 }
 
 export class Poster extends Article {
-	sourceURL: string;
+	sourceURL: string
 
 	constructor(
 		title: string,
@@ -75,7 +75,7 @@ export class Poster extends Article {
 		fileURL: string,
 		sourceURL: string
 	) {
-		super(title, authors, fileURL, notificationAuthor);
-		this.sourceURL = sourceURL;
+		super(title, authors, fileURL, notificationAuthor)
+		this.sourceURL = sourceURL
 	}
 }
