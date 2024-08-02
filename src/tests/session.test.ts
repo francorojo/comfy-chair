@@ -80,3 +80,25 @@ describe("test session case use", () => {
     })
 })
 
+describe("Session BIDDING state tests", () => {
+    test("Session can be updated to BIDDING if state is RECEPTION", () => {})
+
+    test("Session cannot be updated to BIDDING if state is ASIGMENTANDREVIEW", () => {})
+
+    test("Session cannot be updated to BIDDING if state is SELECTION", () => {})
+
+    test("Session cannot be updated to BIDDING if state is BIDDING", () => {})
+
+    test("User can bid on an existing article", () => {})
+
+    test("User cannot bid on an article that is not in the session", () => {})
+
+    test("User can bid on a bidden article", () => {})
+
+    test("User can bid as interested in an article", () => {})
+
+    test("User can bid as not interested in an article", () => {})
+
+    test("User can bid as maybe interested in an article", () => {})
+})
+
