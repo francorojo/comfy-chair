@@ -9,6 +9,7 @@ import {
 	dummyAuthor1,
 	dummyAuthor2,
 	dummyBidder1,
+	dummyBidder2,
 	dummyTop3SelectionForm
 } from '@tests/dummies'
 import {generateRegularArticle} from './articleGenerator'
@@ -124,6 +125,49 @@ describe('Session BIDDING state tests', () => {
 		}).toThrow(new Error('This session can not be updated to BIDDING'))
 	})
 
+	test("Session must return all users's bids in BIDDING state", () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyAuthor2
+
+		session.bid(user1, article, 'INTERESTED')
+		session.bid(user2, article, 'NOT INTERESTED')
+
+		expect(session.getBids()).toEqual(
+			new Map([
+				[user1, new Map([[article, 'INTERESTED']])],
+				[user2, new Map([[article, 'NOT INTERESTED']])]
+			])
+		)
+	})
+
+	test('Session bidsState should be CLOSED before being in BIDDING state', () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+
+		expect(session.getBidsState()).toBe('CLOSED')
+
+		session.updateState(SessionState.BIDDING)
+
+		expect(session.getBidsState()).toBe('OPENED')
+	})
+
+	test('Session bidsState should be CLOSED after being closed', () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		session.closeBids()
+
+		expect(session.getBidsState()).toBe('CLOSED')
+	})
+})
+
+describe('Session User role in BIDDING state', () => {
 	test('Submmited articles can be viewed by an user in BIDDING state', () => {
 		const session = new Session('Test', 2, dummyTop3SelectionForm)
 		const article1 = generateRegularArticle()
@@ -146,6 +190,43 @@ describe('Session BIDDING state tests', () => {
 
 		session.bid(user, article, 'INTERESTED')
 		expect('INTERESTED').toBe(session.getBid(user, article))
+	})
+
+	test('User can bid on more than one article', () => {
+		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const article1 = generateRegularArticle()
+		const article2 = generateRegularArticle()
+
+		session.addArticle(article1)
+		session.addArticle(article2)
+		session.updateState(SessionState.BIDDING)
+		const user = dummyBidder1
+
+		session.bid(user, article1, 'INTERESTED')
+		session.bid(user, article2, 'NOT INTERESTED')
+
+		expect('INTERESTED').toBe(session.getBid(user, article1))
+		expect('NOT INTERESTED').toBe(session.getBid(user, article2))
+	})
+
+	test('Many users can bid on more than one article in BIDDING state', () => {
+		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const article1 = generateRegularArticle()
+		const article2 = generateRegularArticle()
+		session.addArticle(article1)
+		session.addArticle(article2)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		session.bid(user1, article1, 'INTERESTED')
+		session.bid(user2, article1, 'NOT INTERESTED')
+		session.bid(user1, article2, 'MAYBE')
+		session.bid(user2, article2, 'INTERESTED')
+
+		expect(session.getBid(user1, article1)).toBe('INTERESTED')
+		expect(session.getBid(user2, article1)).toBe('NOT INTERESTED')
+		expect(session.getBid(user1, article2)).toBe('MAYBE')
+		expect(session.getBid(user2, article2)).toBe('INTERESTED')
 	})
 
 	test('User cannot bid on an article that is not in the session', () => {
@@ -214,22 +295,27 @@ describe('Session BIDDING state tests', () => {
 		expect('MAYBE').toBe(session.getBid(user, article))
 	})
 
-	test("Session must return all users' bids in BIDDING state", () => {
+	test('User cant bid on an article if bidsState is CLOSED', () => {
 		const session = new Session('Test', 1, dummyTop3SelectionForm)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
-		const user1 = dummyBidder1
-		const user2 = dummyAuthor2
+		session.closeBids()
 
-		session.bid(user1, article, 'INTERESTED')
-		session.bid(user2, article, 'NOT INTERESTED')
+		expect(() => {
+			session.bid(dummyBidder1, article, 'INTERESTED')
+		}).toThrow(new Error('The bids are closed, you can not bid anymore'))
+	})
 
-		expect(session.getBids()).toEqual(
-			new Map([
-				[user1, new Map([[article, 'INTERESTED']])],
-				[user2, new Map([[article, 'NOT INTERESTED']])]
-			])
-		)
+	test('User can bid if BidsState is OPENED', () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+
+		expect(session.getBidsState()).toBe('OPENED')
+
+		session.bid(dummyBidder1, article, 'INTERESTED')
+		expect('INTERESTED').toBe(session.getBid(dummyBidder1, article))
 	})
 })

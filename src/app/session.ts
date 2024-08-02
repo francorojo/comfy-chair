@@ -7,7 +7,10 @@ export class Session {
 	private maxArticlesAccept: number
 	private selectionForm: Map<SessionType, SessionSelection>
 	private articles: Article[]
+
+	// BIDDING state
 	private interestInArticles: Map<User, Map<Article, Interest>>
+	private bidsState: BidsState
 
 	public constructor(
 		theme: string,
@@ -22,6 +25,7 @@ export class Session {
 		this.state = SessionState.RECEPTION
 		this.articles = []
 		this.interestInArticles = new Map()
+		this.bidsState = 'CLOSED'
 	}
 
 	public getTheme(): string {
@@ -42,8 +46,6 @@ export class Session {
 
 	public addArticle(article: RegularArticle) {
 		//Validations to add a new article
-		if (this.articles.length == this.maxArticlesAccept)
-			throw new Error('The number of items exceeds the maximum allowed')
 		if (this.state != SessionState.RECEPTION)
 			throw new Error('This session can not recive more articles')
 
@@ -70,11 +72,27 @@ export class Session {
 			this.state != SessionState.RECEPTION
 		)
 			throw new Error('This session can not be updated to BIDDING')
+		else {
+			this.bidsState = 'OPENED'
+			this.interestInArticles.clear()
+		}
 
 		return (this.state = state)
 	}
 
+	public getBidsState(): BidsState {
+		return this.bidsState
+	}
+
+	public closeBids(): void {
+		this.bidsState = 'CLOSED'
+	}
+
 	public bid(user: User, article: Article, interest: Interest) {
+		// cant accept bids in closed state
+		if (this.bidsState == 'CLOSED')
+			throw new Error('The bids are closed, you can not bid anymore')
+
 		// validate article is in the session
 		if (!this.articles.includes(article as RegularArticle))
 			throw new Error('The article is not part of this session')
@@ -106,3 +124,5 @@ export enum SessionState {
 	ASIGMENTANDREVIEW,
 	SELECTION
 }
+
+export type BidsState = 'OPENED' | 'CLOSED'
