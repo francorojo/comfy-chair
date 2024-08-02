@@ -145,15 +145,91 @@ describe('Session BIDDING state tests', () => {
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
+		expect('INTERESTED').toBe(session.getBid(user, article))
 	})
 
-	test('User cannot bid on an article that is not in the session', () => {})
+	test('User cannot bid on an article that is not in the session', () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.updateState(SessionState.BIDDING)
 
-	test('User can bid on a bidden article', () => {})
+		expect(() => {
+			session.bid(dummyBidder1, article, 'INTERESTED')
+		}).toThrow(new Error('The article is not part of this session'))
+	})
 
-	test('User can bid as interested in an article', () => {})
+	test('User can change bid on a bidded article', () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user = dummyBidder1
 
-	test('User can bid as not interested in an article', () => {})
+		session.bid(user, article, 'INTERESTED')
+		expect('INTERESTED').toBe(session.getBid(user, article))
+		session.bid(user, article, 'NOT INTERESTED')
+		expect('NOT INTERESTED').toBe(session.getBid(user, article))
+	})
 
-	test('User can bid as maybe interested in an article', () => {})
+	test("User default bid is NONE if it's not set", () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user = dummyBidder1
+
+		expect('NONE').toBe(session.getBid(user, article))
+	})
+
+	test('User can bid as INTERESTED in an article', () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user = dummyBidder1
+
+		session.bid(user, article, 'INTERESTED')
+		expect('INTERESTED').toBe(session.getBid(user, article))
+	})
+
+	test('User can bid as NOT INTERESTED in an article', () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user = dummyBidder1
+
+		session.bid(user, article, 'NOT INTERESTED')
+		expect('NOT INTERESTED').toBe(session.getBid(user, article))
+	})
+
+	test('User can bid as MAYBE interested in an article', () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user = dummyBidder1
+
+		session.bid(user, article, 'MAYBE')
+		expect('MAYBE').toBe(session.getBid(user, article))
+	})
+
+	test("Session must return all users' bids in BIDDING state", () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyAuthor2
+
+		session.bid(user1, article, 'INTERESTED')
+		session.bid(user2, article, 'NOT INTERESTED')
+
+		expect(session.getBids()).toEqual(
+			new Map([
+				[user1, new Map([[article, 'INTERESTED']])],
+				[user2, new Map([[article, 'NOT INTERESTED']])]
+			])
+		)
+	})
 })

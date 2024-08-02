@@ -7,7 +7,7 @@ export class Session {
 	private maxArticlesAccept: number
 	private selectionForm: Map<SessionType, SessionSelection>
 	private articles: Article[]
-	private interestInArticles: Map<User, Set<Article>>
+	private interestInArticles: Map<User, Map<Article, Interest>>
 
 	public constructor(
 		theme: string,
@@ -50,8 +50,18 @@ export class Session {
 		return this.articles.push(article)
 	}
 
-	public getArticles() {
+	public getArticles(): Article[] {
 		return this.articles
+	}
+
+	public getBids(): Map<User, Map<Article, Interest>> {
+		return this.interestInArticles
+	}
+
+	public getBid(user: User, article: Article): Interest {
+		const userBids = this.interestInArticles.get(user)
+		if (!userBids) return 'NONE'
+		return userBids.get(article) || 'NONE'
 	}
 
 	public updateState(state: SessionState) {
@@ -70,13 +80,14 @@ export class Session {
 			throw new Error('The article is not part of this session')
 
 		// add bid to the article
-		const userBids = this.interestInArticles.get(user) || new Set()
-		userBids.add(article)
+		const userBids: Map<Article, Interest> =
+			this.interestInArticles.get(user) || new Map()
+		userBids.set(article, interest)
 		this.interestInArticles.set(user, userBids)
 	}
 }
 
-export type Interest = 'INTERESTED' | 'NOT_INTERESTED' | 'MAYBE'
+export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
 
 export enum SessionSelection {
 	TOP3,

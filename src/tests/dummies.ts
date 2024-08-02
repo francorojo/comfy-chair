@@ -37,6 +37,8 @@ export const dummyAuthor3 = new User(
 
 export const dummyBidder1 = dummyAuthor1
 
+export const dummyBidder2 = dummyAuthor2
+
 // FORM SELECTION DUMMIES
 
 export const dummyTop3SelectionForm = new Map<SessionType, SessionSelection>([
