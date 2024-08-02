@@ -5,7 +5,12 @@ import {
     SessionState,
 } from "@app/session"
 import { RegularArticle } from "@app/article"
-import { dummyAuthor1, dummyAuthor2 } from "@tests/dummies"
+import {
+    dummyAuthor1,
+    dummyAuthor2,
+    dummyTop3SelectionForm,
+} from "@tests/dummies"
+import { generateRegularArticle } from "./articleGenerator"
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -81,13 +86,42 @@ describe("test session case use", () => {
 })
 
 describe("Session BIDDING state tests", () => {
-    test("Session can be updated to BIDDING if state is RECEPTION", () => {})
+    test("Session can be updated to BIDDING if state is RECEPTION", () => {
+        const session = new Session("Test", 2, dummyTop3SelectionForm)
+        expect(SessionState.RECEPTION).toEqual(session.getState())
 
-    test("Session cannot be updated to BIDDING if state is ASIGMENTANDREVIEW", () => {})
+        session.updateState(SessionState.BIDDING)
 
-    test("Session cannot be updated to BIDDING if state is SELECTION", () => {})
+        expect(SessionState.BIDDING).toEqual(session.getState())
+    })
 
-    test("Session cannot be updated to BIDDING if state is BIDDING", () => {})
+    test("Session cannot be updated to BIDDING if state is ASIGMENTANDREVIEW", () => {
+        const session = new Session("Test", 2, dummyTop3SelectionForm)
+
+        session.updateState(SessionState.ASIGMENTANDREVIEW)
+
+        expect(() => {
+            session.updateState(SessionState.BIDDING)
+        }).toThrow(new Error("This session can not be updated to BIDDING"))
+    })
+
+    test("Session cannot be updated to BIDDING if state is SELECTION", () => {
+        const session = new Session("Test", 2, dummyTop3SelectionForm)
+        session.updateState(SessionState.SELECTION)
+
+        expect(() => {
+            session.updateState(SessionState.BIDDING)
+        }).toThrow(new Error("This session can not be updated to BIDDING"))
+    })
+
+    test("Session cannot be updated to BIDDING if state is BIDDING", () => {
+        const session = new Session("Test", 2, dummyTop3SelectionForm)
+        session.updateState(SessionState.BIDDING)
+
+        expect(() => {
+            session.updateState(SessionState.BIDDING)
+        }).toThrow(new Error("This session can not be updated to BIDDING"))
+    })
 
     test("User can bid on an existing article", () => {})
 

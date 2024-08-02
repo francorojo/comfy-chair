@@ -47,10 +47,15 @@ export class Session {
         return this.articles;
     }
 
-    public updateState(state: SessionState){
-        return this.state = state;
+    public updateState(state: SessionState) {
+        if (
+            state == SessionState.BIDDING &&
+            this.state != SessionState.RECEPTION
+        )
+            throw new Error("This session can not be updated to BIDDING")
+
+        return (this.state = state)
     }
-    
 }
 
 export enum SessionSelection {
