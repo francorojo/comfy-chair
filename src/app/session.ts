@@ -70,6 +70,6 @@ export enum SessionType {
 export enum SessionState {
 	RECEPTION,
 	BIDDING,
-	ASIGMENTANDREVIEW,
+	ASSIGMENTANDREVIEW,
 	SELECTION
 }
