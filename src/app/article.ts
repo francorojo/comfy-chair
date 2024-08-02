@@ -25,6 +25,10 @@ export abstract class Article {
 		this.notificationAuthor = notificationAuthor
 	}
 
+	getAuthors(): User[] {
+		return this.authors
+	}
+
 	public validate(): boolean {
 		if (this.authors.length === 0) {
 			return false
