@@ -35,6 +35,8 @@ export const dummyAuthor3 = new User(
 	Rol.AUTHOR
 )
 
+export const dummyBidder1 = dummyAuthor1
+
 // FORM SELECTION DUMMIES
 
 export const dummyTop3SelectionForm = new Map<SessionType, SessionSelection>([

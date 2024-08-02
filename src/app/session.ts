@@ -1,11 +1,13 @@
-import {RegularArticle} from './article'
+import {Article, RegularArticle} from '@app/article'
+import {User} from '@app/user'
 
 export class Session {
 	private theme: string
 	private state: SessionState
 	private maxArticlesAccept: number
 	private selectionForm: Map<SessionType, SessionSelection>
-	private articles: RegularArticle[]
+	private articles: Article[]
+	private interestInArticles: Map<User, Set<Article>>
 
 	public constructor(
 		theme: string,
@@ -19,6 +21,7 @@ export class Session {
 		//Init default
 		this.state = SessionState.RECEPTION
 		this.articles = []
+		this.interestInArticles = new Map()
 	}
 
 	public getTheme(): string {
@@ -60,7 +63,20 @@ export class Session {
 
 		return (this.state = state)
 	}
+
+	public bid(user: User, article: Article, interest: Interest) {
+		// validate article is in the session
+		if (!this.articles.includes(article as RegularArticle))
+			throw new Error('The article is not part of this session')
+
+		// add bid to the article
+		const userBids = this.interestInArticles.get(user) || new Set()
+		userBids.add(article)
+		this.interestInArticles.set(user, userBids)
+	}
 }
+
+export type Interest = 'INTERESTED' | 'NOT_INTERESTED' | 'MAYBE'
 
 export enum SessionSelection {
 	TOP3,

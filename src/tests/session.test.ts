@@ -8,6 +8,7 @@ import {RegularArticle} from '@app/article'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
+	dummyBidder1,
 	dummyTop3SelectionForm
 } from '@tests/dummies'
 import {generateRegularArticle} from './articleGenerator'
@@ -123,7 +124,28 @@ describe('Session BIDDING state tests', () => {
 		}).toThrow(new Error('This session can not be updated to BIDDING'))
 	})
 
-	test('User can bid on an existing article', () => {})
+	test('Submmited articles can be viewed by an user in BIDDING state', () => {
+		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const article1 = generateRegularArticle()
+		const article2 = generateRegularArticle()
+
+		session.addArticle(article1)
+		session.addArticle(article2)
+
+		session.updateState(SessionState.BIDDING)
+
+		expect(session.getArticles()).toEqual([article1, article2])
+	})
+
+	test('User can bid an existing article', () => {
+		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user = dummyBidder1
+
+		session.bid(user, article, 'INTERESTED')
+	})
 
 	test('User cannot bid on an article that is not in the session', () => {})
 
