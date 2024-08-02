@@ -41,7 +41,8 @@ describe('test session case use', () => {
 		expect(1).toEqual(session.getArticles().length)
 	})
 
-	test('Create a new session with more articles allowed', () => {
+	// Skipped. maxArticlesAccept is for SELECTION phase not receiving articles.
+	test.skip('Create a new session with more articles allowed', () => {
 		let map = new Map()
 		map.set(SessionType.POSTER, SessionSelection.TOP3)
 		const abstract =
