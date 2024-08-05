@@ -51,8 +51,16 @@ export class Session {
 		return this.articles
 	}
 
-	public updateState(state: SessionState) {
-		return (this.state = state)
+	public updateState(state: SessionState): void {
+		if (state == SessionState.ASSIGNMENTANDREVIEW)
+			if (
+				this.state != SessionState.BIDDING ||
+				this.state == SessionState.ASSIGNMENTANDREVIEW
+			)
+				throw new Error(
+					'This session can not be updated to ASSIGNMENTANDREVIEW'
+				)
+		this.state = state
 	}
 }
 
@@ -70,6 +78,6 @@ export enum SessionType {
 export enum SessionState {
 	RECEPTION,
 	BIDDING,
-	ASSIGMENTANDREVIEW,
+	ASSIGNMENTANDREVIEW,
 	SELECTION
 }

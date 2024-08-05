@@ -1,3 +1,4 @@
+import {SessionSelection, SessionType} from '@app/session'
 import {Rol, User} from '@app/user'
 
 // USER DUMMIES
@@ -33,3 +34,13 @@ export const dummyAuthor3 = new User(
 	'test-2024-UTN',
 	Rol.AUTHOR
 )
+
+export const dummyBidder1 = dummyAuthor1
+
+export const dummyBidder2 = dummyAuthor2
+
+// FORM SELECTION DUMMIES
+
+export const dummyTop3SelectionForm = new Map<SessionType, SessionSelection>([
+	[SessionType.REGULAR, SessionSelection.TOP3]
+])

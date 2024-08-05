@@ -5,7 +5,11 @@ import {
 	SessionState
 } from '@app/session'
 import {RegularArticle} from '@app/article'
-import {dummyAuthor1, dummyAuthor2} from '@tests/dummies'
+import {
+	dummyAuthor1,
+	dummyAuthor2,
+	dummyTop3SelectionForm
+} from '@tests/dummies'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -77,5 +81,48 @@ describe('test session case use', () => {
 		expect(() => {
 			session.addArticle(article)
 		}).toThrow(new Error('This session can not recive more articles'))
+	})
+})
+
+describe('Session ASSIGNMENTANDREVIEW tests', () => {
+	test('Session can be updated to ASSIGNMENTANDREVIEW if state is BIDDING', () => {
+		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		session.updateState(SessionState.BIDDING)
+		session.updateState(SessionState.ASSIGNMENTANDREVIEW)
+
+		expect(SessionState.ASSIGNMENTANDREVIEW).toEqual(session.getState())
+	})
+
+	test('Session cannot be updated to ASSIGNMENTANDREVIEW if state is ASSIGNMENTANDREVIEW', () => {
+		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		session.updateState(SessionState.ASSIGNMENTANDREVIEW)
+
+		expect(() => {
+			session.updateState(SessionState.ASSIGNMENTANDREVIEW)
+		}).toThrow(
+			new Error('This session can not be updated to ASSIGNMENTANDREVIEW')
+		)
+	})
+
+	test('Session cannot be updated to ASSIGNMENTANDREVIEW if state is SELECTION', () => {
+		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		session.updateState(SessionState.SELECTION)
+
+		expect(() => {
+			session.updateState(SessionState.ASSIGNMENTANDREVIEW)
+		}).toThrow(
+			new Error('This session can not be updated to ASSIGNMENTANDREVIEW')
+		)
+	})
+
+	test('Session cannot be updated to ASSIGNMENTANDREVIEW if state is RECEPTION', () => {
+		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		session.updateState(SessionState.RECEPTION)
+
+		expect(() => {
+			session.updateState(SessionState.ASSIGNMENTANDREVIEW)
+		}).toThrow(
+			new Error('This session can not be updated to ASSIGNMENTANDREVIEW')
+		)
 	})
 })
