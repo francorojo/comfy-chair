@@ -1,5 +1,5 @@
-import { RegularArticle } from '@app/article'
-import { Session, SessionSelection, SessionType } from '@app/session'
+import {RegularArticle} from '@app/article'
+import {Session, SessionSelection, SessionType} from '@app/session'
 import {Rol, User} from '@app/user'
 
 // USER DUMMIES
@@ -21,7 +21,7 @@ export const dummyOrganizer2 = new User(
 )
 
 export const dummyAuthor1 = new User(
-	'Jane',
+	'Pedro',
 	'UTN-FRBA',
 	'jane@utn.frba.edu.ar',
 	'test-2024-UTN',
@@ -47,31 +47,31 @@ export const dummyAuthor3 = new User(
 // SESSION DUMMIES
 
 export const session = new Session(
-	'Test', 
-	2, 
+	'First Session',
+	5,
 	new Map([[SessionType.POSTER, SessionSelection.TOP3]])
 )
 
 export const session2 = new Session(
-	'Test2', 
-	2, 
+	'Second Session',
+	5,
 	new Map([[SessionType.POSTER, SessionSelection.TOP3]])
 )
 
 // ARTICLE DUMMIES
 
 export const article = new RegularArticle(
-	'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
-	'Sample Article Title',
+	'First article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
+	'First Sample Article Title',
 	[dummyAuthor1, dummyAuthor2],
 	dummyAuthor1,
-	'https://example.com/sample-article.pdf'
+	'https://first-example.com/sample-article.pdf'
 )
 
 export const article2 = new RegularArticle(
-	'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
-	'Sample Article Title',
+	'Second article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
+	'Second Sample Article Title',
 	[dummyAuthor3],
 	dummyAuthor1,
-	'https://example.com/sample-article.pdf'
+	'https://second-example.com/sample-article.pdf'
 )

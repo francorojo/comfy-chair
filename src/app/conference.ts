@@ -1,12 +1,15 @@
-import { Session } from "./session"
-import { User } from "./user"
+import {Session} from './session'
+import {Rol, User} from './user'
 
 export class Conference {
 	private sessions: Session[]
 	private chairs: User[]
 
 	public constructor(chairs: User[], sessions: Session[]) {
-		this.chairs = chairs //validate rol
+		if (!chairs.every((user) => user.getRol() == Rol.ORGANIZER))
+			throw new Error('All chairs must to be organizers')
+
+		this.chairs = chairs
 		this.sessions = sessions
 	}
 
@@ -15,7 +18,10 @@ export class Conference {
 	}
 
 	public addChair(user: User) {
-		this.chairs.push(user) //pending validate rol
+		if (user.getRol() != Rol.ORGANIZER)
+			throw new Error('The user must to be organizer')
+
+		this.chairs.push(user)
 	}
 
 	public getSessions(): Session[] {
@@ -27,7 +33,13 @@ export class Conference {
 	}
 
 	public getAuthors(): User[] {
-		return Array.from(new Set(this.sessions.flatMap(session => session.getArticles()).flatMap(article => article.authors)));
+		return Array.from(
+			new Set(
+				this.sessions
+					.flatMap((session) => session.getArticles())
+					.flatMap((article) => article.authors)
+			)
+		)
 	}
 
 	// public getReviewers(): User[] {
