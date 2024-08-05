@@ -1,3 +1,4 @@
+import {Poster} from '@app/article'
 import {
 	Session,
 	SessionType,
@@ -10,87 +11,69 @@ import {
 	dummyAuthor2,
 	dummyBidder1,
 	dummyBidder2,
-	dummyTop3SelectionForm
+	dummyTop3SelectionForm,
+	posterArticleDummy,
+	regularArticleDummy,
+	top3SelectionDummy
 } from '@tests/dummies'
 import {generateRegularArticle} from './articleGenerator'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
+const defaultDeadlineTomorrow = new Date(
+	new Date().getTime() + 1000 * 60 * 60 * 24
+) //1 day
+
+const defaultDeadlineYesterday = new Date(
+	new Date().getTime() - 1000 * 60 * 60 * 24
+) //1 day ago
+
 describe('test session case use', () => {
 	test('Create a new session correctly', () => {
-		let map = new Map()
-		map.set(SessionType.POSTER, SessionSelection.TOP3)
-		const abstract =
-			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim'
-		const title = 'Sample Article Title'
-		const authors = dummyAuthors
-		const notificationAuthor = dummyAuthor1
-		const fileURL = 'https://example.com/sample-article.pdf'
-		const article = new RegularArticle(
-			abstract,
-			title,
-			authors,
-			notificationAuthor,
-			fileURL
+		const session = new Session(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
 		)
-		const session = new Session('Test', 2, map)
-		session.addArticle(article)
+		session.addArticle(regularArticleDummy)
 		expect('Test').toEqual(session.getTheme())
 		expect(SessionState.RECEPTION).toEqual(session.getState())
 		expect(2).toEqual(session.getMaxArticlesAccept())
 		expect(1).toEqual(session.getArticles().length)
 	})
 
-	// Skipped. maxArticlesAccept is for SELECTION phase not receiving articles.
-	test.skip('Create a new session with more articles allowed', () => {
-		let map = new Map()
-		map.set(SessionType.POSTER, SessionSelection.TOP3)
-		const abstract =
-			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim'
-		const title = 'Sample Article Title'
-		const authors = dummyAuthors
-		const notificationAuthor = dummyAuthor1
-		const fileURL = 'https://example.com/sample-article.pdf'
-		const article = new RegularArticle(
-			abstract,
-			title,
-			authors,
-			notificationAuthor,
-			fileURL
+	test('Create a new session with more articles allowed', () => {
+		const session = new Session(
+			'Test',
+			0,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
 		)
-		const session = new Session('Test', 0, map)
 		expect(() => {
-			session.addArticle(article)
+			session.addArticle(regularArticleDummy)
 		}).toThrow(new Error('The number of items exceeds the maximum allowed'))
 	})
 
 	test('Create a new session, update state and try add new article', () => {
-		let map = new Map()
-		map.set(SessionType.POSTER, SessionSelection.TOP3)
-		const abstract =
-			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim'
-		const title = 'Sample Article Title'
-		const authors = dummyAuthors
-		const notificationAuthor = dummyAuthor1
-		const fileURL = 'https://example.com/sample-article.pdf'
-		const article = new RegularArticle(
-			abstract,
-			title,
-			authors,
-			notificationAuthor,
-			fileURL
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
 		)
-		const session = new Session('Test', 1, map)
 		session.updateState(SessionState.BIDDING)
 		expect(() => {
-			session.addArticle(article)
+			session.addArticle(regularArticleDummy)
 		}).toThrow(new Error('This session can not recive more articles'))
 	})
 })
 
+// BIDDING TESTS
+
 describe('Session BIDDING state tests', () => {
 	test('Session can be updated to BIDDING if state is RECEPTION', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		expect(SessionState.RECEPTION).toEqual(session.getState())
 
 		session.updateState(SessionState.BIDDING)
@@ -99,7 +82,7 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session cannot be updated to BIDDING if state is ASIGMENTANDREVIEW', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 
 		session.updateState(SessionState.ASIGMENTANDREVIEW)
 
@@ -109,7 +92,7 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session cannot be updated to BIDDING if state is SELECTION', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		session.updateState(SessionState.SELECTION)
 
 		expect(() => {
@@ -118,7 +101,7 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session cannot be updated to BIDDING if state is BIDDING', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		session.updateState(SessionState.BIDDING)
 
 		expect(() => {
@@ -127,7 +110,7 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test("Session must return all users's bids in BIDDING state", () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -146,7 +129,7 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session bidsState should be CLOSED before being in BIDDING state', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 
@@ -158,7 +141,7 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session bidsState should be CLOSED after being closed', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -170,7 +153,7 @@ describe('Session BIDDING state tests', () => {
 
 describe('Session User role in BIDDING state', () => {
 	test('Submmited articles can be viewed by an user in BIDDING state', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
 
@@ -183,7 +166,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid an existing article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -194,7 +177,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid on more than one article', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
 
@@ -211,7 +194,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('Many users can bid on more than one article in BIDDING state', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm)
+		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
 		session.addArticle(article1)
@@ -231,7 +214,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User cannot bid on an article that is not in the session', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.updateState(SessionState.BIDDING)
 
@@ -241,7 +224,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can change bid on a bidded article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -254,7 +237,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test("User default bid is NONE if it's not set", () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -264,7 +247,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid as INTERESTED in an article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -275,7 +258,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid as NOT INTERESTED in an article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -286,7 +269,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid as MAYBE interested in an article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -297,7 +280,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User cant bid on an article if bidsState is CLOSED', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -309,7 +292,7 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid if BidsState is OPENED', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm)
+		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -318,5 +301,172 @@ describe('Session User role in BIDDING state', () => {
 
 		session.bid(dummyBidder1, article, 'INTERESTED')
 		expect('INTERESTED').toBe(session.getBid(dummyBidder1, article))
+	})
+})
+
+// RECEPTION tests
+
+describe('RECEPTION state suite', () => {
+	test('Session should start with RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(SessionState.RECEPTION).toEqual(session.getState())
+	})
+
+	test('Session should be able to receive a RegularArticle in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.updateState(SessionState.RECEPTION)
+		session.addArticle(regularArticleDummy)
+		expect(1).toEqual(session.getArticles().length)
+	})
+
+	test('Session should not be able to receive a RegularArticle in BIDDING state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.updateState(SessionState.BIDDING)
+		expect(() => {
+			session.addArticle(regularArticleDummy)
+		}).toThrow(new Error('This session can not recive more articles'))
+	})
+
+	test('Session should not be able to receive a RegularArticle in SELECTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.updateState(SessionState.SELECTION)
+		expect(() => {
+			session.addArticle(regularArticleDummy)
+		}).toThrow(new Error('This session can not recive more articles'))
+	})
+
+	test('Session should not be able to receive a RegularArticle in ASIGMENTANDREVIEW state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		expect(() => {
+			session.addArticle(regularArticleDummy)
+		}).toThrow(new Error('This session can not recive more articles'))
+	})
+
+	test('Session should be able to receive a PosterArticle in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.updateState(SessionState.RECEPTION)
+		session.addArticle(posterArticleDummy)
+
+		expect(1).toEqual(session.getArticles().length)
+		expect(Poster).toEqual(session.getArticles()[0].constructor)
+	})
+
+	test('Session should not be able to receive a PosterArticle in BIDDING state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.updateState(SessionState.BIDDING)
+		expect(() => {
+			session.addArticle(posterArticleDummy)
+		}).toThrow(new Error('This session can not recive more articles'))
+	})
+
+	test('Session should not be able to receive a PosterArticle in SELECTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.updateState(SessionState.SELECTION)
+		expect(() => {
+			session.addArticle(posterArticleDummy)
+		}).toThrow(new Error('This session can not recive more articles'))
+	})
+
+	test('Session should not be able to receive a PosterArticle in ASIGMENTANDREVIEW state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		expect(() => {
+			session.addArticle(posterArticleDummy)
+		}).toThrow(new Error('This session can not recive more articles'))
+	})
+
+	test('Session should not be able to receive a RegularArticle when the deadline is reached', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineYesterday
+		)
+
+		expect(() => {
+			session.addArticle(regularArticleDummy)
+		}).toThrow(new Error('This session has passed its deadline'))
+	})
+
+	test('Session should not be able to receive a PosterArticle when the deadline is reached', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineYesterday
+		)
+
+		expect(() => {
+			session.addArticle(posterArticleDummy)
+		}).toThrow(new Error('This session has passed its deadline'))
+	})
+
+	test('Session should be able to receive a RegularArticle when the deadline is not reached', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.addArticle(regularArticleDummy)
+		expect(1).toEqual(session.getArticles().length)
+	})
+
+	test('Session should be able to receive a PosterArticle when the deadline is not reached', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.addArticle(posterArticleDummy)
+		expect(1).toEqual(session.getArticles().length)
+		expect(Poster).toEqual(session.getArticles()[0].constructor)
 	})
 })

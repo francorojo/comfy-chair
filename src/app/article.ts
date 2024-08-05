@@ -1,6 +1,7 @@
 import {Rol, User} from '@app/user'
 
 export abstract class Article {
+
 	private title: string
 	private authors: User[]
 	private notificationAuthor: User
