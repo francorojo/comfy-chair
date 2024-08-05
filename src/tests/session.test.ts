@@ -73,7 +73,12 @@ describe('test session case use', () => {
 
 describe('Session BIDDING state tests', () => {
 	test('Session can be updated to BIDDING if state is RECEPTION', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			2,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		expect(SessionState.RECEPTION).toEqual(session.getState())
 
 		session.updateState(SessionState.BIDDING)
@@ -82,7 +87,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session cannot be updated to BIDDING if state is ASIGMENTANDREVIEW', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			2,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 
 		session.updateState(SessionState.ASIGMENTANDREVIEW)
 
@@ -92,7 +102,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session cannot be updated to BIDDING if state is SELECTION', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			2,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.SELECTION)
 
 		expect(() => {
@@ -101,7 +116,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session cannot be updated to BIDDING if state is BIDDING', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			2,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.BIDDING)
 
 		expect(() => {
@@ -110,7 +130,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test("Session must return all users's bids in BIDDING state", () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -129,7 +154,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session bidsState should be CLOSED before being in BIDDING state', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 
@@ -141,7 +171,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session bidsState should be CLOSED after being closed', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -153,7 +188,12 @@ describe('Session BIDDING state tests', () => {
 
 describe('Session User role in BIDDING state', () => {
 	test('Submmited articles can be viewed by an user in BIDDING state', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			2,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
 
@@ -166,7 +206,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid an existing article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -177,7 +222,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid on more than one article', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			2,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
 
@@ -194,7 +244,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('Many users can bid on more than one article in BIDDING state', () => {
-		const session = new Session('Test', 2, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			2,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
 		session.addArticle(article1)
@@ -214,7 +269,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User cannot bid on an article that is not in the session', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.updateState(SessionState.BIDDING)
 
@@ -224,7 +284,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can change bid on a bidded article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -237,7 +302,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test("User default bid is NONE if it's not set", () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -247,7 +317,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid as INTERESTED in an article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -258,7 +333,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid as NOT INTERESTED in an article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -269,7 +349,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid as MAYBE interested in an article', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -280,7 +365,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User cant bid on an article if bidsState is CLOSED', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -292,7 +382,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid if BidsState is OPENED', () => {
-		const session = new Session('Test', 1, dummyTop3SelectionForm, defaultDeadlineTomorrow)
+		const session = new Session(
+			'Test',
+			1,
+			dummyTop3SelectionForm,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
