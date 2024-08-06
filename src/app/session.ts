@@ -1,5 +1,6 @@
 import {Article, RegularArticle} from '@app/article'
 import {User} from '@app/user'
+import { Review } from './review'
 
 export class Session {
 	private theme: string
@@ -12,6 +13,9 @@ export class Session {
 	private interestInArticles: Map<User, Map<Article, Interest>>
 	private bidsState: BidsState
 	private deadline: Date
+
+	// ASIGMENTANDREVIEW state
+	private articlesReviews: Map<Article, Map<User, Review>>
 
 	public constructor(
 		theme: string,
@@ -29,6 +33,7 @@ export class Session {
 		this.articles = []
 		this.interestInArticles = new Map()
 		this.bidsState = 'CLOSED'
+		this.articlesReviews = new Map()
 	}
 
 	public getTheme(): string {
@@ -93,17 +98,40 @@ export class Session {
 	}
 
 	public updateState(state: SessionState) {
-		if (
-			state == SessionState.BIDDING &&
-			this.state != SessionState.RECEPTION
-		)
+		//BIDDING STAGE
+		if (state == SessionState.BIDDING && this.state != SessionState.RECEPTION)
 			throw new Error('This session can not be updated to BIDDING')
 		else {
 			this.bidsState = 'OPENED'
 			this.interestInArticles.clear()
 		}
 
+		//ASIGMENTANDREVIEW STAGE
+		if (state == SessionState.ASIGMENTANDREVIEW && this.state != SessionState.BIDDING)
+			throw new Error('This session can not be updated to ASIGMENTANDREVIEW')
+		else {
+			this.createAssignment()
+			this.bidsState = 'CLOSED'
+		}
 		return (this.state = state)
+	}
+
+	public createAssignment(): void {
+		if(this.interestInArticles.keys.length < 3)
+			throw new Error('This session must to be 3 reviewers minimum')
+		
+		for (let i = 0; i < this.articles.length; i++) {
+			for (let i = 0; i < 3; i++) {
+				let assignment = new Map()
+				let review = new Map()
+				assignment.set(this.getReviewsForArticle()[i],review)
+				this.articlesReviews.set(this.articles[i], assignment)
+			}
+		}
+	}
+
+	public getReviewsForArticle(): User[]{
+		return Array.from( this.interestInArticles.keys() ); //PENDING FILTER INSTERESTED USERS
 	}
 
 	public getBidsState(): BidsState {
