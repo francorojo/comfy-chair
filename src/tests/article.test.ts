@@ -131,7 +131,7 @@ describe('Regular Article tests ', () => {
 		)
 
 		expect(article.validate()).toBeTruthy()
-		expect(article.authors.length).toBeGreaterThan(1)
+		expect(article.getAuthors().length).toBeGreaterThan(1)
 	})
 
 	test('Regular article is valid when it has a title', () => {
@@ -186,7 +186,7 @@ describe('Regular Article tests ', () => {
 		)
 
 		expect(article.validate()).toBeTruthy()
-		expect(article.authors.length).toBeGreaterThan(1)
+		expect(article.getAuthors().length).toBeGreaterThan(1)
 	})
 
 	test('Regular article is invalid when it doesnt have a user is not an author', () => {
@@ -259,7 +259,7 @@ describe('Poster Article tests ', () => {
 		)
 
 		expect(article.validate()).toBeTruthy()
-		expect(article.authors.length).toBeGreaterThan(1)
+		expect(article.getAuthors().length).toBeGreaterThan(1)
 	})
 
 	test('Poster article is valid when it has a title', () => {
