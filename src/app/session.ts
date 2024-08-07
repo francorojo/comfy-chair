@@ -87,6 +87,10 @@ export class Session {
 		return this.articles
 	}
 
+	public getArticlesReviews(): Map<Article, Map<User, Review>> {
+		return this.articlesReviews
+	}
+
 	public getBids(): Map<User, Map<Article, Interest>> {
 		return this.interestInArticles
 	}
@@ -134,17 +138,64 @@ export class Session {
 		}
 
 		for (let i = 0; i < this.articles.length; i++) {
-			for (let i = 0; i < 3; i++) {
-				let assignment = new Map()
-				let review = new Map()
-				assignment.set(this.getReviewsForArticle()[i], review)
-				this.articlesReviews.set(this.articles[i], assignment)
+			let users: User[] = this.getReviewsForArticle(this.articles[i])
+			let assignment = new Map()
+			for (let y = 0; y < 3; y++) {
+				assignment.set(users[y], new Review())
 			}
+			this.articlesReviews.set(this.articles[i], assignment)
 		}
 	}
 
-	public getReviewsForArticle(): User[] {
-		return Array.from(this.interestInArticles.keys()) //PENDING FILTER INSTERESTED USERS
+	public getFilterInterestTypeUser(
+		article: Article,
+		interest: Interest
+	): User[] {
+		const usersInterested: User[] = []
+		this.interestInArticles.forEach(
+			(value: Map<Article, Interest>, key: User) => {
+				if (
+					(Array.from(value.keys()).includes(article) &&
+						value.get(article) == interest) ||
+					(interest == 'NONE' &&
+						!Array.from(value.keys()).includes(article))
+				)
+					usersInterested.push(key)
+			}
+		)
+		return usersInterested
+	}
+
+	public getReviewsForArticle(article: Article): User[] {
+		let usersInterested: User[] = []
+		usersInterested = usersInterested.concat(
+			this.getFilterInterestTypeUser(article, 'INTERESTED')
+		)
+		usersInterested = usersInterested.concat(
+			this.getFilterInterestTypeUser(article, 'MAYBE')
+		)
+		usersInterested = usersInterested.concat(
+			this.getFilterInterestTypeUser(article, 'NONE')
+		)
+		usersInterested = usersInterested.concat(
+			this.getFilterInterestTypeUser(article, 'NOT INTERESTED')
+		)
+		return usersInterested
+	}
+
+	public addReview(article: Article, user: User, review: Review): void {
+		if (this.state != SessionState.ASIGMENTANDREVIEW)
+			throw new Error('The review must to be add in review stage')
+		if (Math.abs(review.getNote() || 4) > 3)
+			throw new Error('The note must to be greater -3 and lower 3')
+		if (!Array.from(this.articlesReviews.keys()).includes(article))
+			throw new Error('The article is not part of this session')
+		if (!this.articlesReviews.get(article)?.has(user))
+			throw new Error('The user is not part of this article review')
+
+		let userReviews: Map<User, Review> | undefined =
+			this.articlesReviews.get(article)
+		userReviews?.set(user, review)
 	}
 
 	public getBidsState(): BidsState {

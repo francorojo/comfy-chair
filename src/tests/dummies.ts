@@ -68,6 +68,14 @@ export const dummyBidder3 = new User(
 	Rol.REVIEWER
 )
 
+export const dummyBidder4 = new User(
+	'Nacho',
+	'UTN-FRBA',
+	'jeniffer@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
 // FORM SELECTION DUMMIES
 
 export const dummyTop3SelectionForm = new Map<SessionType, SessionSelection>([

@@ -12,12 +12,15 @@ import {
 	dummyBidder1,
 	dummyBidder2,
 	dummyBidder3,
+	dummyBidder4,
 	dummyTop3SelectionForm,
 	posterArticleDummy,
 	regularArticleDummy,
 	top3SelectionDummy
 } from '@tests/dummies'
 import {generateRegularArticle} from './articleGenerator'
+import {Review} from '@app/review'
+import {User} from '@app/user'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -598,5 +601,143 @@ describe('RECEPTION state suite', () => {
 		session.addArticle(posterArticleDummy)
 		expect(1).toEqual(session.getArticles().length)
 		expect(Poster).toEqual(session.getArticles()[0].constructor)
+	})
+})
+
+// ASIGMENTANDREVIEW tests
+
+describe('RECEPTION state suite', () => {
+	test('Session validate users for review in ASIGMENTANDREVIEW state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+		const user4 = dummyBidder4
+
+		session.bid(user1, article, 'INTERESTED') //1
+		session.bid(user2, article, 'NOT INTERESTED') //4 OUT
+		session.bid(user3, article, 'NONE') //3
+		session.bid(user4, article, 'MAYBE') //2
+		session.updateState(SessionState.ASIGMENTANDREVIEW)
+
+		const asigments: Map<User, Review> =
+			session.getArticlesReviews().get(article) || new Map()
+		expect([user1, user4, user3]).toEqual(Array.from(asigments.keys()))
+	})
+
+	test('Session in ASIGMENTANDREVIEW state add review', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+		const user4 = dummyBidder4
+
+		session.bid(user1, article, 'INTERESTED') //1
+		session.bid(user2, article, 'NOT INTERESTED') //4 OUT
+		session.bid(user3, article, 'NONE') //3
+		session.bid(user4, article, 'MAYBE') //2
+		session.updateState(SessionState.ASIGMENTANDREVIEW)
+
+		session.addReview(article, user1, new Review(3, 'Excelent'))
+	})
+
+	test('Session in ASIGMENTANDREVIEW state add review bad note', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+		const user4 = dummyBidder4
+
+		session.bid(user1, article, 'INTERESTED') //1
+		session.bid(user2, article, 'NOT INTERESTED') //4 OUT
+		session.bid(user3, article, 'NONE') //3
+		session.bid(user4, article, 'MAYBE') //2
+		session.updateState(SessionState.ASIGMENTANDREVIEW)
+
+		expect(() => {
+			session.addReview(article, user1, new Review(-5, 'Excelent'))
+		}).toThrow(new Error('The note must to be greater -3 and lower 3'))
+	})
+
+	test('Session in ASIGMENTANDREVIEW state add review bad article', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+
+		const article = generateRegularArticle()
+		const article2 = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+		const user4 = dummyBidder4
+
+		session.bid(user1, article, 'INTERESTED') //1
+		session.bid(user2, article, 'NOT INTERESTED') //4 OUT
+		session.bid(user3, article, 'NONE') //3
+		session.bid(user4, article, 'MAYBE') //2
+		session.updateState(SessionState.ASIGMENTANDREVIEW)
+
+		expect(() => {
+			session.addReview(article2, user1, new Review(3, 'Excelent'))
+		}).toThrow(new Error('The article is not part of this session'))
+	})
+
+	test('Session in ASIGMENTANDREVIEW state add review bad user', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+		const user4 = dummyBidder4
+
+		session.bid(user1, article, 'INTERESTED') //1
+		session.bid(user2, article, 'NOT INTERESTED') //4 OUT
+		session.bid(user3, article, 'NONE') //3
+		session.bid(user4, article, 'MAYBE') //2
+		session.updateState(SessionState.ASIGMENTANDREVIEW)
+
+		expect(() => {
+			session.addReview(article, user2, new Review(3, 'Excelent'))
+		}).toThrow(new Error('The user is not part of this article review'))
 	})
 })
