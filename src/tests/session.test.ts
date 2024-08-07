@@ -11,6 +11,7 @@ import {
 	dummyAuthor2,
 	dummyBidder1,
 	dummyBidder2,
+	dummyBidder3,
 	dummyTop3SelectionForm,
 	posterArticleDummy,
 	regularArticleDummy,
@@ -94,6 +95,17 @@ describe('Session BIDDING state tests', () => {
 			defaultDeadlineTomorrow
 		)
 
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+
+		session.bid(user1, article, 'INTERESTED')
+		session.bid(user2, article, 'NOT INTERESTED')
+		session.bid(user3, article, 'NOT INTERESTED')
+
 		session.updateState(SessionState.ASIGMENTANDREVIEW)
 
 		expect(() => {
@@ -140,7 +152,7 @@ describe('Session BIDDING state tests', () => {
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
 		const user1 = dummyBidder1
-		const user2 = dummyAuthor2
+		const user2 = dummyBidder2
 
 		session.bid(user1, article, 'INTERESTED')
 		session.bid(user2, article, 'NOT INTERESTED')
@@ -453,11 +465,22 @@ describe('RECEPTION state suite', () => {
 	test('Session should not be able to receive a RegularArticle in ASIGMENTANDREVIEW state', () => {
 		const session = new Session(
 			'Test',
-			1,
+			4,
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+
+		session.bid(user1, article, 'INTERESTED')
+		session.bid(user2, article, 'NOT INTERESTED')
+		session.bid(user3, article, 'NOT INTERESTED')
 		session.updateState(SessionState.ASIGMENTANDREVIEW)
+
 		expect(() => {
 			session.addArticle(regularArticleDummy)
 		}).toThrow(new Error('This session can not recive more articles'))
@@ -506,11 +529,23 @@ describe('RECEPTION state suite', () => {
 	test('Session should not be able to receive a PosterArticle in ASIGMENTANDREVIEW state', () => {
 		const session = new Session(
 			'Test',
-			1,
+			4,
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+
+		session.bid(user1, article, 'INTERESTED')
+		session.bid(user2, article, 'NOT INTERESTED')
+		session.bid(user3, article, 'NOT INTERESTED')
 		session.updateState(SessionState.ASIGMENTANDREVIEW)
+
 		expect(() => {
 			session.addArticle(posterArticleDummy)
 		}).toThrow(new Error('This session can not recive more articles'))

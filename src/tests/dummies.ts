@@ -44,9 +44,29 @@ export const dummyAuthor3 = new User(
 	Rol.AUTHOR
 )
 
-export const dummyBidder1 = dummyAuthor1
+export const dummyBidder1 = new User(
+	'Franco',
+	'UTN-FRBA',
+	'jane@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
 
-export const dummyBidder2 = dummyAuthor2
+export const dummyBidder2 = new User(
+	'Nicolas',
+	'UTN-FRBA',
+	'jeniffer@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
+export const dummyBidder3 = new User(
+	'Nahuel',
+	'UTN-FRBA',
+	'jeniffer@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
 
 // FORM SELECTION DUMMIES
 

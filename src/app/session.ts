@@ -1,6 +1,6 @@
 import {Article, RegularArticle} from '@app/article'
-import {User} from '@app/user'
-import { Review } from './review'
+import {Rol, User} from '@app/user'
+import {Review} from './review'
 
 export class Session {
 	private theme: string
@@ -98,18 +98,30 @@ export class Session {
 	}
 
 	public updateState(state: SessionState) {
-		//BIDDING STAGE
-		if (state == SessionState.BIDDING && this.state != SessionState.RECEPTION)
+		//BIDDING VALIDATION
+		if (
+			state == SessionState.BIDDING &&
+			this.state != SessionState.RECEPTION
+		)
 			throw new Error('This session can not be updated to BIDDING')
-		else {
+
+		//BIDDING STAGE
+		if (state == SessionState.BIDDING) {
 			this.bidsState = 'OPENED'
 			this.interestInArticles.clear()
 		}
 
+		//ASIGMENTANDREVIEW VALIDATION
+		if (
+			state == SessionState.ASIGMENTANDREVIEW &&
+			this.state != SessionState.BIDDING
+		)
+			throw new Error(
+				'This session can not be updated to ASIGMENTANDREVIEW'
+			)
+
 		//ASIGMENTANDREVIEW STAGE
-		if (state == SessionState.ASIGMENTANDREVIEW && this.state != SessionState.BIDDING)
-			throw new Error('This session can not be updated to ASIGMENTANDREVIEW')
-		else {
+		if (state == SessionState.ASIGMENTANDREVIEW) {
 			this.createAssignment()
 			this.bidsState = 'CLOSED'
 		}
@@ -117,21 +129,22 @@ export class Session {
 	}
 
 	public createAssignment(): void {
-		if(this.interestInArticles.keys.length < 3)
+		if (Array.from(this.interestInArticles.keys()).length < 3) {
 			throw new Error('This session must to be 3 reviewers minimum')
-		
+		}
+
 		for (let i = 0; i < this.articles.length; i++) {
 			for (let i = 0; i < 3; i++) {
 				let assignment = new Map()
 				let review = new Map()
-				assignment.set(this.getReviewsForArticle()[i],review)
+				assignment.set(this.getReviewsForArticle()[i], review)
 				this.articlesReviews.set(this.articles[i], assignment)
 			}
 		}
 	}
 
-	public getReviewsForArticle(): User[]{
-		return Array.from( this.interestInArticles.keys() ); //PENDING FILTER INSTERESTED USERS
+	public getReviewsForArticle(): User[] {
+		return Array.from(this.interestInArticles.keys()) //PENDING FILTER INSTERESTED USERS
 	}
 
 	public getBidsState(): BidsState {
@@ -150,6 +163,10 @@ export class Session {
 		// validate article is in the session
 		if (!this.articles.includes(article as RegularArticle))
 			throw new Error('The article is not part of this session')
+
+		// validate article is in the session
+		if (user.getRol() != Rol.REVIEWER)
+			throw new Error('User must to be a reviewer')
 
 		// add bid to the article
 		const userBids: Map<Article, Interest> =
