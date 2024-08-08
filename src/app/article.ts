@@ -1,10 +1,10 @@
 import {Rol, User} from '@app/user'
 
 export abstract class Article {
-	title: string
-	authors: User[]
-	notificationAuthor: User
-	fileURL: string
+	private title: string
+	private authors: User[]
+	private notificationAuthor: User
+	private fileURL: string
 
 	constructor(
 		title: string,
@@ -25,7 +25,11 @@ export abstract class Article {
 		this.notificationAuthor = notificationAuthor
 	}
 
-	validate(): boolean {
+	getAuthors(): User[] {
+		return this.authors
+	}
+
+	public validate(): boolean {
 		if (this.authors.length === 0) {
 			return false
 		}
