@@ -1,17 +1,30 @@
 import {Conference} from '@app/conference'
+import {Session} from '@app/session'
 import {
 	dummyOrganizer,
 	dummyOrganizer2,
 	dummyAuthor1,
-	session,
-	session2,
-	article,
-	article2
+	dummyArticle,
+	dummyArticle2,
+	top3SelectionDummy,
+	defaultDeadlineTomorrow
 } from '@tests/dummies'
 
 describe('Test conferences use cases', () => {
-	test('Create a new conference and add Chair and Session correctly', () => {
-		session.addArticle(article)
+	test('Conference sessions should match those added at first', () => {
+		const session = new Session(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const session2 = new Session(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.addArticle(dummyArticle)
 		const sessions = [session]
 		const chairs = [dummyOrganizer]
 		const conference = new Conference(chairs, sessions)
@@ -21,13 +34,25 @@ describe('Test conferences use cases', () => {
 		expect('Pedro').toEqual(conference.getAuthors()[0].getName())
 	})
 
-	test('Get authors from a conference', () => {
-		session.addArticle(article)
+	test('Get authors should match those added', () => {
+		const session = new Session(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const session2 = new Session(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.addArticle(dummyArticle)
 		const sessions = [session]
 		const chairs = [dummyOrganizer]
 		const conference = new Conference(chairs, sessions)
 		conference.addChair(dummyOrganizer2)
-		session2.addArticle(article2)
+		session2.addArticle(dummyArticle2)
 		conference.addSession(session2)
 		expect(2).toEqual(conference.getSessions().length)
 		expect(['Pedro', 'John', 'Bob']).toEqual(
@@ -35,8 +60,14 @@ describe('Test conferences use cases', () => {
 		)
 	})
 
-	test('Create a new conference with a user not organizer', () => {
-		session.addArticle(article)
+	test('An exception is expected when creating a new conference with a user that does not have the ORGANIZER role', () => {
+		const session = new Session(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		session.addArticle(dummyArticle)
 		const sessions = [session]
 		const chairs = [dummyAuthor1]
 		expect(() => {
@@ -44,8 +75,13 @@ describe('Test conferences use cases', () => {
 		}).toThrow(new Error('All chairs must to be organizers'))
 	})
 
-	test('Create a new conference and add user not organizer', () => {
-		session.addArticle(article)
+	test('An exception is expected when adding a new organizer other that does not have the ORGANIZER role', () => {
+		const session = new Session(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const sessions = [session]
 		const chairs = [dummyOrganizer]
 		const conference = new Conference(chairs, sessions)

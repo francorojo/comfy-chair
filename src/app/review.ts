@@ -7,11 +7,11 @@ export class Review {
 		this.text = text
 	}
 
-	public getNote() {
+	public getNote(): number | undefined {
 		return this.note
 	}
 
-	public getText() {
+	public getText(): string | undefined {
 		return this.text
 	}
 }

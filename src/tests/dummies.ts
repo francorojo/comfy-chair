@@ -23,7 +23,7 @@ export const dummyOrganizer2 = new User(
 export const dummyAuthor1 = new User(
 	'Pedro',
 	'UTN-FRBA',
-	'jane@utn.frba.edu.ar',
+	'pedro@utn.frba.edu.ar',
 	'test-2024-UTN',
 	Rol.AUTHOR
 )
@@ -47,7 +47,7 @@ export const dummyAuthor3 = new User(
 export const dummyBidder1 = new User(
 	'Franco',
 	'UTN-FRBA',
-	'jane@utn.frba.edu.ar',
+	'jeniffer@utn.frba.edu.ar',
 	'test-2024-UTN',
 	Rol.REVIEWER
 )
@@ -78,15 +78,33 @@ export const dummyBidder4 = new User(
 
 // FORM SELECTION DUMMIES
 
+export const defaultDeadlineTomorrow = new Date(
+	new Date().getTime() + 1000 * 60 * 60 * 24
+) //1 day
+
 export const dummyTop3SelectionForm = new Map<SessionType, SessionSelection>([
 	[SessionType.REGULAR, SessionSelection.TOP3]
 ])
 
+export const top3SelectionDummy = new Map<SessionType, SessionSelection>([
+	[SessionType.POSTER, SessionSelection.TOP3]
+])
+
 // SESSION DUMMIES
 
-const defaultDeadlineTomorrow = new Date(
-	new Date().getTime() + 1000 * 60 * 60 * 24
-) //1 day
+export const dummySession = new Session(
+	'First Session',
+	5,
+	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
+	defaultDeadlineTomorrow
+)
+
+export const dummySession2 = new Session(
+	'Second Session',
+	5,
+	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
+	defaultDeadlineTomorrow
+)
 
 export const session = new Session(
 	'First Session',
@@ -101,30 +119,6 @@ export const session2 = new Session(
 	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
 	defaultDeadlineTomorrow
 )
-
-// ARTICLE DUMMIES
-
-export const article = new RegularArticle(
-	'First article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
-	'First Sample Article Title',
-	[dummyAuthor1, dummyAuthor2],
-	dummyAuthor1,
-	'https://first-example.com/sample-article.pdf'
-)
-
-export const article2 = new RegularArticle(
-	'Second article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
-	'Second Sample Article Title',
-	[dummyAuthor3],
-	dummyAuthor1,
-	'https://second-example.com/sample-article.pdf'
-)
-
-// SESSION SELECTION DUMMIES
-
-export const top3SelectionDummy = new Map<SessionType, SessionSelection>([
-	[SessionType.POSTER, SessionSelection.TOP3]
-])
 
 // DUMMY ARTICLES
 
@@ -152,4 +146,20 @@ export const posterArticleDummy = new Poster(
 	notificationAuthor,
 	fileURL,
 	sourceURL
+)
+
+export const dummyArticle = new RegularArticle(
+	'First article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
+	'First Sample Article Title',
+	[dummyAuthor1, dummyAuthor2],
+	dummyAuthor1,
+	'https://first-example.com/sample-article.pdf'
+)
+
+export const dummyArticle2 = new RegularArticle(
+	'Second article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
+	'Second Sample Article Title',
+	[dummyAuthor3],
+	dummyAuthor1,
+	'https://second-example.com/sample-article.pdf'
 )
