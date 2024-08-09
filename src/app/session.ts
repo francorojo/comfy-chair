@@ -1,4 +1,5 @@
-import {Article} from '@app/article'
+import {Article, RegularArticle} from '@app/article'
+import {User} from '@app/user'
 
 export class Session {
 	private theme: string
@@ -6,6 +7,10 @@ export class Session {
 	private maxArticlesAccept: number
 	private selectionForm: Map<SessionType, SessionSelection>
 	private articles: Article[]
+
+	// BIDDING state
+	private interestInArticles: Map<User, Map<Article, Interest>>
+	private bidsState: BidsState
 	private deadline: Date
 
 	public constructor(
@@ -22,6 +27,8 @@ export class Session {
 		//Init default
 		this.state = SessionState.RECEPTION
 		this.articles = []
+		this.interestInArticles = new Map()
+		this.bidsState = 'CLOSED'
 	}
 
 	public getTheme(): string {
@@ -71,14 +78,60 @@ export class Session {
 			throw new Error('This session has passed its deadline')
 	}
 
-	public getArticles() {
+	public getArticles(): Article[] {
 		return this.articles
 	}
 
+	public getBids(): Map<User, Map<Article, Interest>> {
+		return this.interestInArticles
+	}
+
+	public getBid(user: User, article: Article): Interest {
+		const userBids = this.interestInArticles.get(user)
+		if (!userBids) return 'NONE'
+		return userBids.get(article) || 'NONE'
+	}
+
 	public updateState(state: SessionState) {
+		if (
+			state == SessionState.BIDDING &&
+			this.state != SessionState.RECEPTION
+		)
+			throw new Error('This session can not be updated to BIDDING')
+		else {
+			this.bidsState = 'OPENED'
+			this.interestInArticles.clear()
+		}
+
 		return (this.state = state)
 	}
+
+	public getBidsState(): BidsState {
+		return this.bidsState
+	}
+
+	public closeBids(): void {
+		this.bidsState = 'CLOSED'
+	}
+
+	public bid(user: User, article: Article, interest: Interest) {
+		// cant accept bids in closed state
+		if (this.bidsState == 'CLOSED')
+			throw new Error('The bids are closed, you can not bid anymore')
+
+		// validate article is in the session
+		if (!this.articles.includes(article as RegularArticle))
+			throw new Error('The article is not part of this session')
+
+		// add bid to the article
+		const userBids: Map<Article, Interest> =
+			this.interestInArticles.get(user) || new Map()
+		userBids.set(article, interest)
+		this.interestInArticles.set(user, userBids)
+	}
 }
+
+export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
 
 export enum SessionSelection {
 	TOP3,
@@ -97,3 +150,5 @@ export enum SessionState {
 	ASIGMENTANDREVIEW,
 	SELECTION
 }
+
+export type BidsState = 'OPENED' | 'CLOSED'
