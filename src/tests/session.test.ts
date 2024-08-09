@@ -683,7 +683,7 @@ describe('RECEPTION state suite', () => {
 
 		expect(() => {
 			session.addReview(article, user1, new Review(-5, 'Excelent'))
-		}).toThrow(new Error('The note must to be greater -3 and lower 3'))
+		}).toThrow(new Error('The note must be greater -3 and lower 3'))
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add review bad article', () => {

@@ -185,16 +185,19 @@ export class Session {
 
 	public addReview(article: Article, user: User, review: Review): void {
 		if (this.state != SessionState.ASIGMENTANDREVIEW)
-			throw new Error('The review must to be add in review stage')
+			throw new Error(
+				'The review must be added in ASIGMENTANDREVIEW state'
+			)
 		if (Math.abs(review.getNote() || 4) > 3)
-			throw new Error('The note must to be greater -3 and lower 3')
+			throw new Error('The note must be greater -3 and lower 3')
 		if (!Array.from(this.articlesReviews.keys()).includes(article))
 			throw new Error('The article is not part of this session')
 		if (!this.articlesReviews.get(article)?.has(user))
 			throw new Error('The user is not part of this article review')
 
-		let userReviews: Map<User, Review> | undefined =
-			this.articlesReviews.get(article)
+		let userReviews: Map<User, Review> =
+			this.articlesReviews.get(article) ?? new Map()
+
 		userReviews?.set(user, review)
 	}
 
