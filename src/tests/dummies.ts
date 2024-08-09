@@ -23,7 +23,7 @@ export const dummyOrganizer2 = new User(
 export const dummyAuthor1 = new User(
 	'Pedro',
 	'UTN-FRBA',
-	'jane@utn.frba.edu.ar',
+	'pedro@utn.frba.edu.ar',
 	'test-2024-UTN',
 	Rol.AUTHOR
 )
@@ -46,18 +46,18 @@ export const dummyAuthor3 = new User(
 
 // SESSION DUMMIES
 
-const defaultDeadlineTomorrow = new Date(
+export const defaultDeadlineTomorrow = new Date(
 	new Date().getTime() + 1000 * 60 * 60 * 24
 ) //1 day
 
-export const session = new Session(
+export const dummySession = new Session(
 	'First Session',
 	5,
 	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
 	defaultDeadlineTomorrow
 )
 
-export const session2 = new Session(
+export const dummySession2 = new Session(
 	'Second Session',
 	5,
 	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
@@ -66,7 +66,7 @@ export const session2 = new Session(
 
 // ARTICLE DUMMIES
 
-export const article = new RegularArticle(
+export const dummyArticle = new RegularArticle(
 	'First article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
 	'First Sample Article Title',
 	[dummyAuthor1, dummyAuthor2],
@@ -74,7 +74,7 @@ export const article = new RegularArticle(
 	'https://first-example.com/sample-article.pdf'
 )
 
-export const article2 = new RegularArticle(
+export const dummyArticle2 = new RegularArticle(
 	'Second article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
 	'Second Sample Article Title',
 	[dummyAuthor3],
