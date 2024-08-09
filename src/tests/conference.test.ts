@@ -1,5 +1,5 @@
 import {Conference} from '@app/conference'
-import { Session } from '@app/session'
+import {Session} from '@app/session'
 import {
 	dummyOrganizer,
 	dummyOrganizer2,

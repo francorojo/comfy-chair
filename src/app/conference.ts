@@ -37,7 +37,7 @@ export class Conference {
 			new Set(
 				this.sessions
 					.flatMap((session) => session.getArticles())
-					.flatMap((article) => article.authors)
+					.flatMap((article) => article.getAuthors())
 			)
 		)
 	}
