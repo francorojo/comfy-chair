@@ -1,11 +1,5 @@
 import {Poster} from '@app/article'
-import {
-	Session,
-	SessionType,
-	SessionSelection,
-	SessionState
-} from '@app/session'
-import {RegularArticle} from '@app/article'
+import {Session, SessionState} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
