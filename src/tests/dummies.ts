@@ -64,24 +64,6 @@ export const dummySession2 = new Session(
 	defaultDeadlineTomorrow
 )
 
-// ARTICLE DUMMIES
-
-export const dummyArticle = new RegularArticle(
-	'First article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
-	'First Sample Article Title',
-	[dummyAuthor1, dummyAuthor2],
-	dummyAuthor1,
-	'https://first-example.com/sample-article.pdf'
-)
-
-export const dummyArticle2 = new RegularArticle(
-	'Second article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
-	'Second Sample Article Title',
-	[dummyAuthor3],
-	dummyAuthor1,
-	'https://second-example.com/sample-article.pdf'
-)
-
 export const dummyBidder1 = dummyAuthor1
 
 export const dummyBidder2 = dummyAuthor2
@@ -124,4 +106,20 @@ export const posterArticleDummy = new Poster(
 	notificationAuthor,
 	fileURL,
 	sourceURL
+)
+
+export const dummyArticle = new RegularArticle(
+	'First article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
+	'First Sample Article Title',
+	[dummyAuthor1, dummyAuthor2],
+	dummyAuthor1,
+	'https://first-example.com/sample-article.pdf'
+)
+
+export const dummyArticle2 = new RegularArticle(
+	'Second article: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim',
+	'Second Sample Article Title',
+	[dummyAuthor3],
+	dummyAuthor1,
+	'https://second-example.com/sample-article.pdf'
 )
