@@ -1,6 +1,7 @@
 import {Poster} from '@app/article'
 import {Session} from '@app/session'
 import {
+	dummyArticle,
 	dummyAuthor1,
 	dummyAuthor2,
 	dummyBidder1,
@@ -639,6 +640,86 @@ describe('RECEPTION state suite', () => {
 		session.addArticle(posterArticleDummy)
 		expect(1).toEqual(session.getArticles().length)
 		expect(Poster).toEqual(session.getArticles()[0].constructor)
+	})
+})
+
+describe('BIDDING state suite', () => {
+	test('Session should not allow bids during RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.bid(dummyBidder1, generateRegularArticle(), 'INTERESTED')
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should allow bids during BIDDING state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.startBidding()
+
+		expect(session.areBidsOpen()).toBe(true)
+
+		session.bid(dummyBidder1, article, 'INTERESTED')
+		expect('INTERESTED').toBe(session.getBid(dummyBidder1, article))
+	})
+
+	test('Session should not allow bids during ASIGMENTANDREVIEW state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.startBidding()
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+
+		session.bid(user1, article, 'INTERESTED')
+		session.bid(user2, article, 'NOT INTERESTED')
+		session.bid(user3, article, 'NOT INTERESTED')
+		session.startReviewAndAssignment()
+
+		expect(() => {
+			session.bid(dummyBidder1, generateRegularArticle(), 'INTERESTED')
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not allow bids during SELECTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.startBidding()
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+
+		session.bid(user1, article, 'INTERESTED')
+		session.bid(user2, article, 'NOT INTERESTED')
+		session.bid(user3, article, 'NOT INTERESTED')
+		session.startReviewAndAssignment()
+		session.startSelection()
+
+		expect(() => {
+			session.bid(dummyBidder1, generateRegularArticle(), 'INTERESTED')
+		}).toThrow(new Error('This session is not in BIDDING state'))
 	})
 })
 

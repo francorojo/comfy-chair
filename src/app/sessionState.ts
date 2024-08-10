@@ -9,25 +9,23 @@ export type ValidState =
 	| 'SELECTION'
 
 export abstract class SessionState {
-	private state: ValidState
 	protected session: Session
 
-	public constructor(state: ValidState, session: Session) {
-		this.state = state
+	public constructor(session: Session) {
 		this.session = session
 	}
 
 	public isReceptionState(): boolean {
-		return this.state == 'RECEPTION'
+		return this instanceof Reception
 	}
 	public isBiddingState(): boolean {
-		return this.state == 'BIDDING'
+		return this instanceof Bidding
 	}
 	public isAssignmentAndReviewState(): boolean {
-		return this.state == 'ASSIGNMENTANDREVIEW'
+		return this instanceof AssignmentAndReview
 	}
 	public isSelectionState(): boolean {
-		return this.state == 'SELECTION'
+		return this instanceof Selection
 	}
 
 	public abstract canReceiveArticle(article: Article): void
@@ -49,7 +47,7 @@ export abstract class SessionState {
 
 export class Reception extends SessionState {
 	public constructor(session: Session) {
-		super('RECEPTION', session)
+		super(session)
 	}
 
 	public canReceiveArticle(): void {
@@ -106,7 +104,7 @@ export class Bidding extends SessionState {
 	private bidsState: BidsState
 
 	public constructor(session: Session) {
-		super('BIDDING', session)
+		super(session)
 		this.interestInArticles = new Map()
 		this.bidsState = 'OPENED'
 	}
@@ -161,7 +159,7 @@ export class Bidding extends SessionState {
 
 export class AssignmentAndReview extends SessionState {
 	public constructor(session: Session) {
-		super('ASSIGNMENTANDREVIEW', session)
+		super(session)
 		this.session.createAssignment()
 	}
 
@@ -201,7 +199,7 @@ export class AssignmentAndReview extends SessionState {
 
 export class Selection extends SessionState {
 	public constructor(session: Session) {
-		super('SELECTION', session)
+		super(session)
 	}
 
 	public canReceiveArticle(): void {
