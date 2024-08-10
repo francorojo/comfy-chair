@@ -1,4 +1,4 @@
-import {Session, SessionSelection, SessionType} from '@app/session'
+import {Session} from '@app/session'
 import {RegularArticle, Poster} from '@app/article'
 import {Rol, User} from '@app/user'
 
@@ -53,32 +53,18 @@ export const defaultDeadlineTomorrow = new Date(
 export const dummySession = new Session(
 	'First Session',
 	5,
-	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
 	defaultDeadlineTomorrow
 )
 
 export const dummySession2 = new Session(
 	'Second Session',
 	5,
-	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
 	defaultDeadlineTomorrow
 )
 
 export const dummyBidder1 = dummyAuthor1
 
 export const dummyBidder2 = dummyAuthor2
-
-// FORM SELECTION DUMMIES
-
-export const dummyTop3SelectionForm = new Map<SessionType, SessionSelection>([
-	[SessionType.REGULAR, SessionSelection.TOP3]
-])
-
-// SESSION SELECTION DUMMIES
-
-export const top3SelectionDummy = new Map<SessionType, SessionSelection>([
-	[SessionType.POSTER, SessionSelection.TOP3]
-])
 
 // DUMMY ARTICLES
 

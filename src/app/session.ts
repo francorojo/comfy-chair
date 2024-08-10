@@ -5,7 +5,6 @@ export class Session {
 	private theme: string
 	private state: SessionState
 	private maxArticlesAccept: number
-	private selectionForm: Map<SessionType, SessionSelection>
 	private articles: Article[]
 
 	// BIDDING state
@@ -16,12 +15,10 @@ export class Session {
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
-		selectionForm: Map<SessionType, SessionSelection>,
 		deadline: Date
 	) {
 		this.theme = theme
 		this.maxArticlesAccept = maxArticlesAccept
-		this.selectionForm = selectionForm
 		this.deadline = deadline
 
 		//Init default
@@ -41,10 +38,6 @@ export class Session {
 
 	public getMaxArticlesAccept(): number {
 		return this.maxArticlesAccept
-	}
-
-	public getSelectionForm(): Map<SessionType, SessionSelection> {
-		return this.selectionForm
 	}
 
 	public getDeadline(): Date {
@@ -132,16 +125,6 @@ export class Session {
 }
 
 export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
-
-export enum SessionSelection {
-	TOP3,
-	MINVALUE
-}
-
-export enum SessionType {
-	REGULAR,
-	POSTER
-}
 
 //Maybe in future this enum can be a state pattern for delegate logic
 export enum SessionState {
