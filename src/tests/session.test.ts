@@ -420,7 +420,7 @@ describe('Session User role in BIDDING state', () => {
 		const user1 = dummyAuthor1
 		expect(() => {
 			session.bid(user1, article, 'INTERESTED')
-		}).toThrow(new Error('User must to be a reviewer'))
+		}).toThrow(new Error('User must be a reviewer'))
 	})
 })
 
