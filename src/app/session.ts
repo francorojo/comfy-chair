@@ -110,39 +110,8 @@ export class Session {
 		return this.state.areBidsOpen()
 	}
 
-	public updateState(state: SessionState) {
-		//BIDDING VALIDATION
-		if (
-			state == SessionState.BIDDING &&
-			this.state != SessionState.RECEPTION
-		)
-			throw new Error('This session can not be updated to BIDDING')
-
-		//BIDDING STAGE
-		if (state == SessionState.BIDDING) {
-			this.bidsState = 'OPENED'
-			this.interestInArticles.clear()
-		}
-
-		//ASIGMENTANDREVIEW VALIDATION
-		if (
-			state == SessionState.ASIGMENTANDREVIEW &&
-			this.state != SessionState.BIDDING
-		)
-			throw new Error(
-				'This session can not be updated to ASIGMENTANDREVIEW'
-			)
-
-		//ASIGMENTANDREVIEW STAGE
-		if (state == SessionState.ASIGMENTANDREVIEW) {
-			this.createAssignment()
-			this.bidsState = 'CLOSED'
-		}
-		return (this.state = state)
-	}
-
 	public createAssignment(): void {
-		if (Array.from(this.interestInArticles.keys()).length < 3) {
+		if (Array.from(this.state.getBids().keys()).length < 3) {
 			throw new Error('This session must to be 3 reviewers minimum')
 		}
 
@@ -161,8 +130,9 @@ export class Session {
 		interest: Interest
 	): User[] {
 		const usersInterested: User[] = []
-		this.interestInArticles.forEach(
-			(value: Map<Article, Interest>, key: User) => {
+		this.state
+			.getBids()
+			.forEach((value: Map<Article, Interest>, key: User) => {
 				if (
 					(Array.from(value.keys()).includes(article) &&
 						value.get(article) == interest) ||
@@ -170,8 +140,7 @@ export class Session {
 						!Array.from(value.keys()).includes(article))
 				)
 					usersInterested.push(key)
-			}
-		)
+			})
 		return usersInterested
 	}
 
@@ -193,7 +162,7 @@ export class Session {
 	}
 
 	public addReview(article: Article, user: User, review: Review): void {
-		if (this.state != SessionState.ASIGMENTANDREVIEW)
+		if (!this.state.isAssignmentAndReviewState())
 			throw new Error(
 				'The review must be added in ASIGMENTANDREVIEW state'
 			)
@@ -219,10 +188,6 @@ export class Session {
 			throw new Error('The user is not part of this article review')
 
 		return userReviews.get(user)
-	}
-
-	public getBidsState(): BidsState {
-		return this.bidsState
 	}
 
 	public closeBids(): void {

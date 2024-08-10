@@ -1,6 +1,6 @@
 import {Article} from './article'
 import {Interest, BidsState, Session} from './session'
-import {User} from './user'
+import {Rol, User} from './user'
 
 export type ValidState =
 	| 'RECEPTION'
@@ -51,9 +51,6 @@ export class Reception extends SessionState {
 	public constructor(session: Session) {
 		super('RECEPTION', session)
 	}
-	public startReviewAndAssignment(): void {
-		throw new Error('Cant start review and assignment in RECEPTION state')
-	}
 
 	public canReceiveArticle(): void {
 		//Validations to add a new article
@@ -94,8 +91,12 @@ export class Reception extends SessionState {
 		throw new Error('This session is not in BIDDING state')
 	}
 
+	public startReviewAndAssignment(): void {
+		throw new Error('This session is not in BIDDING state')
+	}
+
 	public startSelection(): void {
-		throw new Error('Cant start selection in RECEPTION state')
+		throw new Error('')
 	}
 }
 
@@ -127,6 +128,10 @@ export class Bidding extends SessionState {
 		if (!this.session.isArticlePresent(article))
 			throw new Error('The article is not part of this session')
 
+		// validate user has rol reviewer
+		if (user.getRol() != Rol.REVIEWER)
+			throw new Error('User must be a reviewer')
+
 		// add bid to the article
 		const userBids: Map<Article, Interest> =
 			this.interestInArticles.get(user) || new Map()
@@ -157,6 +162,7 @@ export class Bidding extends SessionState {
 export class AssignmentAndReview extends SessionState {
 	public constructor(session: Session) {
 		super('ASSIGNMENTANDREVIEW', session)
+		this.session.createAssignment()
 	}
 
 	public canReceiveArticle(): void {
