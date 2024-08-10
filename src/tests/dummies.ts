@@ -45,11 +45,45 @@ export const dummyAuthor3 = new User(
 	Rol.AUTHOR
 )
 
-// SESSION DUMMIES
+export const dummyBidder1 = new User(
+	'Franco',
+	'UTN-FRBA',
+	'franco@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
+export const dummyBidder2 = new User(
+	'Nicolas',
+	'UTN-FRBA',
+	'nicolas@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
+export const dummyBidder3 = new User(
+	'Nahuel',
+	'UTN-FRBA',
+	'nahuel@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
+export const dummyBidder4 = new User(
+	'Nacho',
+	'UTN-FRBA',
+	'nacho@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
+// FORM SELECTION DUMMIES
 
 export const defaultDeadlineTomorrow = new Date(
 	new Date().getTime() + 1000 * 60 * 60 * 24
 ) //1 day
+
+// SESSION DUMMIES
 
 export const dummyRegularSession = new RegularSession(
 	'First Session',
@@ -64,10 +98,6 @@ export const dummyRegularSession2 = new RegularSession(
 	defaultDeadlineTomorrow,
 	DEFAULT_SELECTION
 )
-
-export const dummyBidder1 = dummyAuthor1
-
-export const dummyBidder2 = dummyAuthor2
 
 // DUMMY ARTICLES
 

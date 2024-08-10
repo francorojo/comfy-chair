@@ -1,6 +1,7 @@
 import {Article, ArticleType, Poster, RegularArticle} from '@app/article'
-import {User} from '@app/user'
+import {Rol, User} from '@app/user'
 import {DEFAULT_SELECTION, Selection} from './selection'
+import {Review} from './review'
 
 export abstract class Session {
 	protected theme: string
@@ -15,6 +16,9 @@ export abstract class Session {
 
 	// SELECTION state
 	protected selection: Selection
+
+	// ASIGMENTANDREVIEW state
+	private articlesReviews: Map<Article, Map<User, Review>>
 
 	public constructor(
 		theme: string,
@@ -32,6 +36,7 @@ export abstract class Session {
 		this.articles = []
 		this.interestInArticles = new Map()
 		this.bidsState = 'CLOSED'
+		this.articlesReviews = new Map()
 	}
 
 	public getTheme(): string {
@@ -81,6 +86,10 @@ export abstract class Session {
 		return this.articles
 	}
 
+	public getArticlesReviews(): Map<Article, Map<User, Review>> {
+		return this.articlesReviews
+	}
+
 	public getBids(): Map<User, Map<Article, Interest>> {
 		return this.interestInArticles
 	}
@@ -92,17 +101,114 @@ export abstract class Session {
 	}
 
 	public updateState(state: SessionState) {
+		//BIDDING VALIDATION
 		if (
 			state == SessionState.BIDDING &&
 			this.state != SessionState.RECEPTION
 		)
 			throw new Error('This session can not be updated to BIDDING')
-		else {
+
+		//BIDDING STAGE
+		if (state == SessionState.BIDDING) {
 			this.bidsState = 'OPENED'
 			this.interestInArticles.clear()
 		}
 
+		//ASIGMENTANDREVIEW VALIDATION
+		if (
+			state == SessionState.ASIGMENTANDREVIEW &&
+			this.state != SessionState.BIDDING
+		)
+			throw new Error(
+				'This session can not be updated to ASIGMENTANDREVIEW'
+			)
+
+		//ASIGMENTANDREVIEW STAGE
+		if (state == SessionState.ASIGMENTANDREVIEW) {
+			this.createAssignment()
+			this.bidsState = 'CLOSED'
+		}
 		return (this.state = state)
+	}
+
+	public createAssignment(): void {
+		if (Array.from(this.interestInArticles.keys()).length < 3) {
+			throw new Error('This session must to be 3 reviewers minimum')
+		}
+
+		for (let i = 0; i < this.articles.length; i++) {
+			let users: User[] = this.getReviewsForArticle(this.articles[i])
+			let assignment = new Map()
+			for (let y = 0; y < 3; y++) {
+				assignment.set(users[y], new Review())
+			}
+			this.articlesReviews.set(this.articles[i], assignment)
+		}
+	}
+
+	public getFilterInterestTypeUser(
+		article: Article,
+		interest: Interest
+	): User[] {
+		const usersInterested: User[] = []
+		this.interestInArticles.forEach(
+			(value: Map<Article, Interest>, key: User) => {
+				if (
+					(Array.from(value.keys()).includes(article) &&
+						value.get(article) == interest) ||
+					(interest == 'NONE' &&
+						!Array.from(value.keys()).includes(article))
+				)
+					usersInterested.push(key)
+			}
+		)
+		return usersInterested
+	}
+
+	public getReviewsForArticle(article: Article): User[] {
+		let usersInterested: User[] = []
+		usersInterested = usersInterested.concat(
+			this.getFilterInterestTypeUser(article, 'INTERESTED')
+		)
+		usersInterested = usersInterested.concat(
+			this.getFilterInterestTypeUser(article, 'MAYBE')
+		)
+		usersInterested = usersInterested.concat(
+			this.getFilterInterestTypeUser(article, 'NONE')
+		)
+		usersInterested = usersInterested.concat(
+			this.getFilterInterestTypeUser(article, 'NOT INTERESTED')
+		)
+		return usersInterested
+	}
+
+	public addReview(article: Article, user: User, review: Review): void {
+		if (this.state != SessionState.ASIGMENTANDREVIEW)
+			throw new Error(
+				'The review must be added in ASIGMENTANDREVIEW state'
+			)
+		if (Math.abs(review.getNote() || 4) > 3)
+			throw new Error('The note must be greater -3 and lower 3')
+		if (!Array.from(this.articlesReviews.keys()).includes(article))
+			throw new Error('The article is not part of this session')
+		if (!this.articlesReviews.get(article)?.has(user))
+			throw new Error('The user is not part of this article review')
+
+		let userReviews: Map<User, Review> =
+			this.articlesReviews.get(article) ?? new Map()
+
+		userReviews?.set(user, review)
+	}
+
+	public getReview(article: Article, user: User): Review | undefined {
+		if (!this.articlesReviews.has(article))
+			throw new Error('The article is not part of this sesion')
+		let userReviews = this.articlesReviews.get(article)
+
+		if (!userReviews?.has(user))
+			throw new Error('The user is not part of this article review')
+
+		return userReviews.get(user)
 	}
 
 	public getBidsState(): BidsState {
@@ -121,6 +227,10 @@ export abstract class Session {
 		// validate article is in the session
 		if (!this.articles.includes(article as RegularArticle))
 			throw new Error('The article is not part of this session')
+
+		// validate user´s rol
+		if (user.getRol() != Rol.REVIEWER)
+			throw new Error('User must be a reviewer')
 
 		// add bid to the article
 		const userBids: Map<Article, Interest> =
