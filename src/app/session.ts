@@ -201,6 +201,17 @@ export class Session {
 		userReviews?.set(user, review)
 	}
 
+	public getReview(article: Article, user: User): Review | undefined {
+		if (!this.articlesReviews.has(article))
+			throw new Error('The article is not part of this sesion')
+		let userReviews = this.articlesReviews.get(article)
+
+		if (!userReviews?.has(user))
+			throw new Error('The user is not part of this article review')
+
+		return userReviews.get(user)
+	}
+
 	public getBidsState(): BidsState {
 		return this.bidsState
 	}
@@ -218,7 +229,7 @@ export class Session {
 		if (!this.articles.includes(article as RegularArticle))
 			throw new Error('The article is not part of this session')
 
-		// validate article is in the session
+		// validate user´s rol
 		if (user.getRol() != Rol.REVIEWER)
 			throw new Error('User must to be a reviewer')
 
