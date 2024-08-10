@@ -56,49 +56,8 @@ export class Session {
 		return this.deadline
 	}
 
-	public addArticle(article: Article) {
-		this.canReceiveArticle()
-		return this.articles.push(article)
-	}
-
-	private canReceiveArticle(): void {
-		//Validations to add a new article
-		this.validateMaxAllowed()
-		this.validateReceptionState()
-		this.validateDeadline()
-	}
-
-	private validateMaxAllowed(): void {
-		if (this.articles.length == this.maxArticlesAccept)
-			throw new Error('The number of items exceeds the maximum allowed')
-	}
-
-	private validateReceptionState(): void {
-		if (this.state != SessionState.RECEPTION)
-			throw new Error('This session can not recive more articles')
-	}
-
-	private validateDeadline(): void {
-		if (this.deadline < new Date())
-			throw new Error('This session has passed its deadline')
-	}
-
 	public getArticles(): Article[] {
 		return this.articles
-	}
-
-	public getArticlesReviews(): Map<Article, Map<User, Review>> {
-		return this.articlesReviews
-	}
-
-	public getBids(): Map<User, Map<Article, Interest>> {
-		return this.interestInArticles
-	}
-
-	public getBid(user: User, article: Article): Interest {
-		const userBids = this.interestInArticles.get(user)
-		if (!userBids) return 'NONE'
-		return userBids.get(article) || 'NONE'
 	}
 
 	public updateState(state: SessionState) {
@@ -132,6 +91,76 @@ export class Session {
 		return (this.state = state)
 	}
 
+	//RECEPTION STAGE
+
+	public addArticle(article: Article) {
+		this.canReceiveArticle()
+		return this.articles.push(article)
+	}
+
+	private canReceiveArticle(): void {
+		//Validations to add a new article
+		this.validateMaxAllowed()
+		this.validateReceptionState()
+		this.validateDeadline()
+	}
+
+	private validateMaxAllowed(): void {
+		if (this.articles.length == this.maxArticlesAccept)
+			throw new Error('The number of items exceeds the maximum allowed')
+	}
+
+	private validateReceptionState(): void {
+		if (this.state != SessionState.RECEPTION)
+			throw new Error('This session can not recive more articles')
+	}
+
+	private validateDeadline(): void {
+		if (this.deadline < new Date())
+			throw new Error('This session has passed its deadline')
+	}
+
+	//BIDDING STAGE
+
+	public getBidsState(): BidsState {
+		return this.bidsState
+	}
+
+	public closeBids(): void {
+		this.bidsState = 'CLOSED'
+	}
+
+	public bid(user: User, article: Article, interest: Interest) {
+		// cant accept bids in closed state
+		if (this.bidsState == 'CLOSED')
+			throw new Error('The bids are closed, you can not bid anymore')
+
+		// validate article is in the session
+		if (!this.articles.includes(article as RegularArticle))
+			throw new Error('The article is not part of this session')
+
+		// validate user´s rol
+		if (user.getRol() != Rol.REVIEWER)
+			throw new Error('User must be a reviewer')
+
+		// add bid to the article
+		const userBids: Map<Article, Interest> =
+			this.interestInArticles.get(user) || new Map()
+		userBids.set(article, interest)
+		this.interestInArticles.set(user, userBids)
+	}
+
+	public getBids(): Map<User, Map<Article, Interest>> {
+		return this.interestInArticles
+	}
+
+	public getBid(user: User, article: Article): Interest {
+		const userBids = this.interestInArticles.get(user)
+		if (!userBids) return 'NONE'
+		return userBids.get(article) || 'NONE'
+	}
+
+	//ASIGMENTANDREVIEW STAGE
 	public createAssignment(): void {
 		if (Array.from(this.interestInArticles.keys()).length < 3) {
 			throw new Error('This session must to be 3 reviewers minimum')
@@ -212,32 +241,35 @@ export class Session {
 		return userReviews.get(user)
 	}
 
-	public getBidsState(): BidsState {
-		return this.bidsState
+	public getArticlesReviews(): Map<Article, Map<User, Review>> {
+		return this.articlesReviews
 	}
 
-	public closeBids(): void {
-		this.bidsState = 'CLOSED'
+	//SELECTION STAGE
+	public selection(): Article[]{
+		let selectedArticles: Article[] = this.getOrderedArticles()
+		let sessionSelection = Array.from(this.selectionForm.values())[0] //In future validate de sessionForm
+		if(sessionSelection == SessionSelection.MINVALUE)
+			return selectedArticles.slice(0, 1) //In future, state class and should define a value
+		if(sessionSelection == SessionSelection.TOP3)
+			return selectedArticles.slice(0, 3) //In future, state class and should define a value
+		return []
 	}
 
-	public bid(user: User, article: Article, interest: Interest) {
-		// cant accept bids in closed state
-		if (this.bidsState == 'CLOSED')
-			throw new Error('The bids are closed, you can not bid anymore')
+	private getOrderedArticles(): Article[]{
+		// Convert the map to an array of entries
+		const articlesReviewsEntries = Array.from(this.articlesReviews.entries());
 
-		// validate article is in the session
-		if (!this.articles.includes(article as RegularArticle))
-			throw new Error('The article is not part of this session')
+		// Sort the array by total review (the value in each entry)
+		articlesReviewsEntries.sort((a, b) => this.getTotalReview(a[1]) - this.getTotalReview(b[1]));
+	
+		// Return the sorted array
+		return articlesReviewsEntries.map(articleReview => articleReview[0]);
+	}
 
-		// validate user´s rol
-		if (user.getRol() != Rol.REVIEWER)
-			throw new Error('User must be a reviewer')
-
-		// add bid to the article
-		const userBids: Map<Article, Interest> =
-			this.interestInArticles.get(user) || new Map()
-		userBids.set(article, interest)
-		this.interestInArticles.set(user, userBids)
+	private getTotalReview(reviews: Map<User, Review>): number{
+		const reviewsEntries = Array.from(reviews.entries()).map(review => review[1].getNote() ?? 0)
+		return reviewsEntries.reduce((accumulator, currentValue) => accumulator + currentValue)
 	}
 }
 
