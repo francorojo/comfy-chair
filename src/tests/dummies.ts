@@ -47,7 +47,7 @@ export const dummyAuthor3 = new User(
 export const dummyBidder1 = new User(
 	'Franco',
 	'UTN-FRBA',
-	'jeniffer@utn.frba.edu.ar',
+	'franco@utn.frba.edu.ar',
 	'test-2024-UTN',
 	Rol.REVIEWER
 )
@@ -55,7 +55,7 @@ export const dummyBidder1 = new User(
 export const dummyBidder2 = new User(
 	'Nicolas',
 	'UTN-FRBA',
-	'jeniffer@utn.frba.edu.ar',
+	'nicolas@utn.frba.edu.ar',
 	'test-2024-UTN',
 	Rol.REVIEWER
 )
@@ -63,7 +63,7 @@ export const dummyBidder2 = new User(
 export const dummyBidder3 = new User(
 	'Nahuel',
 	'UTN-FRBA',
-	'jeniffer@utn.frba.edu.ar',
+	'nahuel@utn.frba.edu.ar',
 	'test-2024-UTN',
 	Rol.REVIEWER
 )
@@ -71,7 +71,7 @@ export const dummyBidder3 = new User(
 export const dummyBidder4 = new User(
 	'Nacho',
 	'UTN-FRBA',
-	'jeniffer@utn.frba.edu.ar',
+	'nacho@utn.frba.edu.ar',
 	'test-2024-UTN',
 	Rol.REVIEWER
 )

@@ -231,7 +231,7 @@ export class Session {
 
 		// validate user´s rol
 		if (user.getRol() != Rol.REVIEWER)
-			throw new Error('User must to be a reviewer')
+			throw new Error('User must be a reviewer')
 
 		// add bid to the article
 		const userBids: Map<Article, Interest> =
