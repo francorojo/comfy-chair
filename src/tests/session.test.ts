@@ -1,11 +1,5 @@
 import {Poster} from '@app/article'
-import {
-	Session,
-	SessionType,
-	SessionSelection,
-	SessionState
-} from '@app/session'
-import {RegularArticle} from '@app/article'
+import {Session} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
@@ -38,7 +32,7 @@ describe('test session case use', () => {
 		)
 		session.addArticle(regularArticleDummy)
 		expect('Test').toEqual(session.getTheme())
-		expect(SessionState.RECEPTION).toEqual(session.getState())
+		expect(session.isReceptionState()).toEqual(true)
 		expect(2).toEqual(session.getMaxArticlesAccept())
 		expect(1).toEqual(session.getArticles().length)
 	})
@@ -62,10 +56,10 @@ describe('test session case use', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 })
 
@@ -79,11 +73,11 @@ describe('Session BIDDING state tests', () => {
 			dummyTop3SelectionForm,
 			defaultDeadlineTomorrow
 		)
-		expect(SessionState.RECEPTION).toEqual(session.getState())
+		expect(session.isReceptionState()).toEqual(true)
 
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
-		expect(SessionState.BIDDING).toEqual(session.getState())
+		expect(session.isBiddingState()).toEqual(true)
 	})
 
 	test('Session cannot be updated to BIDDING if state is ASIGMENTANDREVIEW', () => {
@@ -94,10 +88,11 @@ describe('Session BIDDING state tests', () => {
 			defaultDeadlineTomorrow
 		)
 
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startBidding()
+		session.startReviewAndAssignment()
 
 		expect(() => {
-			session.updateState(SessionState.BIDDING)
+			session.startBidding()
 		}).toThrow(new Error('This session can not be updated to BIDDING'))
 	})
 
@@ -108,10 +103,11 @@ describe('Session BIDDING state tests', () => {
 			dummyTop3SelectionForm,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.SELECTION)
-
+		session.startBidding()
+		session.startReviewAndAssignment()
+		session.startSelection()
 		expect(() => {
-			session.updateState(SessionState.BIDDING)
+			session.startBidding()
 		}).toThrow(new Error('This session can not be updated to BIDDING'))
 	})
 
@@ -122,11 +118,10 @@ describe('Session BIDDING state tests', () => {
 			dummyTop3SelectionForm,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.BIDDING)
-
+		session.startBidding()
 		expect(() => {
-			session.updateState(SessionState.BIDDING)
-		}).toThrow(new Error('This session can not be updated to BIDDING'))
+			session.startBidding()
+		}).toThrow(new Error('Cant start bidding in BIDDING state'))
 	})
 
 	test("Session must return all users's bids in BIDDING state", () => {
@@ -138,7 +133,7 @@ describe('Session BIDDING state tests', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyAuthor2
 
@@ -163,11 +158,11 @@ describe('Session BIDDING state tests', () => {
 		const article = generateRegularArticle()
 		session.addArticle(article)
 
-		expect(session.getBidsState()).toBe('CLOSED')
+		expect(session.areBidsOpen()).toBe(false)
 
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
-		expect(session.getBidsState()).toBe('OPENED')
+		expect(session.areBidsOpen()).toBe(true)
 	})
 
 	test('Session bidsState should be CLOSED after being closed', () => {
@@ -179,10 +174,10 @@ describe('Session BIDDING state tests', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		session.closeBids()
 
-		expect(session.getBidsState()).toBe('CLOSED')
+		expect(session.areBidsOpen()).toBe(false)
 	})
 })
 
@@ -200,7 +195,7 @@ describe('Session User role in BIDDING state', () => {
 		session.addArticle(article1)
 		session.addArticle(article2)
 
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
 		expect(session.getArticles()).toEqual([article1, article2])
 	})
@@ -214,7 +209,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
@@ -233,7 +228,7 @@ describe('Session User role in BIDDING state', () => {
 
 		session.addArticle(article1)
 		session.addArticle(article2)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article1, 'INTERESTED')
@@ -254,7 +249,7 @@ describe('Session User role in BIDDING state', () => {
 		const article2 = generateRegularArticle()
 		session.addArticle(article1)
 		session.addArticle(article2)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		session.bid(user1, article1, 'INTERESTED')
@@ -276,7 +271,7 @@ describe('Session User role in BIDDING state', () => {
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
 		expect(() => {
 			session.bid(dummyBidder1, article, 'INTERESTED')
@@ -292,7 +287,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
@@ -310,7 +305,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		expect('NONE').toBe(session.getBid(user, article))
@@ -325,7 +320,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
@@ -341,7 +336,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'NOT INTERESTED')
@@ -357,7 +352,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'MAYBE')
@@ -373,7 +368,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		session.closeBids()
 
 		expect(() => {
@@ -390,9 +385,9 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
-		expect(session.getBidsState()).toBe('OPENED')
+		expect(session.areBidsOpen()).toBe(true)
 
 		session.bid(dummyBidder1, article, 'INTERESTED')
 		expect('INTERESTED').toBe(session.getBid(dummyBidder1, article))
@@ -409,7 +404,7 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		expect(SessionState.RECEPTION).toEqual(session.getState())
+		expect(session.isReceptionState()).toEqual(true)
 	})
 
 	test('Session should be able to receive a RegularArticle in RECEPTION state', () => {
@@ -419,7 +414,6 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.RECEPTION)
 		session.addArticle(regularArticleDummy)
 		expect(1).toEqual(session.getArticles().length)
 	})
@@ -431,10 +425,10 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle in SELECTION state', () => {
@@ -444,10 +438,12 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.SELECTION)
+		session.startBidding()
+		session.startReviewAndAssignment()
+		session.startSelection()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle in ASIGMENTANDREVIEW state', () => {
@@ -457,10 +453,11 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startBidding()
+		session.startReviewAndAssignment()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should be able to receive a PosterArticle in RECEPTION state', () => {
@@ -470,7 +467,6 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.RECEPTION)
 		session.addArticle(posterArticleDummy)
 
 		expect(1).toEqual(session.getArticles().length)
@@ -484,10 +480,10 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a PosterArticle in SELECTION state', () => {
@@ -497,10 +493,12 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.SELECTION)
+		session.startBidding()
+		session.startReviewAndAssignment()
+		session.startSelection()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a PosterArticle in ASIGMENTANDREVIEW state', () => {
@@ -510,10 +508,11 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startBidding()
+		session.startReviewAndAssignment()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle when the deadline is reached', () => {
