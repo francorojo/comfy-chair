@@ -1,12 +1,12 @@
 import {Conference} from '@app/conference'
 import {Session} from '@app/session'
+import {Top} from '@app/sessionSelection'
 import {
 	dummyOrganizer,
 	dummyOrganizer2,
 	dummyAuthor1,
 	dummyArticle,
 	dummyArticle2,
-	top3SelectionDummy,
 	defaultDeadlineTomorrow
 } from '@tests/dummies'
 
@@ -15,13 +15,13 @@ describe('Test conferences use cases', () => {
 		const session = new Session(
 			'Test',
 			2,
-			top3SelectionDummy,
+			new Top(3),
 			defaultDeadlineTomorrow
 		)
 		const session2 = new Session(
 			'Test',
 			2,
-			top3SelectionDummy,
+			new Top(3),
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(dummyArticle)
@@ -38,13 +38,13 @@ describe('Test conferences use cases', () => {
 		const session = new Session(
 			'Test',
 			2,
-			top3SelectionDummy,
+			new Top(3),
 			defaultDeadlineTomorrow
 		)
 		const session2 = new Session(
 			'Test',
 			2,
-			top3SelectionDummy,
+			new Top(3),
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(dummyArticle)
@@ -64,7 +64,7 @@ describe('Test conferences use cases', () => {
 		const session = new Session(
 			'Test',
 			2,
-			top3SelectionDummy,
+			new Top(3),
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(dummyArticle)
@@ -79,7 +79,7 @@ describe('Test conferences use cases', () => {
 		const session = new Session(
 			'Test',
 			2,
-			top3SelectionDummy,
+			new Top(3),
 			defaultDeadlineTomorrow
 		)
 		const sessions = [session]

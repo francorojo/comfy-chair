@@ -42,7 +42,13 @@ export class Conference {
 		)
 	}
 
-	// public getReviewers(): User[] {
-	// 	return this.sessions.flatMap(session => session.getReviews()).map(review => review.getReviewer());
-	// }
+	public getReviewers(): User[] {
+		//TODO add tests
+		return this.sessions.flatMap((session) =>
+			Array.from(session.getArticlesReviews().entries()).flatMap(
+				(articleReview) =>
+					Array.from(articleReview[1]).map((review) => review[0])
+			)
+		)
+	}
 }

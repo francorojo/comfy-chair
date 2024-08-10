@@ -1,12 +1,13 @@
 import {Article, RegularArticle} from '@app/article'
 import {Rol, User} from '@app/user'
 import {Review} from './review'
+import {SessionSelection} from './sessionSelection'
 
 export class Session {
 	private theme: string
 	private state: SessionState
 	private maxArticlesAccept: number
-	private selectionForm: Map<SessionType, SessionSelection>
+	private sessionSelection: SessionSelection
 	private articles: Article[]
 
 	// BIDDING state
@@ -20,12 +21,12 @@ export class Session {
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
-		selectionForm: Map<SessionType, SessionSelection>,
+		sessionSelection: SessionSelection,
 		deadline: Date
 	) {
 		this.theme = theme
 		this.maxArticlesAccept = maxArticlesAccept
-		this.selectionForm = selectionForm
+		this.sessionSelection = sessionSelection
 		this.deadline = deadline
 
 		//Init default
@@ -48,8 +49,8 @@ export class Session {
 		return this.maxArticlesAccept
 	}
 
-	public getSelectionForm(): Map<SessionType, SessionSelection> {
-		return this.selectionForm
+	public getSelectionForm(): SessionSelection {
+		return this.sessionSelection
 	}
 
 	public getDeadline(): Date {
@@ -246,39 +247,12 @@ export class Session {
 	}
 
 	//SELECTION STAGE
-	public selection(): Article[]{
-		let selectedArticles: Article[] = this.getOrderedArticles()
-		let sessionSelection = Array.from(this.selectionForm.values())[0] //In future validate de sessionForm
-		if(sessionSelection == SessionSelection.MINVALUE)
-			return selectedArticles.slice(0, 1) //In future, state class and should define a value
-		if(sessionSelection == SessionSelection.TOP3)
-			return selectedArticles.slice(0, 3) //In future, state class and should define a value
-		return []
-	}
-
-	private getOrderedArticles(): Article[]{
-		// Convert the map to an array of entries
-		const articlesReviewsEntries = Array.from(this.articlesReviews.entries());
-
-		// Sort the array by total review (the value in each entry)
-		articlesReviewsEntries.sort((a, b) => this.getTotalReview(a[1]) - this.getTotalReview(b[1]));
-	
-		// Return the sorted array
-		return articlesReviewsEntries.map(articleReview => articleReview[0]);
-	}
-
-	private getTotalReview(reviews: Map<User, Review>): number{
-		const reviewsEntries = Array.from(reviews.entries()).map(review => review[1].getNote() ?? 0)
-		return reviewsEntries.reduce((accumulator, currentValue) => accumulator + currentValue)
+	public selection(): Article[] {
+		return this.sessionSelection.selection(this.articlesReviews)
 	}
 }
 
 export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
-
-export enum SessionSelection {
-	TOP3,
-	MINVALUE
-}
 
 export enum SessionType {
 	REGULAR,
