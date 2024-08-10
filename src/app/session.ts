@@ -1,25 +1,31 @@
-import {Article, RegularArticle} from '@app/article'
+import {Article, ArticleType, Poster, RegularArticle} from '@app/article'
 import {User} from '@app/user'
+import {DEFAULT_SELECTION, Selection} from './selection'
 
-export class Session {
-	private theme: string
-	private state: SessionState
-	private maxArticlesAccept: number
-	private articles: Article[]
+export abstract class Session {
+	protected theme: string
+	protected state: SessionState
+	protected maxArticlesAccept: number
+	protected articles: Article[]
 
 	// BIDDING state
-	private interestInArticles: Map<User, Map<Article, Interest>>
-	private bidsState: BidsState
-	private deadline: Date
+	protected interestInArticles: Map<User, Map<Article, Interest>>
+	protected bidsState: BidsState
+	protected deadline: Date
+
+	// SELECTION state
+	protected selection: Selection
 
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
-		deadline: Date
+		deadline: Date,
+		selection: Selection = DEFAULT_SELECTION
 	) {
 		this.theme = theme
 		this.maxArticlesAccept = maxArticlesAccept
 		this.deadline = deadline
+		this.selection = selection
 
 		//Init default
 		this.state = SessionState.RECEPTION
@@ -44,9 +50,9 @@ export class Session {
 		return this.deadline
 	}
 
-	public addArticle(article: Article) {
+	public addArticle(article: Article): void {
 		this.canReceiveArticle()
-		return this.articles.push(article)
+		this.articles.push(article)
 	}
 
 	private canReceiveArticle(): void {
@@ -121,6 +127,34 @@ export class Session {
 			this.interestInArticles.get(user) || new Map()
 		userBids.set(article, interest)
 		this.interestInArticles.set(user, userBids)
+	}
+}
+
+export class RegularSession extends Session {
+	public addArticle(article: RegularArticle): void {
+		super.addArticle(article)
+		return
+	}
+}
+
+export class PosterSession extends Session {
+	public addArticle(article: Poster): void {
+		super.addArticle(article)
+		return
+	}
+}
+
+export class WorkshopSession extends Session {
+	private selectionCriteria: Map<ArticleType, Selection>
+
+	public constructor(
+		theme: string,
+		maxArticlesAccept: number,
+		deadline: Date,
+		selectionCriteria: Map<ArticleType, Selection>
+	) {
+		super(theme, maxArticlesAccept, deadline)
+		this.selectionCriteria = selectionCriteria
 	}
 }
 

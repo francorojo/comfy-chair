@@ -1,5 +1,5 @@
 import {Conference} from '@app/conference'
-import {Session} from '@app/session'
+import {RegularSession, Session} from '@app/session'
 import {
 	dummyOrganizer,
 	dummyOrganizer2,
@@ -11,8 +11,8 @@ import {
 
 describe('Test conferences use cases', () => {
 	test('Conference sessions should match those added at first', () => {
-		const session = new Session('Test', 2, defaultDeadlineTomorrow)
-		const session2 = new Session('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session2 = new RegularSession('Test', 2, defaultDeadlineTomorrow)
 		session.addArticle(dummyArticle)
 		const sessions = [session]
 		const chairs = [dummyOrganizer]
@@ -24,8 +24,8 @@ describe('Test conferences use cases', () => {
 	})
 
 	test('Get authors should match those added', () => {
-		const session = new Session('Test', 2, defaultDeadlineTomorrow)
-		const session2 = new Session('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session2 = new RegularSession('Test', 2, defaultDeadlineTomorrow)
 		session.addArticle(dummyArticle)
 		const sessions = [session]
 		const chairs = [dummyOrganizer]
@@ -40,7 +40,7 @@ describe('Test conferences use cases', () => {
 	})
 
 	test('An exception is expected when creating a new conference with a user that does not have the ORGANIZER role', () => {
-		const session = new Session('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
 		session.addArticle(dummyArticle)
 		const sessions = [session]
 		const chairs = [dummyAuthor1]
@@ -50,7 +50,7 @@ describe('Test conferences use cases', () => {
 	})
 
 	test('An exception is expected when adding a new organizer other that does not have the ORGANIZER role', () => {
-		const session = new Session('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
 		const sessions = [session]
 		const chairs = [dummyOrganizer]
 		const conference = new Conference(chairs, sessions)
