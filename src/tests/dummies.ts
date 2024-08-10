@@ -44,11 +44,53 @@ export const dummyAuthor3 = new User(
 	Rol.AUTHOR
 )
 
-// SESSION DUMMIES
+export const dummyBidder1 = new User(
+	'Franco',
+	'UTN-FRBA',
+	'franco@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
+export const dummyBidder2 = new User(
+	'Nicolas',
+	'UTN-FRBA',
+	'nicolas@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
+export const dummyBidder3 = new User(
+	'Nahuel',
+	'UTN-FRBA',
+	'nahuel@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
+export const dummyBidder4 = new User(
+	'Nacho',
+	'UTN-FRBA',
+	'nacho@utn.frba.edu.ar',
+	'test-2024-UTN',
+	Rol.REVIEWER
+)
+
+// FORM SELECTION DUMMIES
 
 export const defaultDeadlineTomorrow = new Date(
 	new Date().getTime() + 1000 * 60 * 60 * 24
 ) //1 day
+
+export const dummyTop3SelectionForm = new Map<SessionType, SessionSelection>([
+	[SessionType.REGULAR, SessionSelection.TOP3]
+])
+
+export const top3SelectionDummy = new Map<SessionType, SessionSelection>([
+	[SessionType.POSTER, SessionSelection.TOP3]
+])
+
+// SESSION DUMMIES
 
 export const dummySession = new Session(
 	'First Session',
@@ -64,21 +106,19 @@ export const dummySession2 = new Session(
 	defaultDeadlineTomorrow
 )
 
-export const dummyBidder1 = dummyAuthor1
+export const session = new Session(
+	'First Session',
+	5,
+	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
+	defaultDeadlineTomorrow
+)
 
-export const dummyBidder2 = dummyAuthor2
-
-// FORM SELECTION DUMMIES
-
-export const dummyTop3SelectionForm = new Map<SessionType, SessionSelection>([
-	[SessionType.REGULAR, SessionSelection.TOP3]
-])
-
-// SESSION SELECTION DUMMIES
-
-export const top3SelectionDummy = new Map<SessionType, SessionSelection>([
-	[SessionType.POSTER, SessionSelection.TOP3]
-])
+export const session2 = new Session(
+	'Second Session',
+	5,
+	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
+	defaultDeadlineTomorrow
+)
 
 // DUMMY ARTICLES
 
