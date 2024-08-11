@@ -2,6 +2,7 @@ import {Article, RegularArticle} from '@app/article'
 import {Rol, User} from '@app/user'
 import {Review} from './review'
 import {SessionSelection} from './sessionSelection'
+import {iterableIncludes} from './utils'
 
 export class Session {
 	private theme: string
@@ -163,7 +164,7 @@ export class Session {
 
 	//ASIGMENTANDREVIEW STAGE
 	public createAssignment(): void {
-		if (Array.from(this.interestInArticles.keys()).length < 3) {
+		if (this.interestInArticles.size < 3) {
 			throw new Error('This session must to be 3 reviewers minimum')
 		}
 
@@ -185,10 +186,10 @@ export class Session {
 		this.interestInArticles.forEach(
 			(value: Map<Article, Interest>, key: User) => {
 				if (
-					(Array.from(value.keys()).includes(article) &&
+					(iterableIncludes(value.keys(), article) &&
 						value.get(article) == interest) ||
 					(interest == 'NONE' &&
-						!Array.from(value.keys()).includes(article))
+						!iterableIncludes(value.keys(), article))
 				)
 					usersInterested.push(key)
 			}
@@ -220,7 +221,7 @@ export class Session {
 			)
 		if (Math.abs(review.getNote() || 4) > 3)
 			throw new Error('The note must be greater -3 and lower 3')
-		if (!Array.from(this.articlesReviews.keys()).includes(article))
+		if (!iterableIncludes(this.articlesReviews.keys(), article))
 			throw new Error('The article is not part of this session')
 		if (!this.articlesReviews.get(article)?.has(user))
 			throw new Error('The user is not part of this article review')

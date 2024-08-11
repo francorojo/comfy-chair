@@ -8,12 +8,13 @@ import {
 	dummyBidder3,
 	dummyBidder4,
 	posterArticleDummy,
-	regularArticleDummy
+	regularArticleDummy,
+	top3SelectionDummy
 } from '@tests/dummies'
 import {generateRegularArticle} from './articleGenerator'
 import {Review} from '@app/review'
 import {User} from '@app/user'
-import {Top} from '@app/sessionSelection'
+import {TopN} from '@app/sessionSelection'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -30,7 +31,7 @@ describe('tests session case use', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(regularArticleDummy)
@@ -44,7 +45,7 @@ describe('tests session case use', () => {
 		const session = new Session(
 			'Test',
 			0,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		expect(() => {
@@ -56,7 +57,7 @@ describe('tests session case use', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.updateState(SessionState.BIDDING)
@@ -73,7 +74,7 @@ describe('Session BIDDING state tests', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		expect(SessionState.RECEPTION).toEqual(session.getState())
@@ -87,7 +88,7 @@ describe('Session BIDDING state tests', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 
@@ -113,7 +114,7 @@ describe('Session BIDDING state tests', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.updateState(SessionState.SELECTION)
@@ -127,7 +128,7 @@ describe('Session BIDDING state tests', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.updateState(SessionState.BIDDING)
@@ -141,7 +142,7 @@ describe('Session BIDDING state tests', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -165,7 +166,7 @@ describe('Session BIDDING state tests', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -182,7 +183,7 @@ describe('Session BIDDING state tests', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -199,7 +200,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article1 = generateRegularArticle()
@@ -217,7 +218,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -233,7 +234,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article1 = generateRegularArticle()
@@ -255,7 +256,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article1 = generateRegularArticle()
@@ -280,7 +281,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -295,7 +296,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -313,7 +314,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -328,7 +329,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -344,7 +345,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -360,7 +361,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -376,7 +377,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -393,7 +394,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -410,7 +411,7 @@ describe('Session User role in BIDDING state', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -430,7 +431,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		expect(SessionState.RECEPTION).toEqual(session.getState())
@@ -440,7 +441,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.updateState(SessionState.RECEPTION)
@@ -452,7 +453,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.updateState(SessionState.BIDDING)
@@ -465,7 +466,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.updateState(SessionState.SELECTION)
@@ -478,7 +479,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			4,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
@@ -502,7 +503,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.updateState(SessionState.RECEPTION)
@@ -516,7 +517,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.updateState(SessionState.BIDDING)
@@ -529,7 +530,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.updateState(SessionState.SELECTION)
@@ -542,7 +543,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			4,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 
@@ -567,7 +568,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineYesterday
 		)
 
@@ -580,7 +581,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineYesterday
 		)
 
@@ -593,7 +594,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(regularArticleDummy)
@@ -604,7 +605,7 @@ describe('RECEPTION state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(posterArticleDummy)
@@ -620,7 +621,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 
@@ -647,7 +648,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 
@@ -674,7 +675,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 
@@ -717,7 +718,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 
@@ -744,7 +745,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 
@@ -772,7 +773,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 
@@ -799,7 +800,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		const session = new Session(
 			'Test',
 			1,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 

@@ -6,7 +6,7 @@ export interface SessionSelection {
 	selection(articlesReviews: Map<Article, Map<User, Review>>): Article[]
 }
 
-export class Top implements SessionSelection {
+export class TopN implements SessionSelection {
 	limit: number
 
 	constructor(limit: number) {
@@ -29,7 +29,8 @@ export class Top implements SessionSelection {
 
 		// Sort the array by total review (the value in each entry)
 		articlesReviewsEntries.sort(
-			(a, b) => this.getTotalReview(b[1]) - this.getTotalReview(a[1])
+			([article1, reviews1], [article2, reviews2]) =>
+				this.getTotalReview(reviews2) - this.getTotalReview(reviews1)
 		)
 
 		// Return the sorted array
@@ -38,7 +39,7 @@ export class Top implements SessionSelection {
 
 	private getTotalReview(reviews: Map<User, Review>): number {
 		const reviewsEntries = Array.from(reviews.entries()).map(
-			(review) => review[1].getNote() ?? 0
+			([user, review]) => review.getNote() ?? 0
 		)
 		return reviewsEntries.reduce(
 			(accumulator, currentValue) => accumulator + currentValue
@@ -60,14 +61,15 @@ export class MinimumValue implements SessionSelection {
 		const articlesReviewsEntries = Array.from(articlesReviews.entries())
 		return articlesReviewsEntries
 			.filter(
-				(article) => this.getTotalReview(article[1]) > this.minimumValue
+				([article, reviews]) =>
+					this.getTotalReview(reviews) >= this.minimumValue
 			)
 			.map((articleReview) => articleReview[0])
 	}
 
 	private getTotalReview(reviews: Map<User, Review>): number {
 		const reviewsEntries = Array.from(reviews.entries()).map(
-			(review) => review[1].getNote() ?? 0
+			([user, review]) => review.getNote() ?? 0
 		)
 		return reviewsEntries.reduce(
 			(accumulator, currentValue) => accumulator + currentValue

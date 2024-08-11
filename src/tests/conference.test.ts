@@ -1,13 +1,14 @@
 import {Conference} from '@app/conference'
 import {Session} from '@app/session'
-import {Top} from '@app/sessionSelection'
+import {TopN} from '@app/sessionSelection'
 import {
 	dummyOrganizer,
 	dummyOrganizer2,
 	dummyAuthor1,
 	dummyArticle,
 	dummyArticle2,
-	defaultDeadlineTomorrow
+	defaultDeadlineTomorrow,
+	top3SelectionDummy
 } from '@tests/dummies'
 
 describe('Test conferences use cases', () => {
@@ -15,13 +16,13 @@ describe('Test conferences use cases', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const session2 = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(dummyArticle)
@@ -38,13 +39,13 @@ describe('Test conferences use cases', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const session2 = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(dummyArticle)
@@ -64,7 +65,7 @@ describe('Test conferences use cases', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(dummyArticle)
@@ -79,7 +80,7 @@ describe('Test conferences use cases', () => {
 		const session = new Session(
 			'Test',
 			2,
-			new Top(3),
+			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 		const sessions = [session]
@@ -88,5 +89,10 @@ describe('Test conferences use cases', () => {
 		expect(() => {
 			conference.addChair(dummyAuthor1)
 		}).toThrow(new Error('The user must to be organizer'))
+	})
+
+	test('Get reviewers from a conference', () => {
+		//Pending test
+		expect(true).toEqual(true)
 	})
 })

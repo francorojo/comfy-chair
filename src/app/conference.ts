@@ -1,5 +1,6 @@
 import {Session} from './session'
 import {Rol, User} from './user'
+import {flatMap} from './utils'
 
 export class Conference {
 	private sessions: Session[]
@@ -45,9 +46,9 @@ export class Conference {
 	public getReviewers(): User[] {
 		//TODO add tests
 		return this.sessions.flatMap((session) =>
-			Array.from(session.getArticlesReviews().entries()).flatMap(
-				(articleReview) =>
-					Array.from(articleReview[1]).map((review) => review[0])
+			flatMap(
+				session.getArticlesReviews().entries(),
+				([article, reviews]) => reviews.keys()
 			)
 		)
 	}
