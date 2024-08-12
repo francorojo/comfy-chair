@@ -1,5 +1,6 @@
 import {Session} from './session'
 import {Rol, User} from './user'
+import {flatMap} from './utils'
 
 export class Conference {
 	private sessions: Session[]
@@ -42,7 +43,13 @@ export class Conference {
 		)
 	}
 
-	// public getReviewers(): User[] {
-	// 	return this.sessions.flatMap(session => session.getReviews()).map(review => review.getReviewer());
-	// }
+	public getReviewers(): User[] {
+		const users: User[] = this.sessions.flatMap((session) =>
+			flatMap(
+				session.getArticlesReviews().entries(),
+				([article, reviews]) => reviews.keys()
+			)
+		)
+		return Array.from(new Set(users))
+	}
 }
