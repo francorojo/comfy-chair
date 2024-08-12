@@ -1,6 +1,5 @@
-import {Article, ArticleType, Poster, RegularArticle} from '@app/article'
+import {Article, Poster, RegularArticle} from '@app/article'
 import {Rol, User} from '@app/user'
-import {Selection} from './selection'
 import {Review} from './review'
 import {SessionSelection} from './sessionSelection'
 import {iterableIncludes} from './utils'
