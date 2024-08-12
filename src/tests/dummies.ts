@@ -90,28 +90,28 @@ export const defaultDeadlineTomorrow = new Date(
 export const dummySession = new RegularSession(
 	'First Session',
 	5,
-	new TopN(3),
+	top3SelectionDummy,
 	defaultDeadlineTomorrow
 )
 
 export const dummyRegularSession2 = new RegularSession(
 	'Second Session',
 	5,
-	new TopN(3),
+	top3SelectionDummy,
 	defaultDeadlineTomorrow
 )
 
 export const session = new RegularSession(
 	'First Session',
 	5,
-	new TopN(3),
+	top3SelectionDummy,
 	defaultDeadlineTomorrow
 )
 
 export const session2 = new RegularSession(
 	'Second Session',
 	5,
-	new TopN(3),
+	top3SelectionDummy,
 	defaultDeadlineTomorrow
 )
 
