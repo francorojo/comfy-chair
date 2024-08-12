@@ -2,12 +2,14 @@ import {Article} from '@app/article'
 import {Rol, User} from '@app/user'
 import {Reception as ReceptionState, SessionState} from './sessionState'
 import {Review} from './review'
+import {SessionSelection} from './sessionSelection'
+import {iterableIncludes} from './utils'
 
 export class Session {
 	private theme: string
 	private state: SessionState
 	private maxArticlesAccept: number
-	private selectionForm: Map<SessionType, SessionSelection>
+	private sessionSelection: SessionSelection
 	private articles: Article[]
 	private deadline: Date
 
@@ -17,12 +19,12 @@ export class Session {
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
-		selectionForm: Map<SessionType, SessionSelection>,
+		sessionSelection: SessionSelection,
 		deadline: Date
 	) {
 		this.theme = theme
 		this.maxArticlesAccept = maxArticlesAccept
-		this.selectionForm = selectionForm
+		this.sessionSelection = sessionSelection
 		this.deadline = deadline
 
 		//Init default
@@ -59,8 +61,8 @@ export class Session {
 		return this.maxArticlesAccept
 	}
 
-	public getSelectionForm(): Map<SessionType, SessionSelection> {
-		return this.selectionForm
+	public getSelectionForm(): SessionSelection {
+		return this.sessionSelection
 	}
 
 	public getDeadline(): Date {
@@ -110,8 +112,9 @@ export class Session {
 		return this.state.areBidsOpen()
 	}
 
+	//ASIGMENTANDREVIEW STAGE
 	public createAssignment(): void {
-		if (Array.from(this.state.getBids().keys()).length < 3) {
+		if (this.getBids().size < 3) {
 			throw new Error('This session must to be 3 reviewers minimum')
 		}
 
@@ -134,10 +137,10 @@ export class Session {
 			.getBids()
 			.forEach((value: Map<Article, Interest>, key: User) => {
 				if (
-					(Array.from(value.keys()).includes(article) &&
+					(iterableIncludes(value.keys(), article) &&
 						value.get(article) == interest) ||
 					(interest == 'NONE' &&
-						!Array.from(value.keys()).includes(article))
+						!iterableIncludes(value.keys(), article))
 				)
 					usersInterested.push(key)
 			})
@@ -168,7 +171,7 @@ export class Session {
 			)
 		if (Math.abs(review.getNote() || 4) > 3)
 			throw new Error('The note must be greater -3 and lower 3')
-		if (!Array.from(this.articlesReviews.keys()).includes(article))
+		if (!iterableIncludes(this.articlesReviews.keys(), article))
 			throw new Error('The article is not part of this session')
 		if (!this.articlesReviews.get(article)?.has(user))
 			throw new Error('The user is not part of this article review')
@@ -197,14 +200,14 @@ export class Session {
 	public bid(user: User, article: Article, interest: Interest) {
 		this.state.bid(user, article, interest)
 	}
+
+	//SELECTION STAGE
+	public selection(): Article[] {
+		return this.sessionSelection.selection(this.articlesReviews)
+	}
 }
 
 export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
-
-export enum SessionSelection {
-	TOP3,
-	MINVALUE
-}
 
 export enum SessionType {
 	REGULAR,
