@@ -1,6 +1,5 @@
 import {Conference} from '@app/conference'
-import {Session, SessionState} from '@app/session'
-import {TopN} from '@app/sessionSelection'
+import {Session} from '@app/session'
 import {
 	dummyOrganizer,
 	dummyOrganizer2,
@@ -111,7 +110,7 @@ describe('Test conferences use cases', () => {
 		const article2 = generateRegularArticle()
 		session.addArticle(article1)
 		session.addArticle(article2)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -129,7 +128,7 @@ describe('Test conferences use cases', () => {
 		session.bid(user3, article2, 'NONE')
 		session.bid(user4, article2, 'MAYBE')
 
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 		expect([user1, user4, user3]).toEqual(conference.getReviewers())
 	})
 })
