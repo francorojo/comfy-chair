@@ -6,7 +6,7 @@ import {generateRegularArticle} from './articleGenerator'
 import {dummyBidder1, dummyBidder2, dummyBidder3} from './dummies'
 
 describe('test sessionSelection case use', () => {
-	test('Create a new sessionSelection TopN and validate the selection', () => {
+	test('TopN selection should return the first N articles ordered by its reviews', () => {
 		const sessionSelectionTop3 = new TopN(3)
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
@@ -43,7 +43,7 @@ describe('test sessionSelection case use', () => {
 		)
 	})
 
-	test('Create a new sessionSelection MinimiumValue and validate the selection', () => {
+	test('MinimumValue N selection should return only articles whose values are over the N value', () => {
 		const sessionSelectionTop3 = new MinimumValue(0)
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2

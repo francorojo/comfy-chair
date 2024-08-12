@@ -44,12 +44,12 @@ export class Conference {
 	}
 
 	public getReviewers(): User[] {
-		//TODO add tests
-		return this.sessions.flatMap((session) =>
+		const users: User[] = this.sessions.flatMap((session) =>
 			flatMap(
 				session.getArticlesReviews().entries(),
 				([article, reviews]) => reviews.keys()
 			)
 		)
+		return Array.from(new Set(users))
 	}
 }

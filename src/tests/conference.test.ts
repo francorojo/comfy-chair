@@ -1,5 +1,5 @@
 import {Conference} from '@app/conference'
-import {Session} from '@app/session'
+import {Session, SessionState} from '@app/session'
 import {TopN} from '@app/sessionSelection'
 import {
 	dummyOrganizer,
@@ -8,8 +8,13 @@ import {
 	dummyArticle,
 	dummyArticle2,
 	defaultDeadlineTomorrow,
-	top3SelectionDummy
+	top3SelectionDummy,
+	dummyBidder2,
+	dummyBidder3,
+	dummyBidder1,
+	dummyBidder4
 } from '@tests/dummies'
+import {generateRegularArticle} from './articleGenerator'
 
 describe('Test conferences use cases', () => {
 	test('Conference sessions should match those added at first', () => {
@@ -92,7 +97,39 @@ describe('Test conferences use cases', () => {
 	})
 
 	test('Get reviewers from a conference', () => {
-		//Pending test
-		expect(true).toEqual(true)
+		const session = new Session(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const sessions = [session]
+		const chairs = [dummyOrganizer]
+		const conference = new Conference(chairs, sessions)
+
+		const article1 = generateRegularArticle()
+		const article2 = generateRegularArticle()
+		session.addArticle(article1)
+		session.addArticle(article2)
+		session.updateState(SessionState.BIDDING)
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+		const user4 = dummyBidder4
+
+		//Bids article 1
+		session.bid(user1, article1, 'INTERESTED')
+		session.bid(user2, article1, 'NOT INTERESTED')
+		session.bid(user3, article1, 'NONE')
+		session.bid(user4, article1, 'MAYBE')
+
+		//Bids article 2
+		session.bid(user1, article2, 'INTERESTED')
+		session.bid(user2, article2, 'NOT INTERESTED')
+		session.bid(user3, article2, 'NONE')
+		session.bid(user4, article2, 'MAYBE')
+
+		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		expect([user1, user4, user3]).toEqual(conference.getReviewers())
 	})
 })
