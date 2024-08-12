@@ -3,6 +3,16 @@ import {RegularArticle, Poster} from '@app/article'
 import {Rol, User} from '@app/user'
 import {TopN} from '@app/sessionSelection'
 
+// TIME DUMMIES
+
+export const defaultDeadlineTomorrow = new Date(
+	new Date().getTime() + 1000 * 60 * 60 * 24
+) //1 day
+
+export const defaultDeadlineYesterday = new Date(
+	new Date().getTime() - 1000 * 60 * 60 * 24
+) //1 day ago
+
 // USER DUMMIES
 
 export const dummyOrganizer = new User(
@@ -82,10 +92,6 @@ export const dummyBidder4 = new User(
 export const top3SelectionDummy = new TopN(3)
 
 // SESSION DUMMIES
-
-export const defaultDeadlineTomorrow = new Date(
-	new Date().getTime() + 1000 * 60 * 60 * 24
-) //1 day
 
 export const dummySession = new RegularSession(
 	'First Session',
