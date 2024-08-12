@@ -1,7 +1,9 @@
 import {Article, ArticleType, Poster, RegularArticle} from '@app/article'
 import {Rol, User} from '@app/user'
-import {DEFAULT_SELECTION, Selection} from './selection'
+import {Selection} from './selection'
 import {Review} from './review'
+import {SessionSelection} from './sessionSelection'
+import {iterableIncludes} from './utils'
 
 export abstract class Session {
 	protected theme: string
@@ -15,7 +17,7 @@ export abstract class Session {
 	protected deadline: Date
 
 	// SELECTION state
-	protected selection: Selection
+	protected sessionSelection: SessionSelection
 
 	// ASIGMENTANDREVIEW state
 	private articlesReviews: Map<Article, Map<User, Review>>
@@ -23,13 +25,13 @@ export abstract class Session {
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
-		deadline: Date,
-		selection: Selection = DEFAULT_SELECTION
+		selection: SessionSelection,
+		deadline: Date
 	) {
 		this.theme = theme
 		this.maxArticlesAccept = maxArticlesAccept
+		this.sessionSelection = selection
 		this.deadline = deadline
-		this.selection = selection
 
 		//Init default
 		this.state = SessionState.RECEPTION
@@ -51,53 +53,16 @@ export abstract class Session {
 		return this.maxArticlesAccept
 	}
 
+	public getSelectionForm(): SessionSelection {
+		return this.sessionSelection
+	}
+
 	public getDeadline(): Date {
 		return this.deadline
 	}
 
-	public addArticle(article: Article): void {
-		this.canReceiveArticle()
-		this.articles.push(article)
-	}
-
-	private canReceiveArticle(): void {
-		//Validations to add a new article
-		this.validateMaxAllowed()
-		this.validateReceptionState()
-		this.validateDeadline()
-	}
-
-	private validateMaxAllowed(): void {
-		if (this.articles.length == this.maxArticlesAccept)
-			throw new Error('The number of items exceeds the maximum allowed')
-	}
-
-	private validateReceptionState(): void {
-		if (this.state != SessionState.RECEPTION)
-			throw new Error('This session can not recive more articles')
-	}
-
-	private validateDeadline(): void {
-		if (this.deadline < new Date())
-			throw new Error('This session has passed its deadline')
-	}
-
 	public getArticles(): Article[] {
 		return this.articles
-	}
-
-	public getArticlesReviews(): Map<Article, Map<User, Review>> {
-		return this.articlesReviews
-	}
-
-	public getBids(): Map<User, Map<Article, Interest>> {
-		return this.interestInArticles
-	}
-
-	public getBid(user: User, article: Article): Interest {
-		const userBids = this.interestInArticles.get(user)
-		if (!userBids) return 'NONE'
-		return userBids.get(article) || 'NONE'
 	}
 
 	public updateState(state: SessionState) {
@@ -131,8 +96,78 @@ export abstract class Session {
 		return (this.state = state)
 	}
 
+	//RECEPTION STAGE
+
+	public addArticle(article: Article): void {
+		this.canReceiveArticle()
+		this.articles.push(article)
+	}
+
+	private canReceiveArticle(): void {
+		//Validations to add a new article
+		this.validateMaxAllowed()
+		this.validateReceptionState()
+		this.validateDeadline()
+	}
+
+	private validateMaxAllowed(): void {
+		if (this.articles.length == this.maxArticlesAccept)
+			throw new Error('The number of items exceeds the maximum allowed')
+	}
+
+	private validateReceptionState(): void {
+		if (this.state != SessionState.RECEPTION)
+			throw new Error('This session can not recive more articles')
+	}
+
+	private validateDeadline(): void {
+		if (this.deadline < new Date())
+			throw new Error('This session has passed its deadline')
+	}
+
+	//BIDDING STAGE
+
+	public getBidsState(): BidsState {
+		return this.bidsState
+	}
+
+	public closeBids(): void {
+		this.bidsState = 'CLOSED'
+	}
+
+	public bid(user: User, article: Article, interest: Interest) {
+		// cant accept bids in closed state
+		if (this.bidsState == 'CLOSED')
+			throw new Error('The bids are closed, you can not bid anymore')
+
+		// validate article is in the session
+		if (!this.articles.includes(article as RegularArticle))
+			throw new Error('The article is not part of this session')
+
+		// validate user´s rol
+		if (user.getRol() != Rol.REVIEWER)
+			throw new Error('User must be a reviewer')
+
+		// add bid to the article
+		const userBids: Map<Article, Interest> =
+			this.interestInArticles.get(user) || new Map()
+		userBids.set(article, interest)
+		this.interestInArticles.set(user, userBids)
+	}
+
+	public getBids(): Map<User, Map<Article, Interest>> {
+		return this.interestInArticles
+	}
+
+	public getBid(user: User, article: Article): Interest {
+		const userBids = this.interestInArticles.get(user)
+		if (!userBids) return 'NONE'
+		return userBids.get(article) || 'NONE'
+	}
+
+	//ASIGMENTANDREVIEW STAGE
 	public createAssignment(): void {
-		if (Array.from(this.interestInArticles.keys()).length < 3) {
+		if (this.interestInArticles.size < 3) {
 			throw new Error('This session must to be 3 reviewers minimum')
 		}
 
@@ -154,10 +189,10 @@ export abstract class Session {
 		this.interestInArticles.forEach(
 			(value: Map<Article, Interest>, key: User) => {
 				if (
-					(Array.from(value.keys()).includes(article) &&
+					(iterableIncludes(value.keys(), article) &&
 						value.get(article) == interest) ||
 					(interest == 'NONE' &&
-						!Array.from(value.keys()).includes(article))
+						!iterableIncludes(value.keys(), article))
 				)
 					usersInterested.push(key)
 			}
@@ -189,7 +224,7 @@ export abstract class Session {
 			)
 		if (Math.abs(review.getNote() || 4) > 3)
 			throw new Error('The note must be greater -3 and lower 3')
-		if (!Array.from(this.articlesReviews.keys()).includes(article))
+		if (!iterableIncludes(this.articlesReviews.keys(), article))
 			throw new Error('The article is not part of this session')
 		if (!this.articlesReviews.get(article)?.has(user))
 			throw new Error('The user is not part of this article review')
@@ -211,32 +246,13 @@ export abstract class Session {
 		return userReviews.get(user)
 	}
 
-	public getBidsState(): BidsState {
-		return this.bidsState
+	public getArticlesReviews(): Map<Article, Map<User, Review>> {
+		return this.articlesReviews
 	}
 
-	public closeBids(): void {
-		this.bidsState = 'CLOSED'
-	}
-
-	public bid(user: User, article: Article, interest: Interest) {
-		// cant accept bids in closed state
-		if (this.bidsState == 'CLOSED')
-			throw new Error('The bids are closed, you can not bid anymore')
-
-		// validate article is in the session
-		if (!this.articles.includes(article as RegularArticle))
-			throw new Error('The article is not part of this session')
-
-		// validate user´s rol
-		if (user.getRol() != Rol.REVIEWER)
-			throw new Error('User must be a reviewer')
-
-		// add bid to the article
-		const userBids: Map<Article, Interest> =
-			this.interestInArticles.get(user) || new Map()
-		userBids.set(article, interest)
-		this.interestInArticles.set(user, userBids)
+	//SELECTION STAGE
+	public selection(): Article[] {
+		return this.sessionSelection.selection(this.articlesReviews)
 	}
 }
 
@@ -255,16 +271,13 @@ export class PosterSession extends Session {
 }
 
 export class WorkshopSession extends Session {
-	private selectionCriteria: Map<ArticleType, Selection>
-
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
 		deadline: Date,
-		selectionCriteria: Map<ArticleType, Selection>
+		selectionCriteria: SessionSelection
 	) {
-		super(theme, maxArticlesAccept, deadline)
-		this.selectionCriteria = selectionCriteria
+		super(theme, maxArticlesAccept, selectionCriteria, deadline)
 	}
 }
 

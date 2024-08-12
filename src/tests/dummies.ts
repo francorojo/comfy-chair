@@ -1,7 +1,7 @@
-import {RegularSession, Session} from '@app/session'
+import {RegularSession} from '@app/session'
 import {RegularArticle, Poster} from '@app/article'
 import {Rol, User} from '@app/user'
-import {DEFAULT_SELECTION} from '@app/selection'
+import {TopN} from '@app/sessionSelection'
 
 // USER DUMMIES
 
@@ -79,24 +79,40 @@ export const dummyBidder4 = new User(
 
 // FORM SELECTION DUMMIES
 
+export const top3SelectionDummy = new TopN(3)
+
+// SESSION DUMMIES
+
 export const defaultDeadlineTomorrow = new Date(
 	new Date().getTime() + 1000 * 60 * 60 * 24
 ) //1 day
 
-// SESSION DUMMIES
-
-export const dummyRegularSession = new RegularSession(
+export const dummySession = new RegularSession(
 	'First Session',
 	5,
-	defaultDeadlineTomorrow,
-	DEFAULT_SELECTION
+	new TopN(3),
+	defaultDeadlineTomorrow
 )
 
 export const dummyRegularSession2 = new RegularSession(
 	'Second Session',
 	5,
-	defaultDeadlineTomorrow,
-	DEFAULT_SELECTION
+	new TopN(3),
+	defaultDeadlineTomorrow
+)
+
+export const session = new RegularSession(
+	'First Session',
+	5,
+	new TopN(3),
+	defaultDeadlineTomorrow
+)
+
+export const session2 = new RegularSession(
+	'Second Session',
+	5,
+	new TopN(3),
+	defaultDeadlineTomorrow
 )
 
 // DUMMY ARTICLES

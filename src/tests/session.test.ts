@@ -8,7 +8,8 @@ import {
 	dummyBidder3,
 	dummyBidder4,
 	posterArticleDummy,
-	regularArticleDummy
+	regularArticleDummy,
+	top3SelectionDummy
 } from '@tests/dummies'
 import {generatePosterArticle, generateRegularArticle} from './articleGenerator'
 import {Review} from '@app/review'
@@ -26,7 +27,12 @@ const defaultDeadlineYesterday = new Date(
 
 describe('tests session case use', () => {
 	test('Create a new session correctly', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.addArticle(regularArticleDummy)
 		expect('Test').toEqual(session.getTheme())
 		expect(SessionState.RECEPTION).toEqual(session.getState())
@@ -35,14 +41,24 @@ describe('tests session case use', () => {
 	})
 
 	test('Create a new session with more articles allowed', () => {
-		const session = new RegularSession('Test', 0, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			0,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		expect(() => {
 			session.addArticle(regularArticleDummy)
 		}).toThrow(new Error('The number of items exceeds the maximum allowed'))
 	})
 
 	test('Create a new session, update state and try add new article', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.BIDDING)
 		expect(() => {
 			session.addArticle(regularArticleDummy)
@@ -54,7 +70,12 @@ describe('tests session case use', () => {
 
 describe('Session BIDDING state tests', () => {
 	test('Session can be updated to BIDDING if state is RECEPTION', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		expect(SessionState.RECEPTION).toEqual(session.getState())
 
 		session.updateState(SessionState.BIDDING)
@@ -63,7 +84,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session cannot be updated to BIDDING if state is ASIGMENTANDREVIEW', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
@@ -84,7 +110,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session cannot be updated to BIDDING if state is SELECTION', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.SELECTION)
 
 		expect(() => {
@@ -93,7 +124,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session cannot be updated to BIDDING if state is BIDDING', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.BIDDING)
 
 		expect(() => {
@@ -102,7 +138,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test("Session must return all users's bids in BIDDING state", () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -121,7 +162,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session bidsState should be CLOSED before being in BIDDING state', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 
@@ -133,7 +179,12 @@ describe('Session BIDDING state tests', () => {
 	})
 
 	test('Session bidsState should be CLOSED after being closed', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -145,7 +196,12 @@ describe('Session BIDDING state tests', () => {
 
 describe('Session User role in BIDDING state', () => {
 	test('Submmited articles can be viewed by an user in BIDDING state', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
 
@@ -158,7 +214,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid an existing article', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -169,7 +230,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid on more than one article', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
 
@@ -186,7 +252,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('Many users can bid on more than one article in BIDDING state', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
 		session.addArticle(article1)
@@ -206,7 +277,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User cannot bid on an article that is not in the session', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.updateState(SessionState.BIDDING)
 
@@ -216,7 +292,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can change bid on a bidded article', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -229,7 +310,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test("User default bid is NONE if it's not set", () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -239,7 +325,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid as INTERESTED in an article', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -250,7 +341,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid as NOT INTERESTED in an article', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -261,7 +357,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid as MAYBE interested in an article', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -272,7 +373,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User cant bid on an article if bidsState is CLOSED', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -284,7 +390,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('User can bid if BidsState is OPENED', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -296,7 +407,12 @@ describe('Session User role in BIDDING state', () => {
 	})
 
 	test('Session in BIDDING state add bid with a user that doesnt belongs to the REVIEWER rol', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -311,19 +427,34 @@ describe('Session User role in BIDDING state', () => {
 
 describe('RECEPTION state suite', () => {
 	test('Session should start with RECEPTION state', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		expect(SessionState.RECEPTION).toEqual(session.getState())
 	})
 
 	test('Session should be able to receive a RegularArticle in RECEPTION state', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.RECEPTION)
 		session.addArticle(regularArticleDummy)
 		expect(1).toEqual(session.getArticles().length)
 	})
 
 	test('Session should not be able to receive a RegularArticle in BIDDING state', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.BIDDING)
 		expect(() => {
 			session.addArticle(regularArticleDummy)
@@ -331,7 +462,12 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a RegularArticle in SELECTION state', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.SELECTION)
 		expect(() => {
 			session.addArticle(regularArticleDummy)
@@ -339,7 +475,12 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a RegularArticle in ASIGMENTANDREVIEW state', () => {
-		const session = new RegularSession('Test', 4, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			4,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
 		session.updateState(SessionState.BIDDING)
@@ -358,7 +499,12 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should be able to receive a PosterArticle in RECEPTION state', () => {
-		const session = new PosterSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new PosterSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.RECEPTION)
 		session.addArticle(posterArticleDummy)
 
@@ -367,7 +513,12 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a PosterArticle in BIDDING state', () => {
-		const session = new PosterSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new PosterSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.BIDDING)
 		expect(() => {
 			session.addArticle(posterArticleDummy)
@@ -375,7 +526,12 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a PosterArticle in SELECTION state', () => {
-		const session = new PosterSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new PosterSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.updateState(SessionState.SELECTION)
 		expect(() => {
 			session.addArticle(posterArticleDummy)
@@ -383,7 +539,12 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a PosterArticle in ASIGMENTANDREVIEW state', () => {
-		const session = new PosterSession('Test', 4, defaultDeadlineTomorrow)
+		const session = new PosterSession(
+			'Test',
+			4,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generatePosterArticle()
 		session.addArticle(article)
@@ -403,7 +564,12 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a RegularArticle when the deadline is reached', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineYesterday)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineYesterday
+		)
 
 		expect(() => {
 			session.addArticle(regularArticleDummy)
@@ -411,7 +577,12 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a PosterArticle when the deadline is reached', () => {
-		const session = new PosterSession('Test', 1, defaultDeadlineYesterday)
+		const session = new PosterSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineYesterday
+		)
 
 		expect(() => {
 			session.addArticle(posterArticleDummy)
@@ -419,13 +590,23 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should be able to receive a RegularArticle when the deadline is not reached', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.addArticle(regularArticleDummy)
 		expect(1).toEqual(session.getArticles().length)
 	})
 
 	test('Session should be able to receive a PosterArticle when the deadline is not reached', () => {
-		const session = new PosterSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new PosterSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 		session.addArticle(posterArticleDummy)
 		expect(1).toEqual(session.getArticles().length)
 		expect(Poster).toEqual(session.getArticles()[0].constructor)
@@ -436,7 +617,12 @@ describe('RECEPTION state suite', () => {
 
 describe('ASIGMENTANDREVIEW state suite', () => {
 	test('Session assigns users for review in ASIGMENTANDREVIEW state', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
@@ -458,7 +644,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add review and validate that later', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
@@ -480,7 +671,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add two reviews and validate these later', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
@@ -518,7 +714,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add review with a note out of permitted range', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
@@ -540,7 +741,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add review with an article without session', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		const article2 = generateRegularArticle()
@@ -563,7 +769,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add review with a user that doesnt belongs to this session', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
@@ -585,7 +796,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Should throw an exception when session in RECEPTION try update ASIGMENTANDREVIEW state', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		expect(() => {
 			session.updateState(SessionState.ASIGMENTANDREVIEW)
@@ -599,7 +815,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 
 describe('ASIGMENTANDREVIEW state suite', () => {
 	test('Session assigns users for review in ASIGMENTANDREVIEW state', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
@@ -621,7 +842,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add review and validate that later', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
@@ -643,7 +869,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add two reviews and validate these later', () => {
-		const session = new RegularSession('Test', 2, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article1 = generateRegularArticle()
 		const article2 = generateRegularArticle()
@@ -681,7 +912,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add review with a note out of permitted range', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
@@ -703,7 +939,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add review with an article without session', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		const article2 = generateRegularArticle()
@@ -726,7 +967,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session in ASIGMENTANDREVIEW state add review with a user that doesnt belongs to this session', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
@@ -748,7 +994,12 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Should throw an exception when session in RECEPTION try update ASIGMENTANDREVIEW state', () => {
-		const session = new RegularSession('Test', 1, defaultDeadlineTomorrow)
+		const session = new RegularSession(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
 
 		expect(() => {
 			session.updateState(SessionState.ASIGMENTANDREVIEW)
