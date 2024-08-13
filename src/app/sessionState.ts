@@ -1,4 +1,5 @@
 import {Article} from './article'
+import {Review} from './review'
 import {Interest, BidsState, Session} from './session'
 import {Rol, User} from './user'
 import {compareInterests} from './utils'
@@ -50,6 +51,8 @@ export abstract class SessionState {
 	public abstract areBidsOpen(): boolean
 
 	public abstract closeBids(): void
+
+	public abstract addReview(article: Article, review: Review): void
 }
 
 export class Reception extends SessionState {
@@ -106,6 +109,10 @@ export class Reception extends SessionState {
 
 	public startReviewAndAssignment(): void {
 		throw new Error('This session is not in BIDDING state')
+	}
+
+	public addReview(article: Article, review: Review): void {
+		throw new Error('The review must be added in ASIGMENTANDREVIEW state')
 	}
 
 	public startSelection(): void {
@@ -172,6 +179,10 @@ export class Bidding extends SessionState {
 	}
 	public startReviewAndAssignment(): void {
 		this.session.setState(new AssignmentAndReview(this.session, this.bids))
+	}
+
+	public addReview(article: Article, review: Review): void {
+		throw new Error('The review must be added in ASIGMENTANDREVIEW state')
 	}
 
 	public startSelection(): void {
@@ -247,6 +258,17 @@ export class AssignmentAndReview extends SessionState {
 			.map(([user, _]) => user)
 	}
 
+	public addReview(article: Article, review: Review): void {
+		if (Math.abs(review.getNote() || 4) > 3)
+			throw new Error('The note must be greater -3 and lower 3')
+		if (!this.session.isArticlePresent(article))
+			throw new Error('The article is not part of this session')
+		if (!article.isReviewer(review.getReviewer()))
+			throw new Error('The user is not part of this article review')
+
+		article.addReview(review)
+	}
+
 	public startSelection(): void {
 		this.session.setState(new Selection(this.session))
 	}
@@ -292,6 +314,10 @@ export class Selection extends SessionState {
 		throw new Error(
 			'This session can not be updated to ASSIGNMENTANDREVIEW'
 		)
+	}
+
+	public addReview(article: Article, review: Review): void {
+		throw new Error('The review must be added in ASIGMENTANDREVIEW state')
 	}
 
 	public startSelection(): void {

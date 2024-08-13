@@ -110,18 +110,7 @@ export class Session {
 	//ASIGMENTANDREVIEW STAGE
 
 	public addReview(article: Article, review: Review): void {
-		if (!this.isAssignmentAndReviewState())
-			throw new Error(
-				'The review must be added in ASIGMENTANDREVIEW state'
-			)
-		if (Math.abs(review.getNote() || 4) > 3)
-			throw new Error('The note must be greater -3 and lower 3')
-		if (!this.articles.includes(article))
-			throw new Error('The article is not part of this session')
-		if (!article.isReviewer(review.getReviewer()))
-			throw new Error('The user is not part of this article review')
-
-		article.addReview(review)
+		this.state.addReview(article, review)
 	}
 
 	public getReview(article: Article, user: User): Review {
@@ -132,9 +121,8 @@ export class Session {
 		this.state.closeBids()
 	}
 
-	public bid(user: User, article: Article, interest: Interest) {
+	public bid(user: User, article: Article, interest: Interest): void {
 		this.state.bid(user, article, interest)
-		return article.getReview(user)
 	}
 
 	//SELECTION STAGE
