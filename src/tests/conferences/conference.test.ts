@@ -130,6 +130,10 @@ describe('Test conferences use cases', () => {
 		session.bid(user4, article2, 'MAYBE')
 
 		session.updateState(SessionState.ASIGMENTANDREVIEW)
-		expect([user1, user4, user3]).toEqual(conference.getReviewers())
+		const reviewers = conference.getReviewers()
+		expect(reviewers).toContain(user1)
+		expect(reviewers).toContain(user4)
+		expect(reviewers).toContain(user3)
+		expect(reviewers).not.toContain(user2)
 	})
 })

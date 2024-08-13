@@ -169,7 +169,7 @@ export class Session {
 		}
 
 		for (let article of this.articles) {
-			let users: User[] = this.getReviewersForArticle(article)
+			let users: User[] = this.getReviewersForArticle(article).slice(0, 3)
 			article.setReviewers(users)
 		}
 	}
@@ -217,7 +217,7 @@ export class Session {
 			)
 		if (Math.abs(review.getNote() || 4) > 3)
 			throw new Error('The note must be greater -3 and lower 3')
-		if (!iterableIncludes(this.articlesReviews.keys(), article))
+		if (!this.articles.includes(article))
 			throw new Error('The article is not part of this session')
 		if (!article.isReviewer(review.getReviewer()))
 			throw new Error('The user is not part of this article review')
@@ -225,9 +225,9 @@ export class Session {
 		article.addReview(review)
 	}
 
-	public getReview(article: Article, user: User): Review | undefined {
-		if (!this.articlesReviews.has(article))
-			throw new Error('The article is not part of this sesion')
+	public getReview(article: Article, user: User): Review {
+		if (!this.articles.includes(article))
+			throw new Error('The article is not part of this session')
 
 		return article.getReview(user)
 	}
@@ -238,7 +238,7 @@ export class Session {
 
 	//SELECTION STAGE
 	public selection(): Article[] {
-		return this.sessionSelection.selection(this.articlesReviews)
+		return this.sessionSelection.selection(this.getArticles())
 	}
 }
 

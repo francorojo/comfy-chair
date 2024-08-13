@@ -72,10 +72,18 @@ export abstract class Article {
 		}
 	}
 
+	public getReviews(): Review[] {
+		return this.reviews
+	}
+
 	public getReview(reviewer: User): Review {
 		return this.reviews.filter(
 			(review) => review.getReviewer() === reviewer
 		)[0]
+	}
+
+	public getReviewsValue(): number {
+		return this.reviews.reduce((sum, review) => sum + review.getNote(), 0)
 	}
 }
 
