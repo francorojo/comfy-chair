@@ -5,9 +5,10 @@ import {
 	dummyBidder1,
 	dummyBidder2,
 	dummyBidder3,
+	posterArticleDummy,
 	top3SelectionDummy
 } from '@tests/utils/dummies'
-import {generateRegularArticle} from '../utils/articleGenerator'
+import {generatePoster, generateRegularArticle} from '../utils/articleGenerator'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -63,6 +64,16 @@ describe('Session BIDDING state tests', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+
+		const posterArticleDummy = generatePoster()
+
+		session.addArticle(posterArticleDummy)
+		session.startBidding()
+		session.bid(dummyBidder1, posterArticleDummy, 'INTERESTED')
+		session.bid(dummyBidder2, posterArticleDummy, 'NOT INTERESTED')
+		session.bid(dummyBidder3, posterArticleDummy, 'NOT INTERESTED')
+
+		session.startReviewAndAssignment()
 		session.startSelection()
 
 		expect(() => {
@@ -355,7 +366,7 @@ describe('Session User role in BIDDING state', () => {
 		expect(session.areBidsOpen()).toBe(true)
 
 		session.bid(dummyBidder1, article, 'INTERESTED')
-		expect('INTERESTED').toBe(session.getBid(dummyBidder1, article))
+		expect(session.getBid(dummyBidder1, article)).toBe('INTERESTED')
 	})
 
 	test('Session in BIDDING state add bid with a user that doesnt belongs to the REVIEWER rol', () => {

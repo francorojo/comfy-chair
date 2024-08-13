@@ -64,6 +64,14 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+
+		session.addArticle(posterArticleDummy)
+		session.startBidding()
+		session.bid(dummyBidder1, posterArticleDummy, 'INTERESTED')
+		session.bid(dummyBidder2, posterArticleDummy, 'NOT INTERESTED')
+		session.bid(dummyBidder3, posterArticleDummy, 'NOT INTERESTED')
+
+		session.startReviewAndAssignment()
 		session.startSelection()
 		expect(() => {
 			session.addArticle(regularArticleDummy)

@@ -1,9 +1,8 @@
 import {Article} from '@app/article'
-import {Rol, User} from '@app/user'
-import {Reception as ReceptionState, SessionState} from './sessionState'
+import {User} from '@app/user'
+import {Bids, Reception as ReceptionState, SessionState} from './sessionState'
 import {Review} from './review'
 import {SessionSelection} from './sessionSelection'
-import {compareInterests} from './utils'
 
 export class Session {
 	private theme: string
@@ -13,7 +12,6 @@ export class Session {
 	private articles: Article[]
 
 	// BIDDING state
-	private interestInArticles: Map<Article, Map<User, Interest>>
 	private deadline: Date
 
 	public constructor(
@@ -30,7 +28,6 @@ export class Session {
 		//Init default
 		this.state = new ReceptionState(this)
 		this.articles = []
-		this.interestInArticles = new Map()
 	}
 
 	public getTheme(): string {
@@ -94,20 +91,16 @@ export class Session {
 		this.state.startSelection()
 	}
 
-	public getBids(): Map<User, Map<Article, Interest>> {
+	public getBids(): Bids {
 		return this.state.getBids()
 	}
 
 	public getBid(user: User, article: Article): Interest {
-		const userBids = this.interestInArticles.get(article)
-		if (!userBids) return 'NONE'
-		return userBids.get(user) || 'NONE'
+		return this.state.getBid(user, article)
 	}
 
 	public getBidders(): User[] {
-		return Array.from(this.interestInArticles).flatMap(([_, b]) =>
-			Array.from(b.keys())
-		)
+		return this.state.getBidders()
 	}
 
 	public areBidsOpen(): boolean {
@@ -115,30 +108,9 @@ export class Session {
 	}
 
 	//ASIGMENTANDREVIEW STAGE
-	public createAssignment(): void {
-		if (this.getBidders().length < 3) {
-			throw new Error('This session must have 3 reviewers minimum')
-		}
-
-		for (let article of this.articles) {
-			let users: User[] = this.getOrderedInteresteds(article).slice(0, 3)
-			article.setReviewers(users)
-		}
-	}
-
-	public getOrderedInteresteds(article: Article): User[] {
-		const interests = this.interestInArticles.get(article)
-
-		if (!interests)
-			throw new Error('The article has not enough interesteds')
-
-		return Array.from(interests.entries())
-			.sort(([userA, iA], [userB, iB]) => compareInterests(iA, iB))
-			.map(([user, i]) => user)
-	}
 
 	public addReview(article: Article, review: Review): void {
-		if (this.isAssignmentAndReviewState())
+		if (!this.isAssignmentAndReviewState())
 			throw new Error(
 				'The review must be added in ASIGMENTANDREVIEW state'
 			)
@@ -150,6 +122,10 @@ export class Session {
 			throw new Error('The user is not part of this article review')
 
 		article.addReview(review)
+	}
+
+	public getReview(article: Article, user: User): Review {
+		return article.getReview(user)
 	}
 
 	public closeBids(): void {

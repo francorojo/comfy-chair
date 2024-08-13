@@ -1,12 +1,15 @@
 import {Article} from './article'
 import {Interest, BidsState, Session} from './session'
 import {Rol, User} from './user'
+import {compareInterests} from './utils'
 
 export type ValidState =
 	| 'RECEPTION'
 	| 'BIDDING'
 	| 'ASSIGNMENTANDREVIEW'
 	| 'SELECTION'
+
+export type Bids = Map<Article, Map<User, Interest>>
 
 export abstract class SessionState {
 	protected session: Session
@@ -36,7 +39,11 @@ export abstract class SessionState {
 
 	public abstract startSelection(): void
 
-	public abstract getBids(): Map<User, Map<Article, Interest>>
+	public abstract getBidders(): User[]
+
+	public abstract getBids(): Bids
+
+	public abstract getBid(user: User, article: Article): Interest
 
 	public abstract bid(user: User, article: Article, interest: Interest): void
 
@@ -73,7 +80,15 @@ export class Reception extends SessionState {
 		this.session.setState(new Bidding(this.session))
 	}
 
-	public getBids(): Map<User, Map<Article, Interest>> {
+	public getBidders(): User[] {
+		throw new Error('This session is not in BIDDING state')
+	}
+
+	public getBids(): Bids {
+		throw new Error('This session is not in BIDDING state')
+	}
+
+	public getBid(user: User, article: Article): Interest {
 		throw new Error('This session is not in BIDDING state')
 	}
 
@@ -99,13 +114,12 @@ export class Reception extends SessionState {
 }
 
 export class Bidding extends SessionState {
-	// BIDDING state
-	private interestInArticles: Map<User, Map<Article, Interest>>
+	private bids: Bids
 	private bidsState: BidsState
 
 	public constructor(session: Session) {
 		super(session)
-		this.interestInArticles = new Map()
+		this.bids = new Map()
 		this.bidsState = 'OPENED'
 	}
 
@@ -113,13 +127,21 @@ export class Bidding extends SessionState {
 		throw new Error('This session can not receive more articles')
 	}
 
-	public getBids(): Map<User, Map<Article, Interest>> {
-		return this.interestInArticles
+	public getBidders(): User[] {
+		return Array.from(this.bids).flatMap(([_, b]) => Array.from(b.keys()))
+	}
+
+	public getBids(): Bids {
+		return this.bids
+	}
+
+	public getBid(user: User, article: Article): Interest {
+		return this.bids.get(article)?.get(user) || 'NONE'
 	}
 
 	public bid(user: User, article: Article, interest: Interest): void {
 		// cant accept bids in closed state
-		if (this.bidsState == 'CLOSED')
+		if (!this.areBidsOpen())
 			throw new Error('The bids are closed, you can not bid anymore')
 
 		// validate article is in the session
@@ -131,10 +153,10 @@ export class Bidding extends SessionState {
 			throw new Error('User must be a reviewer')
 
 		// add bid to the article
-		const userBids: Map<Article, Interest> =
-			this.interestInArticles.get(user) || new Map()
-		userBids.set(article, interest)
-		this.interestInArticles.set(user, userBids)
+		const userBids: Map<User, Interest> =
+			this.bids.get(article) || new Map()
+		userBids.set(user, interest)
+		this.bids.set(article, userBids)
 	}
 
 	public areBidsOpen(): boolean {
@@ -149,7 +171,7 @@ export class Bidding extends SessionState {
 		throw new Error('This session can not be updated to BIDDING')
 	}
 	public startReviewAndAssignment(): void {
-		this.session.setState(new AssignmentAndReview(this.session))
+		this.session.setState(new AssignmentAndReview(this.session, this.bids))
 	}
 
 	public startSelection(): void {
@@ -158,16 +180,27 @@ export class Bidding extends SessionState {
 }
 
 export class AssignmentAndReview extends SessionState {
-	public constructor(session: Session) {
+	private bids: Bids
+
+	public constructor(session: Session, bids: Bids) {
 		super(session)
-		this.session.createAssignment()
+		this.bids = bids
+		this.createAssignment()
 	}
 
 	public canReceiveArticle(): void {
 		throw new Error('This session can not receive more articles')
 	}
 
-	public getBids(): Map<User, Map<Article, Interest>> {
+	public getBidders(): User[] {
+		return Array.from(this.bids).flatMap(([_, b]) => Array.from(b.keys()))
+	}
+
+	public getBids(): Bids {
+		throw new Error('This session is not in BIDDING state')
+	}
+
+	public getBid(user: User, article: Article): Interest {
 		throw new Error('This session is not in BIDDING state')
 	}
 
@@ -192,6 +225,28 @@ export class AssignmentAndReview extends SessionState {
 		)
 	}
 
+	public createAssignment(): void {
+		if (this.getBidders().length < 3) {
+			throw new Error('This session must have 3 reviewers minimum')
+		}
+
+		for (let article of this.session.getArticles()) {
+			let users: User[] = this.getOrderedInteresteds(article).slice(0, 3)
+			article.setReviewers(users)
+		}
+	}
+
+	private getOrderedInteresteds(article: Article): User[] {
+		const interests = this.bids.get(article)
+
+		if (!interests)
+			throw new Error('The article has not enough interesteds')
+
+		return Array.from(interests.entries())
+			.sort(([_, iA], [__, iB]) => compareInterests(iA, iB))
+			.map(([user, _]) => user)
+	}
+
 	public startSelection(): void {
 		this.session.setState(new Selection(this.session))
 	}
@@ -206,7 +261,15 @@ export class Selection extends SessionState {
 		throw new Error('This session can not receive more articles')
 	}
 
-	public getBids(): Map<User, Map<Article, Interest>> {
+	public getBidders(): User[] {
+		throw new Error('This session is not in BIDDING state')
+	}
+
+	public getBids(): Bids {
+		throw new Error('This session is not in BIDDING state')
+	}
+
+	public getBid(user: User, article: Article): Interest {
 		throw new Error('This session is not in BIDDING state')
 	}
 

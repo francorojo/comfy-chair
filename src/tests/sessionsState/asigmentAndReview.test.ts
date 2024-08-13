@@ -193,6 +193,8 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user4, article, 'MAYBE') //2
 		session.startReviewAndAssignment()
 
+		session.addReview(article, new Review(user1, 3, 'Excelent'))
+
 		expect(() => {
 			session.addReview(article, new Review(user2, 3, 'Excelent'))
 		}).toThrow(new Error('The user is not part of this article review'))
