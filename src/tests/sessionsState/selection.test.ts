@@ -1,7 +1,10 @@
 import {Review} from '@app/review'
-import {RegularSession} from '@app/session'
-import {TopN} from '@app/sessionSelection'
-import {generateRegularArticle} from '@tests/utils/articleGenerator'
+import {PosterSession, RegularSession} from '@app/session'
+import {MinimumValue, TopN} from '@app/sessionSelection'
+import {
+	generatePoster,
+	generateRegularArticle
+} from '@tests/utils/articleGenerator'
 import {
 	top3SelectionDummy,
 	defaultDeadlineTomorrow,
@@ -230,19 +233,200 @@ describe('SELECTION state test suite', () => {
 
 describe('Selection behaviour tests suite', () => {
 	test('Regular Session should return the top 2 articles in selection', () => {
-		const regularSession = new RegularSession(
+		const session = new RegularSession(
 			'Test',
-			1,
+			3,
 			new TopN(2),
 			defaultDeadlineTomorrow
 		)
+		const article1 = generateRegularArticle()
+		const article2 = generateRegularArticle()
+		const article3 = generateRegularArticle()
+		session.addArticle(article1)
+		session.addArticle(article2)
+		session.addArticle(article3)
+		session.startBidding()
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+
+		session.bid(user1, article1, 'INTERESTED') //1
+		session.bid(user2, article1, 'NOT INTERESTED') //3
+		session.bid(user3, article1, 'MAYBE') //2
+
+		session.bid(user3, article2, 'INTERESTED') //1
+		session.bid(user1, article2, 'NOT INTERESTED') //3
+		session.bid(user2, article2, 'MAYBE') //2
+
+		session.bid(user2, article3, 'INTERESTED') //1
+		session.bid(user3, article3, 'NOT INTERESTED') //3
+		session.bid(user1, article3, 'MAYBE') //2
+
+		session.startReviewAndAssignment()
+
+		session.addReview(article1, new Review(user1, 3, 'Excelent'))
+		session.addReview(article1, new Review(user2, 3, 'Excelent'))
+		session.addReview(article1, new Review(user3, 3, 'Excelent'))
+
+		session.addReview(article2, new Review(user1, 2, 'Good'))
+		session.addReview(article2, new Review(user2, 2, 'Good'))
+		session.addReview(article2, new Review(user3, 2, 'Good'))
+
+		session.addReview(article3, new Review(user1, 1, 'Poor'))
+		session.addReview(article3, new Review(user2, 1, 'Poor'))
+		session.addReview(article3, new Review(user3, 1, 'Poor'))
+
+		session.startSelection()
+
+		expect(session.selection()).toEqual([article1, article2])
 	})
 
-	test('Poster Session should return the top 2 posters in selection', () => {})
+	test('Poster Session should return the top 2 posters in selection', () => {
+		const session = new PosterSession(
+			'Test',
+			3,
+			new TopN(2),
+			defaultDeadlineTomorrow
+		)
+		const poster1 = generatePoster()
+		const poster2 = generatePoster()
+		const poster3 = generatePoster()
+		session.addArticle(poster1)
+		session.addArticle(poster2)
+		session.addArticle(poster3)
+		session.startBidding()
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
 
-	test('Regular Session should return the minimum value 10 of articles in selection', () => {})
+		session.bid(user1, poster1, 'INTERESTED') //1
+		session.bid(user2, poster1, 'NOT INTERESTED') //3
+		session.bid(user3, poster1, 'MAYBE') //2
 
-	test('Poster Session should return the minimum value 5 of posters in selection', () => {})
+		session.bid(user3, poster2, 'INTERESTED') //1
+		session.bid(user1, poster2, 'NOT INTERESTED') //3
+		session.bid(user2, poster2, 'MAYBE') //2
+
+		session.bid(user2, poster3, 'INTERESTED') //1
+		session.bid(user3, poster3, 'NOT INTERESTED') //3
+		session.bid(user1, poster3, 'MAYBE') //2
+
+		session.startReviewAndAssignment()
+
+		session.addReview(poster1, new Review(user1, 3, 'Excelent'))
+		session.addReview(poster1, new Review(user2, 3, 'Excelent'))
+		session.addReview(poster1, new Review(user3, 3, 'Excelent'))
+
+		session.addReview(poster2, new Review(user1, 2, 'Good'))
+		session.addReview(poster2, new Review(user2, 2, 'Good'))
+		session.addReview(poster2, new Review(user3, 2, 'Good'))
+
+		session.addReview(poster3, new Review(user1, 1, 'Poor'))
+		session.addReview(poster3, new Review(user2, 1, 'Poor'))
+		session.addReview(poster3, new Review(user3, 1, 'Poor'))
+
+		session.startSelection()
+
+		expect(session.selection()).toEqual([poster1, poster2])
+	})
+
+	test('Regular Session should return the minimum value 8 of articles in selection', () => {
+		const session = new RegularSession(
+			'Test',
+			3,
+			new MinimumValue(8),
+			defaultDeadlineTomorrow
+		)
+		const article1 = generateRegularArticle()
+		const article2 = generateRegularArticle()
+		const article3 = generateRegularArticle()
+		session.addArticle(article1)
+		session.addArticle(article2)
+		session.addArticle(article3)
+		session.startBidding()
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+
+		session.bid(user1, article1, 'INTERESTED') //1
+		session.bid(user2, article1, 'NOT INTERESTED') //3
+		session.bid(user3, article1, 'MAYBE') //2
+
+		session.bid(user3, article2, 'INTERESTED') //1
+		session.bid(user1, article2, 'NOT INTERESTED') //3
+		session.bid(user2, article2, 'MAYBE') //2
+
+		session.bid(user2, article3, 'INTERESTED') //1
+		session.bid(user3, article3, 'NOT INTERESTED') //3
+		session.bid(user1, article3, 'MAYBE') //2
+
+		session.startReviewAndAssignment()
+
+		session.addReview(article1, new Review(user1, 3, 'Excelent'))
+		session.addReview(article1, new Review(user2, 3, 'Excelent'))
+		session.addReview(article1, new Review(user3, 3, 'Excelent'))
+
+		session.addReview(article2, new Review(user1, 2, 'Good'))
+		session.addReview(article2, new Review(user2, 2, 'Good'))
+		session.addReview(article2, new Review(user3, 2, 'Good'))
+
+		session.addReview(article3, new Review(user1, 1, 'Poor'))
+		session.addReview(article3, new Review(user2, 1, 'Poor'))
+		session.addReview(article3, new Review(user3, 1, 'Poor'))
+
+		session.startSelection()
+
+		expect(session.selection()).toEqual([article1])
+	})
+
+	test('Poster Session should return the minimum value 5 of posters in selection', () => {
+		const session = new PosterSession(
+			'Test',
+			3,
+			new TopN(2),
+			defaultDeadlineTomorrow
+		)
+		const poster1 = generatePoster()
+		const poster2 = generatePoster()
+		const poster3 = generatePoster()
+		session.addArticle(poster1)
+		session.addArticle(poster2)
+		session.addArticle(poster3)
+		session.startBidding()
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+
+		session.bid(user1, poster1, 'INTERESTED') //1
+		session.bid(user2, poster1, 'NOT INTERESTED') //3
+		session.bid(user3, poster1, 'MAYBE') //2
+
+		session.bid(user3, poster2, 'INTERESTED') //1
+		session.bid(user1, poster2, 'NOT INTERESTED') //3
+		session.bid(user2, poster2, 'MAYBE') //2
+
+		session.bid(user2, poster3, 'INTERESTED') //1
+		session.bid(user3, poster3, 'NOT INTERESTED') //3
+		session.bid(user1, poster3, 'MAYBE') //2
+
+		session.startReviewAndAssignment()
+
+		session.addReview(poster1, new Review(user1, 3, 'Excelent'))
+		session.addReview(poster1, new Review(user2, 3, 'Excelent'))
+		session.addReview(poster1, new Review(user3, 3, 'Excelent'))
+
+		session.addReview(poster2, new Review(user1, 2, 'Good'))
+		session.addReview(poster2, new Review(user2, 2, 'Good'))
+		session.addReview(poster2, new Review(user3, 2, 'Good'))
+
+		session.addReview(poster3, new Review(user1, 1, 'Poor'))
+		session.addReview(poster3, new Review(user2, 1, 'Poor'))
+		session.addReview(poster3, new Review(user3, 1, 'Poor'))
+
+		session.startSelection()
+
+		expect(session.selection()).toEqual([poster1, poster2])
+	})
 
 	test('Workshop Session should return the top 3 regular articles and the top 2 posters in selection all in one array', () => {})
 
