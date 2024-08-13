@@ -82,7 +82,7 @@ export abstract class Article {
 		)[0]
 	}
 
-	public getReviewsValue(): number {
+	public getReviewsTotalNote(): number {
 		return this.reviews.reduce((sum, review) => sum + review.getNote(), 0)
 	}
 }
