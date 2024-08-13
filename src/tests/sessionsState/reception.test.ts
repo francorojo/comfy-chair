@@ -11,6 +11,7 @@ import {
 	top3SelectionDummy
 } from '@tests/utils/dummies'
 import {generateRegularArticle} from '../utils/articleGenerator'
+import {Review} from '@app/review'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -222,5 +223,96 @@ describe('RECEPTION state suite', () => {
 		session.addArticle(posterArticleDummy)
 		expect(1).toEqual(session.getArticles().length)
 		expect(Poster).toEqual(session.getArticles()[0].constructor)
+	})
+
+	test('Session should not be able to get bidders in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.getBidders()
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to get bids in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.getBids()
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to get bid in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.getBid(dummyBidder1, regularArticleDummy)
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to bid in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.bid(dummyBidder1, regularArticleDummy, 'INTERESTED')
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to close bids in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.closeBids()
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to add a review in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.addReview(
+				regularArticleDummy,
+				new Review(dummyAuthor1, 2, 'Excelente')
+			)
+		}).toThrow(
+			new Error('The review must be added in ASIGMENTANDREVIEW state')
+		)
+	})
+
+	test('Session should not be able to start selection in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.startSelection()
+		}).toThrow(
+			new Error('This session is not in ASSIGNMENTANDREVIEW state')
+		)
 	})
 })

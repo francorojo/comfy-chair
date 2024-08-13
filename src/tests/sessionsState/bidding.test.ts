@@ -9,6 +9,7 @@ import {
 	top3SelectionDummy
 } from '@tests/utils/dummies'
 import {generatePoster, generateRegularArticle} from '../utils/articleGenerator'
+import {Review} from '@app/review'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -383,5 +384,59 @@ describe('Session User role in BIDDING state', () => {
 		expect(() => {
 			session.bid(user1, article, 'INTERESTED')
 		}).toThrow(new Error('User must be a reviewer'))
+	})
+
+	test('Session should be able to get Bidders in BIDDING state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.startBidding()
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		session.bid(user1, article, 'INTERESTED')
+		session.bid(user2, article, 'NOT INTERESTED')
+		expect(session.isBiddingState()).toBeTruthy()
+		expect(session.getBidders()).toEqual([user1, user2])
+		expect(session.getBidders()).toContain(user1)
+		expect(session.getBidders()).toContain(user2)
+		expect(session.getBidders()).toHaveLength(2)
+	})
+
+	test('Session should not be able to add review in BIDDING state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.startBidding()
+		const user1 = dummyAuthor1
+		expect(() => {
+			session.addReview(article, new Review(user1, 5, 'Excellent work!'))
+		}).toThrow(
+			new Error('The review must be added in ASIGMENTANDREVIEW state')
+		)
+	})
+
+	test('Session should not be able to start selection in BIDDING state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.startBidding()
+		expect(() => {
+			session.startSelection()
+		}).toThrow(new Error('Cant start selection in BIDDING state'))
 	})
 })
