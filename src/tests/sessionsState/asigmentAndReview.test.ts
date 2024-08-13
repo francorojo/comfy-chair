@@ -47,6 +47,30 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	test('Session assigns users for review in ASIGMENTANDREVIEW state', () => {
 		const session = new RegularSession(
 			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.startBidding()
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+		const user4 = dummyBidder4
+
+		session.bid(user1, article, 'INTERESTED') //1
+		session.bid(user2, article, 'NOT INTERESTED') //4 This user is discarded, last in sorting, max 3
+		session.bid(user3, article, 'NONE') //3
+		session.bid(user4, article, 'MAYBE') //2
+		session.startReviewAndAssignment()
+
+		expect(session.isAssignmentAndReviewState()).toBeTruthy()
+	})
+
+	test('Session assigns users for review in ASIGMENTANDREVIEW state', () => {
+		const session = new RegularSession(
+			'Test',
 			1,
 			top3SelectionDummy,
 			defaultDeadlineTomorrow

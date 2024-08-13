@@ -1,4 +1,4 @@
-import {RegularSession, Session} from '@app/session'
+import {RegularSession} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,

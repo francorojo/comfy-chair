@@ -1,11 +1,6 @@
 import {Article, Poster, RegularArticle} from '@app/article'
 import {User} from '@app/user'
-import {
-	Bids,
-	Interest,
-	Reception as ReceptionState,
-	SessionState
-} from './sessionState'
+import {Bids, Interest, Reception, SessionState} from './sessionState'
 import {Review} from './review'
 import {SessionSelection} from './sessionSelection'
 
@@ -33,7 +28,7 @@ export abstract class Session {
 		this.deadline = deadline
 
 		//Init default
-		this.state = new ReceptionState(this)
+		this.state = new Reception(this)
 		this.articles = []
 	}
 
