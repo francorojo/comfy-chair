@@ -13,8 +13,8 @@ import {
 	dummyBidder3,
 	dummyBidder1,
 	dummyBidder4
-} from '@tests/dummies'
-import {generateRegularArticle} from './articleGenerator'
+} from '@tests/utils/dummies'
+import {generateRegularArticle} from '../utils/articleGenerator'
 
 describe('Test conferences use cases', () => {
 	test('Conference sessions should match those added at first', () => {

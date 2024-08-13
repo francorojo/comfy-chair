@@ -2,8 +2,8 @@ import {Article} from '@app/article'
 import {Review} from '@app/review'
 import {TopN, MinimumValue} from '@app/sessionSelection'
 import {User} from '@app/user'
-import {generateRegularArticle} from './articleGenerator'
-import {dummyBidder1, dummyBidder2, dummyBidder3} from './dummies'
+import {generateRegularArticle} from '../utils/articleGenerator'
+import {dummyBidder1, dummyBidder2, dummyBidder3} from '../utils/dummies'
 
 describe('test sessionSelection case use', () => {
 	test('TopN selection should return the first N articles ordered by its reviews', () => {

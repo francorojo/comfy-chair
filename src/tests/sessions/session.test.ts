@@ -10,8 +10,8 @@ import {
 	posterArticleDummy,
 	regularArticleDummy,
 	top3SelectionDummy
-} from '@tests/dummies'
-import {generateRegularArticle} from './articleGenerator'
+} from '@tests/utils/dummies'
+import {generateRegularArticle} from '../utils/articleGenerator'
 import {Review} from '@app/review'
 import {User} from '@app/user'
 import {TopN} from '@app/sessionSelection'
