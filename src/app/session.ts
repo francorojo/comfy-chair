@@ -16,9 +16,6 @@ export class Session {
 	private bidsState: BidsState
 	private deadline: Date
 
-	// ASIGMENTANDREVIEW state
-	private articlesReviews: Map<Article, Map<User, Review>>
-
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
@@ -35,7 +32,6 @@ export class Session {
 		this.articles = []
 		this.interestInArticles = new Map()
 		this.bidsState = 'CLOSED'
-		this.articlesReviews = new Map()
 	}
 
 	public getTheme(): string {
@@ -230,10 +226,6 @@ export class Session {
 			throw new Error('The article is not part of this session')
 
 		return article.getReview(user)
-	}
-
-	public getArticlesReviews(): Map<Article, Map<User, Review>> {
-		return this.articlesReviews
 	}
 
 	//SELECTION STAGE
