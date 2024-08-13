@@ -3,8 +3,7 @@ import {User} from '@app/user'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
-	dummyAuthor3,
-	dummyOrganizer
+	dummyAuthor3
 } from '@tests/utils/dummies'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
