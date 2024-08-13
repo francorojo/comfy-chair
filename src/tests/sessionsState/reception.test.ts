@@ -1,5 +1,5 @@
 import {Poster} from '@app/article'
-import {Session, SessionState} from '@app/session'
+import {Session} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
@@ -11,6 +11,7 @@ import {
 	top3SelectionDummy
 } from '@tests/utils/dummies'
 import {generateRegularArticle} from '../utils/articleGenerator'
+import {Review} from '@app/review'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -30,7 +31,7 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		expect(SessionState.RECEPTION).toEqual(session.getState())
+		expect(session.isReceptionState()).toBeTruthy()
 	})
 
 	test('Session should be able to receive a RegularArticle in RECEPTION state', () => {
@@ -40,7 +41,6 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.RECEPTION)
 		session.addArticle(regularArticleDummy)
 		expect(1).toEqual(session.getArticles().length)
 	})
@@ -52,10 +52,10 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle in SELECTION state', () => {
@@ -65,10 +65,18 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.SELECTION)
+
+		session.addArticle(posterArticleDummy)
+		session.startBidding()
+		session.bid(dummyBidder1, posterArticleDummy, 'INTERESTED')
+		session.bid(dummyBidder2, posterArticleDummy, 'NOT INTERESTED')
+		session.bid(dummyBidder3, posterArticleDummy, 'NOT INTERESTED')
+
+		session.startReviewAndAssignment()
+		session.startSelection()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle in ASIGMENTANDREVIEW state', () => {
@@ -80,7 +88,7 @@ describe('RECEPTION state suite', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -88,11 +96,11 @@ describe('RECEPTION state suite', () => {
 		session.bid(user1, article, 'INTERESTED')
 		session.bid(user2, article, 'NOT INTERESTED')
 		session.bid(user3, article, 'NOT INTERESTED')
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should be able to receive a PosterArticle in RECEPTION state', () => {
@@ -102,7 +110,6 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.RECEPTION)
 		session.addArticle(posterArticleDummy)
 
 		expect(1).toEqual(session.getArticles().length)
@@ -116,10 +123,10 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a PosterArticle in SELECTION state', () => {
@@ -129,10 +136,19 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.SELECTION)
+
+		session.addArticle(posterArticleDummy)
+		session.startBidding()
+		session.bid(dummyBidder1, posterArticleDummy, 'INTERESTED')
+		session.bid(dummyBidder2, posterArticleDummy, 'NOT INTERESTED')
+		session.bid(dummyBidder3, posterArticleDummy, 'NOT INTERESTED')
+
+		session.startReviewAndAssignment()
+
+		session.startSelection()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a PosterArticle in ASIGMENTANDREVIEW state', () => {
@@ -145,7 +161,7 @@ describe('RECEPTION state suite', () => {
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -153,11 +169,11 @@ describe('RECEPTION state suite', () => {
 		session.bid(user1, article, 'INTERESTED')
 		session.bid(user2, article, 'NOT INTERESTED')
 		session.bid(user3, article, 'NOT INTERESTED')
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle when the deadline is reached', () => {
@@ -207,5 +223,96 @@ describe('RECEPTION state suite', () => {
 		session.addArticle(posterArticleDummy)
 		expect(1).toEqual(session.getArticles().length)
 		expect(Poster).toEqual(session.getArticles()[0].constructor)
+	})
+
+	test('Session should not be able to get bidders in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.getBidders()
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to get bids in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.getBids()
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to get bid in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.getBid(dummyBidder1, regularArticleDummy)
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to bid in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.bid(dummyBidder1, regularArticleDummy, 'INTERESTED')
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to close bids in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.closeBids()
+		}).toThrow(new Error('This session is not in BIDDING state'))
+	})
+
+	test('Session should not be able to add a review in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.addReview(
+				regularArticleDummy,
+				new Review(dummyAuthor1, 2, 'Excelente')
+			)
+		}).toThrow(
+			new Error('The review must be added in ASIGMENTANDREVIEW state')
+		)
+	})
+
+	test('Session should not be able to start selection in RECEPTION state', () => {
+		const session = new Session(
+			'Test',
+			1,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(() => {
+			session.startSelection()
+		}).toThrow(
+			new Error('This session is not in ASSIGNMENTANDREVIEW state')
+		)
 	})
 })
