@@ -44,8 +44,7 @@ export function generateRegularArticle(): RegularArticle {
 	)
 }
 
-export function generatePosterArticle(): Poster {
-	const sourceURL = 'https://example.com/sample-poster.pdf'
+export function generatePoster(): Poster {
 	return new Poster(
 		'Sample Poster Title',
 		authors,
@@ -53,6 +52,6 @@ export function generatePosterArticle(): Poster {
 			Math.floor(Math.random() * notificationAuthors.length)
 		],
 		'https://example.com/sample-poster.pdf',
-		sourceURL
+		'https://example.com/sample-poster.pdf'
 	)
 }
