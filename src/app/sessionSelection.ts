@@ -16,7 +16,7 @@ export class TopN implements SessionSelection {
 	public selection(articles: Article[]): Article[] {
 		return articles
 			.sort((a, b) => b.getReviewsTotalNote() - a.getReviewsTotalNote())
-			.slice(0, 3)
+			.slice(0, this.limit)
 	}
 }
 

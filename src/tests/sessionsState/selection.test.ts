@@ -1,5 +1,6 @@
 import {Review} from '@app/review'
-import {RegularSession, Session} from '@app/session'
+import {RegularSession} from '@app/session'
+import {TopN} from '@app/sessionSelection'
 import {generateRegularArticle} from '@tests/utils/articleGenerator'
 import {
 	top3SelectionDummy,
@@ -225,4 +226,29 @@ describe('SELECTION state test suite', () => {
 			session.startSelection()
 		}).toThrow(new Error('This session can not be updated to SELECTION'))
 	})
+})
+
+describe('Selection behaviour tests suite', () => {
+	test('Regular Session should return the top 2 articles in selection', () => {
+		const regularSession = new RegularSession(
+			'Test',
+			1,
+			new TopN(2),
+			defaultDeadlineTomorrow
+		)
+	})
+
+	test('Poster Session should return the top 2 posters in selection', () => {})
+
+	test('Regular Session should return the minimum value 10 of articles in selection', () => {})
+
+	test('Poster Session should return the minimum value 5 of posters in selection', () => {})
+
+	test('Workshop Session should return the top 3 regular articles and the top 2 posters in selection all in one array', () => {})
+
+	test('Workshop Session should return the minimum value 6 of articles and the minimum value 3 of posters in selection', () => {})
+
+	test('Workshop Session should return an array of only the top 2 articles in selection', () => {})
+
+	test('Workshop Session should return an array of only the top 2 posters in selection', () => {})
 })
