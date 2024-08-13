@@ -15,7 +15,6 @@ const defaultDeadlineTomorrow = new Date(
 	new Date().getTime() + 1000 * 60 * 60 * 24
 ) //1 day
 
-
 describe('Session BIDDING state tests', () => {
 	test('Session can be updated to BIDDING if state is RECEPTION', () => {
 		const session = new Session(

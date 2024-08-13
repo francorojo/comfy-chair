@@ -22,7 +22,6 @@ const defaultDeadlineYesterday = new Date(
 	new Date().getTime() - 1000 * 60 * 60 * 24
 ) //1 day ago
 
-
 describe('RECEPTION state suite', () => {
 	test('Session should start with RECEPTION state', () => {
 		const session = new Session(

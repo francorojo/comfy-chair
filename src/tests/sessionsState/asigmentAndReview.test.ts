@@ -19,7 +19,6 @@ const defaultDeadlineTomorrow = new Date(
 	new Date().getTime() + 1000 * 60 * 60 * 24
 ) //1 day
 
-
 describe('ASIGMENTANDREVIEW state suite', () => {
 	test('Session assigns users for review in ASIGMENTANDREVIEW state', () => {
 		const session = new Session(
