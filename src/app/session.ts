@@ -3,7 +3,7 @@ import {Rol, User} from '@app/user'
 import {Reception as ReceptionState, SessionState} from './sessionState'
 import {Review} from './review'
 import {SessionSelection} from './sessionSelection'
-import {iterableIncludes} from './utils'
+import {compareInterests} from './utils'
 
 export class Session {
 	private theme: string
@@ -11,10 +11,10 @@ export class Session {
 	private maxArticlesAccept: number
 	private sessionSelection: SessionSelection
 	private articles: Article[]
-	private deadline: Date
 
-	// ASIGMENTANDREVIEW state
-	private articlesReviews: Map<Article, Map<User, Review>>
+	// BIDDING state
+	private interestInArticles: Map<Article, Map<User, Interest>>
+	private deadline: Date
 
 	public constructor(
 		theme: string,
@@ -30,7 +30,7 @@ export class Session {
 		//Init default
 		this.state = new ReceptionState(this)
 		this.articles = []
-		this.articlesReviews = new Map()
+		this.interestInArticles = new Map()
 	}
 
 	public getTheme(): string {
@@ -94,18 +94,20 @@ export class Session {
 		this.state.startSelection()
 	}
 
-	public getArticlesReviews(): Map<Article, Map<User, Review>> {
-		return this.articlesReviews
-	}
-
 	public getBids(): Map<User, Map<Article, Interest>> {
 		return this.state.getBids()
 	}
 
 	public getBid(user: User, article: Article): Interest {
-		const userBids = this.state.getBids().get(user)
+		const userBids = this.interestInArticles.get(article)
 		if (!userBids) return 'NONE'
-		return userBids.get(article) || 'NONE'
+		return userBids.get(user) || 'NONE'
+	}
+
+	public getBidders(): User[] {
+		return Array.from(this.interestInArticles).flatMap(([_, b]) =>
+			Array.from(b.keys())
+		)
 	}
 
 	public areBidsOpen(): boolean {
@@ -114,83 +116,40 @@ export class Session {
 
 	//ASIGMENTANDREVIEW STAGE
 	public createAssignment(): void {
-		if (this.getBids().size < 3) {
-			throw new Error('This session must to be 3 reviewers minimum')
+		if (this.getBidders().length < 3) {
+			throw new Error('This session must have 3 reviewers minimum')
 		}
 
-		for (let i = 0; i < this.articles.length; i++) {
-			let users: User[] = this.getReviewsForArticle(this.articles[i])
-			let assignment = new Map()
-			for (let y = 0; y < 3; y++) {
-				assignment.set(users[y], new Review())
-			}
-			this.articlesReviews.set(this.articles[i], assignment)
+		for (let article of this.articles) {
+			let users: User[] = this.getOrderedInteresteds(article).slice(0, 3)
+			article.setReviewers(users)
 		}
 	}
 
-	public getFilterInterestTypeUser(
-		article: Article,
-		interest: Interest
-	): User[] {
-		const usersInterested: User[] = []
-		this.state
-			.getBids()
-			.forEach((value: Map<Article, Interest>, key: User) => {
-				if (
-					(iterableIncludes(value.keys(), article) &&
-						value.get(article) == interest) ||
-					(interest == 'NONE' &&
-						!iterableIncludes(value.keys(), article))
-				)
-					usersInterested.push(key)
-			})
-		return usersInterested
+	public getOrderedInteresteds(article: Article): User[] {
+		const interests = this.interestInArticles.get(article)
+
+		if (!interests)
+			throw new Error('The article has not enough interesteds')
+
+		return Array.from(interests.entries())
+			.sort(([userA, iA], [userB, iB]) => compareInterests(iA, iB))
+			.map(([user, i]) => user)
 	}
 
-	public getReviewsForArticle(article: Article): User[] {
-		let usersInterested: User[] = []
-		usersInterested = usersInterested.concat(
-			this.getFilterInterestTypeUser(article, 'INTERESTED')
-		)
-		usersInterested = usersInterested.concat(
-			this.getFilterInterestTypeUser(article, 'MAYBE')
-		)
-		usersInterested = usersInterested.concat(
-			this.getFilterInterestTypeUser(article, 'NONE')
-		)
-		usersInterested = usersInterested.concat(
-			this.getFilterInterestTypeUser(article, 'NOT INTERESTED')
-		)
-		return usersInterested
-	}
-
-	public addReview(article: Article, user: User, review: Review): void {
-		if (!this.state.isAssignmentAndReviewState())
+	public addReview(article: Article, review: Review): void {
+		if (this.isAssignmentAndReviewState())
 			throw new Error(
 				'The review must be added in ASIGMENTANDREVIEW state'
 			)
 		if (Math.abs(review.getNote() || 4) > 3)
 			throw new Error('The note must be greater -3 and lower 3')
-		if (!iterableIncludes(this.articlesReviews.keys(), article))
+		if (!this.articles.includes(article))
 			throw new Error('The article is not part of this session')
-		if (!this.articlesReviews.get(article)?.has(user))
+		if (!article.isReviewer(review.getReviewer()))
 			throw new Error('The user is not part of this article review')
 
-		let userReviews: Map<User, Review> =
-			this.articlesReviews.get(article) ?? new Map()
-
-		userReviews?.set(user, review)
-	}
-
-	public getReview(article: Article, user: User): Review | undefined {
-		if (!this.articlesReviews.has(article))
-			throw new Error('The article is not part of this sesion')
-		let userReviews = this.articlesReviews.get(article)
-
-		if (!userReviews?.has(user))
-			throw new Error('The user is not part of this article review')
-
-		return userReviews.get(user)
+		article.addReview(review)
 	}
 
 	public closeBids(): void {
@@ -199,19 +158,15 @@ export class Session {
 
 	public bid(user: User, article: Article, interest: Interest) {
 		this.state.bid(user, article, interest)
+		return article.getReview(user)
 	}
 
 	//SELECTION STAGE
 	public selection(): Article[] {
-		return this.sessionSelection.selection(this.articlesReviews)
+		return this.sessionSelection.selection(this.getArticles())
 	}
 }
 
 export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
-
-export enum SessionType {
-	REGULAR,
-	POSTER
-}
 
 export type BidsState = 'OPENED' | 'CLOSED'

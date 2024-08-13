@@ -41,9 +41,9 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user4, article, 'MAYBE') //2
 		session.startReviewAndAssignment()
 
-		const asigments: Map<User, Review> =
-			session.getArticlesReviews().get(article) || new Map()
-		expect([user1, user4, user3]).toEqual(Array.from(asigments.keys()))
+		expect([user1, user4, user3]).toEqual(
+			session.getArticles().flatMap((a) => a.getReviewers())
+		)
 	})
 
 	test('Session can add one review and ask for your reviews in ASIGMENTANDREVIEW state', () => {
@@ -68,7 +68,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user4, article, 'MAYBE') //2
 		session.startReviewAndAssignment()
 
-		session.addReview(article, user1, new Review(3, 'Excelent'))
+		session.addReview(article, new Review(user1, 3, 'Excelent'))
 		expect(3).toEqual(session.getReview(article, user1)?.getNote())
 		expect('Excelent').toEqual(session.getReview(article, user1)?.getText())
 	})
@@ -105,10 +105,10 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 
 		session.startReviewAndAssignment()
 
-		session.addReview(article1, user4, new Review(3, 'Excelent'))
-		session.addReview(article2, user3, new Review(-3, 'Bad'))
+		session.addReview(article1, new Review(user4, 3, 'Excelent'))
+		session.addReview(article2, new Review(user3, -3, 'Bad'))
 
-		expect(3).toEqual(session.getReview(article1, user4)?.getNote())
+		expect(3).toEqual(session.getReview(article1, user4).getNote())
 		expect('Excelent').toEqual(
 			session.getReview(article1, user4)?.getText()
 		)
@@ -139,7 +139,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.startReviewAndAssignment()
 
 		expect(() => {
-			session.addReview(article, user1, new Review(-5, 'Excelent'))
+			session.addReview(article, new Review(user1, -5, 'Excelent'))
 		}).toThrow(new Error('The note must be greater -3 and lower 3'))
 	})
 
@@ -167,7 +167,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.startReviewAndAssignment()
 
 		expect(() => {
-			session.addReview(article2, user1, new Review(3, 'Excelent'))
+			session.addReview(article2, new Review(user1, 3, 'Excelent'))
 		}).toThrow(new Error('The article is not part of this session'))
 	})
 
@@ -194,7 +194,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.startReviewAndAssignment()
 
 		expect(() => {
-			session.addReview(article, user2, new Review(3, 'Excelent'))
+			session.addReview(article, new Review(user2, 3, 'Excelent'))
 		}).toThrow(new Error('The user is not part of this article review'))
 	})
 

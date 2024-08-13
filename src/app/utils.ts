@@ -1,29 +1,11 @@
-export function flatMap<T, U>(
-	iterable: IterableIterator<T>,
-	functionParam: (item: T) => Iterable<U>
-): U[] {
-	const result: U[] = []
+import {Interest} from './session'
 
-	for (const item of iterable) {
-		for (const mappedItem of functionParam(item)) {
-			result.push(mappedItem)
-		}
-	}
-
-	return result
-}
-
-export function iterableIncludes<T>(
-	iterable: Iterable<T>,
-	valueToFind: T
-): boolean {
-	for (const element of iterable) {
-		if (
-			element === valueToFind ||
-			(Number.isNaN(valueToFind) && Number.isNaN(element))
-		) {
-			return true
-		}
-	}
-	return false
+export function compareInterests(
+	interestA: Interest,
+	interestB: Interest
+): number {
+	return (
+		['NOT INTERESTED', 'NONE', 'MAYBE', 'INTERESTED'].indexOf(interestB) -
+		['NOT INTERESTED', 'NONE', 'MAYBE', 'INTERESTED'].indexOf(interestA)
+	)
 }
