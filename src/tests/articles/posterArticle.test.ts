@@ -1,10 +1,6 @@
-import {RegularArticle, Poster} from '@app/article'
+import {Poster} from '@app/article'
 import {User} from '@app/user'
-import {
-	dummyAuthor1,
-	dummyAuthor2,
-	dummyAuthor3
-} from '@tests/utils/dummies'
+import {dummyAuthor1, dummyAuthor2, dummyAuthor3} from '@tests/utils/dummies'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
