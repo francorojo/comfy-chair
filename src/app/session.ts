@@ -165,16 +165,12 @@ export class Session {
 	//ASIGMENTANDREVIEW STAGE
 	public createAssignment(): void {
 		if (this.interestInArticles.size < 3) {
-			throw new Error('This session must to be 3 reviewers minimum')
+			throw new Error('This session must have 3 reviewers minimum')
 		}
 
-		for (let i = 0; i < this.articles.length; i++) {
-			let users: User[] = this.getReviewsForArticle(this.articles[i])
-			let assignment = new Map()
-			for (let y = 0; y < 3; y++) {
-				assignment.set(users[y], new Review())
-			}
-			this.articlesReviews.set(this.articles[i], assignment)
+		for (let article of this.articles) {
+			let users: User[] = this.getReviewersForArticle(article)
+			article.setReviewers(users)
 		}
 	}
 
@@ -197,7 +193,7 @@ export class Session {
 		return usersInterested
 	}
 
-	public getReviewsForArticle(article: Article): User[] {
+	public getReviewersForArticle(article: Article): User[] {
 		let usersInterested: User[] = []
 		usersInterested = usersInterested.concat(
 			this.getFilterInterestTypeUser(article, 'INTERESTED')
@@ -214,7 +210,7 @@ export class Session {
 		return usersInterested
 	}
 
-	public addReview(article: Article, user: User, review: Review): void {
+	public addReview(article: Article, review: Review): void {
 		if (this.state != SessionState.ASIGMENTANDREVIEW)
 			throw new Error(
 				'The review must be added in ASIGMENTANDREVIEW state'
@@ -223,24 +219,17 @@ export class Session {
 			throw new Error('The note must be greater -3 and lower 3')
 		if (!iterableIncludes(this.articlesReviews.keys(), article))
 			throw new Error('The article is not part of this session')
-		if (!this.articlesReviews.get(article)?.has(user))
+		if (!article.isReviewer(review.getReviewer()))
 			throw new Error('The user is not part of this article review')
 
-		let userReviews: Map<User, Review> =
-			this.articlesReviews.get(article) ?? new Map()
-
-		userReviews?.set(user, review)
+		article.addReview(review)
 	}
 
 	public getReview(article: Article, user: User): Review | undefined {
 		if (!this.articlesReviews.has(article))
 			throw new Error('The article is not part of this sesion')
-		let userReviews = this.articlesReviews.get(article)
 
-		if (!userReviews?.has(user))
-			throw new Error('The user is not part of this article review')
-
-		return userReviews.get(user)
+		return article.getReview(user)
 	}
 
 	public getArticlesReviews(): Map<Article, Map<User, Review>> {

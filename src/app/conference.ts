@@ -45,10 +45,7 @@ export class Conference {
 
 	public getReviewers(): User[] {
 		const users: User[] = this.sessions.flatMap((session) =>
-			flatMap(
-				session.getArticlesReviews().entries(),
-				([article, reviews]) => reviews.keys()
-			)
+			session.getArticles().flatMap((article) => article.getReviewers())
 		)
 		return Array.from(new Set(users))
 	}

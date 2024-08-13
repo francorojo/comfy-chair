@@ -1,10 +1,14 @@
 import {Rol, User} from '@app/user'
+import {Review} from './review'
 
 export abstract class Article {
 	private title: string
 	private authors: User[]
 	private notificationAuthor: User
 	private fileURL: string
+
+	private reviewers: User[]
+	private reviews: Review[]
 
 	constructor(
 		title: string,
@@ -23,6 +27,9 @@ export abstract class Article {
 		this.authors = authors
 		this.fileURL = fileURL
 		this.notificationAuthor = notificationAuthor
+
+		this.reviewers = []
+		this.reviews = []
 	}
 
 	getAuthors(): User[] {
@@ -39,6 +46,36 @@ export abstract class Article {
 		}
 
 		return true
+	}
+
+	public getReviewers(): User[] {
+		return this.reviewers
+	}
+
+	public setReviewers(reviewers: User[]): void {
+		this.reviewers = reviewers
+	}
+
+	public isReviewer(reviewer: User): boolean {
+		return this.reviewers.includes(reviewer)
+	}
+
+	public addReview(review: Review): void {
+		// validate reviewer is in the reviewers list
+		this.validateReviewer(review.getReviewer())
+		this.reviews.push(review)
+	}
+
+	private validateReviewer(reviewer: User): void {
+		if (!this.reviewers.includes(reviewer)) {
+			throw new Error('The reviewer is not part of the reviewers list')
+		}
+	}
+
+	public getReview(reviewer: User): Review {
+		return this.reviews.filter(
+			(review) => review.getReviewer() === reviewer
+		)[0]
 	}
 }
 
