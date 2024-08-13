@@ -35,6 +35,14 @@ export abstract class Article {
 		this.reviews = []
 	}
 
+	public isPoster(): boolean {
+		return this.type === 'POSTER'
+	}
+
+	public isRegularArticle(): boolean {
+		return this.type === 'REGULAR'
+	}
+
 	getAuthors(): User[] {
 		return this.authors
 	}

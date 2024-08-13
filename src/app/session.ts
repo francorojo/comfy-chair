@@ -1,6 +1,11 @@
 import {Article, Poster, RegularArticle} from '@app/article'
 import {User} from '@app/user'
-import {Bids, Reception as ReceptionState, SessionState} from './sessionState'
+import {
+	Bids,
+	Interest,
+	Reception as ReceptionState,
+	SessionState
+} from './sessionState'
 import {Review} from './review'
 import {SessionSelection} from './sessionSelection'
 
@@ -151,11 +156,19 @@ export class WorkshopSession extends Session {
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
-		deadline: Date,
-		selectionCriteria: SessionSelection
+		selectionCriteria: SessionSelection,
+		deadline: Date
 	) {
 		super(theme, maxArticlesAccept, selectionCriteria, deadline)
 	}
-}
 
-export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
+	public selectPosters(): Poster[] {
+		return this.selection().filter((a) => a.isPoster()) as Poster[]
+	}
+
+	public selectRegularArticles(): RegularArticle[] {
+		return this.selection().filter((a) =>
+			a.isRegularArticle()
+		) as RegularArticle[]
+	}
+}

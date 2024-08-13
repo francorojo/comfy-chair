@@ -11,6 +11,7 @@ import {
 import {generateRegularArticle} from '../utils/articleGenerator'
 import {Review} from '@app/review'
 import {User} from '@app/user'
+import {compareInterests} from '@app/sessionState'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -237,26 +238,6 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		}).toThrow(new Error('This session is not in BIDDING state'))
 	})
 
-	// public getBids(): Bids {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public getBid(user: User, article: Article): Interest {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public bid(user: User, article: Article, interest: Interest): void {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public areBidsOpen(): boolean {
-	// 	return false
-	// }
-
-	// public closeBids(): void {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
 	test('Session should not be able to get bids in ASIGMENTANDREVIEW state', () => {
 		const session = new RegularSession(
 			'Test',
@@ -427,5 +408,19 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		expect(() => {
 			session.startReviewAndAssignment()
 		}).toThrow(new Error('This session must have 3 reviewers minimum'))
+	})
+})
+
+describe('Utils compare suite tests', () => {
+	test('Should order INTERESTED first to MAYBE', () => {
+		expect(compareInterests('INTERESTED', 'MAYBE')).toBeLessThan(0)
+	})
+
+	test('Should order MAYBE first to NOT INTERESTED', () => {
+		expect(compareInterests('MAYBE', 'NOT INTERESTED')).toBeLessThan(0)
+	})
+
+	test('Should order NONE first to NOT INTERESTED', () => {
+		expect(compareInterests('NOT INTERESTED', 'NONE')).toBeGreaterThan(0)
 	})
 })
