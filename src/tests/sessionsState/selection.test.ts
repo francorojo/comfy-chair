@@ -1,5 +1,5 @@
 import {Review} from '@app/review'
-import {Session} from '@app/session'
+import {RegularSession, Session} from '@app/session'
 import {generateRegularArticle} from '@tests/utils/articleGenerator'
 import {
 	top3SelectionDummy,
@@ -12,7 +12,7 @@ import {
 
 describe('SELECTION state test suite', () => {
 	test('Session state should be SELECTION when entering SELECTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -42,32 +42,8 @@ describe('SELECTION state test suite', () => {
 		expect(session.isSelectionState()).toBeTruthy()
 	})
 
-	// public getBidders(): User[] {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public getBids(): Bids {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public getBid(user: User, article: Article): Interest {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public bid(user: User, article: Article, interest: Interest): void {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public areBidsOpen(): boolean {
-	// 	return false
-	// }
-
-	// public closeBids(): void {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
 	test('Session should throw an error when trying to get bidders in SELECTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -99,7 +75,7 @@ describe('SELECTION state test suite', () => {
 	})
 
 	test('Session should throw an error when trying to get bids in SELECTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -131,7 +107,7 @@ describe('SELECTION state test suite', () => {
 	})
 
 	test('Session should throw an error when trying to get bid in SELECTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -162,7 +138,7 @@ describe('SELECTION state test suite', () => {
 	})
 
 	test('Session should throw an error when trying to close bids in SELECTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -193,7 +169,7 @@ describe('SELECTION state test suite', () => {
 	})
 
 	test('Session should throw an error when trying to bid in SELECTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -224,7 +200,7 @@ describe('SELECTION state test suite', () => {
 	})
 
 	test('Session should throw an error when trying to start selection in BIDDING state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,

@@ -1,4 +1,4 @@
-import {Session} from '@app/session'
+import {RegularSession, Session} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
@@ -18,7 +18,7 @@ const defaultDeadlineYesterday = new Date(
 
 describe('tests session case use', () => {
 	test('Create a new session correctly', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
@@ -32,7 +32,7 @@ describe('tests session case use', () => {
 	})
 
 	test('Create a new session with more articles allowed', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			0,
 			top3SelectionDummy,
@@ -44,7 +44,7 @@ describe('tests session case use', () => {
 	})
 
 	test('Create a new session, update state and try add new article', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
