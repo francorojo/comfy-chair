@@ -132,5 +132,3 @@ export class Session {
 }
 
 export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
-
-export type BidsState = 'OPENED' | 'CLOSED'

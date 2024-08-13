@@ -1,6 +1,6 @@
 import {Article} from './article'
 import {Review} from './review'
-import {Interest, BidsState, Session} from './session'
+import {Interest, Session} from './session'
 import {Rol, User} from './user'
 import {compareInterests} from './utils'
 
@@ -9,6 +9,8 @@ export type ValidState =
 	| 'BIDDING'
 	| 'ASSIGNMENTANDREVIEW'
 	| 'SELECTION'
+
+export type BidsState = 'OPENED' | 'CLOSED'
 
 export type Bids = Map<Article, Map<User, Interest>>
 
