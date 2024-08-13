@@ -237,26 +237,6 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		}).toThrow(new Error('This session is not in BIDDING state'))
 	})
 
-	// public getBids(): Bids {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public getBid(user: User, article: Article): Interest {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public bid(user: User, article: Article, interest: Interest): void {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public areBidsOpen(): boolean {
-	// 	return false
-	// }
-
-	// public closeBids(): void {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
 	test('Session should not be able to get bids in ASIGMENTANDREVIEW state', () => {
 		const session = new Session(
 			'Test',

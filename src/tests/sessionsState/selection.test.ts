@@ -42,30 +42,6 @@ describe('SELECTION state test suite', () => {
 		expect(session.isSelectionState()).toBeTruthy()
 	})
 
-	// public getBidders(): User[] {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public getBids(): Bids {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public getBid(user: User, article: Article): Interest {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public bid(user: User, article: Article, interest: Interest): void {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
-	// public areBidsOpen(): boolean {
-	// 	return false
-	// }
-
-	// public closeBids(): void {
-	// 	throw new Error('This session is not in BIDDING state')
-	// }
-
 	test('Session should throw an error when trying to get bidders in SELECTION state', () => {
 		const session = new Session(
 			'Test',
