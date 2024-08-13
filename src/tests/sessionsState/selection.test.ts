@@ -744,6 +744,4 @@ describe('Selection behaviour tests suite', () => {
 		expect(session.selectPosters()).toEqual([poster1, poster2])
 		expect(session.selectRegularArticles()).toEqual([article1, article2])
 	})
-
-	test('Workshop Session should return an array of only the top 2 posters in selection', () => {})
 })
