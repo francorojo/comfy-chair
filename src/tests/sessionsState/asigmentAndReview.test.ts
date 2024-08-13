@@ -1,5 +1,4 @@
-import {Poster} from '@app/article'
-import {Session, SessionState} from '@app/session'
+import {Session} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
@@ -30,7 +29,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -40,7 +39,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user2, article, 'NOT INTERESTED') //4 This user is discarded, last in sorting, max 3
 		session.bid(user3, article, 'NONE') //3
 		session.bid(user4, article, 'MAYBE') //2
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 
 		const asigments: Map<User, Review> =
 			session.getArticlesReviews().get(article) || new Map()
@@ -57,7 +56,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -67,7 +66,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user2, article, 'NOT INTERESTED') //4 This user is discarded, last in sorting, max 3
 		session.bid(user3, article, 'NONE') //3
 		session.bid(user4, article, 'MAYBE') //2
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 
 		session.addReview(article, user1, new Review(3, 'Excelent'))
 		expect(3).toEqual(session.getReview(article, user1)?.getNote())
@@ -86,7 +85,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		const article2 = generateRegularArticle()
 		session.addArticle(article1)
 		session.addArticle(article2)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -104,7 +103,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user3, article2, 'NONE') //3
 		session.bid(user4, article2, 'MAYBE') //2
 
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 
 		session.addReview(article1, user4, new Review(3, 'Excelent'))
 		session.addReview(article2, user3, new Review(-3, 'Bad'))
@@ -127,7 +126,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -137,7 +136,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user2, article, 'NOT INTERESTED') //4 This user is discarded, last in sorting, max 3
 		session.bid(user3, article, 'NONE') //3
 		session.bid(user4, article, 'MAYBE') //2
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 
 		expect(() => {
 			session.addReview(article, user1, new Review(-5, 'Excelent'))
@@ -155,7 +154,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		const article = generateRegularArticle()
 		const article2 = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -165,7 +164,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user2, article, 'NOT INTERESTED') //4 OUT
 		session.bid(user3, article, 'NONE') //3
 		session.bid(user4, article, 'MAYBE') //2
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 
 		expect(() => {
 			session.addReview(article2, user1, new Review(3, 'Excelent'))
@@ -182,7 +181,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -192,7 +191,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user2, article, 'NOT INTERESTED') //4 OUT
 		session.bid(user3, article, 'NONE') //3
 		session.bid(user4, article, 'MAYBE') //2
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 
 		expect(() => {
 			session.addReview(article, user2, new Review(3, 'Excelent'))
@@ -208,9 +207,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		)
 
 		expect(() => {
-			session.updateState(SessionState.ASIGMENTANDREVIEW)
-		}).toThrow(
-			new Error('This session can not be updated to ASIGMENTANDREVIEW')
-		)
+			session.startReviewAndAssignment()
+		}).toThrow(new Error('This session is not in BIDDING state'))
 	})
 })

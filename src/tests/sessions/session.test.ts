@@ -1,19 +1,10 @@
-import {Poster} from '@app/article'
-import {Session, SessionState} from '@app/session'
+import {Session} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
-	dummyBidder1,
-	dummyBidder2,
-	dummyBidder3,
-	dummyBidder4,
-	posterArticleDummy,
 	regularArticleDummy,
 	top3SelectionDummy
 } from '@tests/utils/dummies'
-import {generateRegularArticle} from '../utils/articleGenerator'
-import {Review} from '@app/review'
-import {User} from '@app/user'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -35,7 +26,7 @@ describe('tests session case use', () => {
 		)
 		session.addArticle(regularArticleDummy)
 		expect('Test').toEqual(session.getTheme())
-		expect(SessionState.RECEPTION).toEqual(session.getState())
+		expect(session.isReceptionState()).toBeTruthy()
 		expect(2).toEqual(session.getMaxArticlesAccept())
 		expect(1).toEqual(session.getArticles().length)
 	})
@@ -59,9 +50,9 @@ describe('tests session case use', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not recive more articles'))
+		}).toThrow(new Error('This session can not receive more articles'))
 	})
 })

@@ -1,4 +1,4 @@
-import {Session, SessionState} from '@app/session'
+import {Session} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
@@ -23,11 +23,11 @@ describe('Session BIDDING state tests', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		expect(SessionState.RECEPTION).toEqual(session.getState())
+		expect(session.isReceptionState()).toBeTruthy()
 
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
-		expect(SessionState.BIDDING).toEqual(session.getState())
+		expect(session.isBiddingState()).toBeTruthy()
 	})
 
 	test('Session cannot be updated to BIDDING if state is ASIGMENTANDREVIEW', () => {
@@ -40,7 +40,7 @@ describe('Session BIDDING state tests', () => {
 
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -49,10 +49,10 @@ describe('Session BIDDING state tests', () => {
 		session.bid(user2, article, 'NOT INTERESTED')
 		session.bid(user3, article, 'NOT INTERESTED')
 
-		session.updateState(SessionState.ASIGMENTANDREVIEW)
+		session.startReviewAndAssignment()
 
 		expect(() => {
-			session.updateState(SessionState.BIDDING)
+			session.startBidding()
 		}).toThrow(new Error('This session can not be updated to BIDDING'))
 	})
 
@@ -63,10 +63,10 @@ describe('Session BIDDING state tests', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.SELECTION)
+		session.startSelection()
 
 		expect(() => {
-			session.updateState(SessionState.BIDDING)
+			session.startBidding()
 		}).toThrow(new Error('This session can not be updated to BIDDING'))
 	})
 
@@ -77,10 +77,10 @@ describe('Session BIDDING state tests', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
 		expect(() => {
-			session.updateState(SessionState.BIDDING)
+			session.startBidding()
 		}).toThrow(new Error('This session can not be updated to BIDDING'))
 	})
 
@@ -93,7 +93,7 @@ describe('Session BIDDING state tests', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 
@@ -118,11 +118,11 @@ describe('Session BIDDING state tests', () => {
 		const article = generateRegularArticle()
 		session.addArticle(article)
 
-		expect(session.getBidsState()).toBe('CLOSED')
+		expect(session.areBidsOpen()).toBe(false)
 
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
-		expect(session.getBidsState()).toBe('OPENED')
+		expect(session.areBidsOpen()).toBe(true)
 	})
 
 	test('Session bidsState should be CLOSED after being closed', () => {
@@ -134,10 +134,10 @@ describe('Session BIDDING state tests', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		session.closeBids()
 
-		expect(session.getBidsState()).toBe('CLOSED')
+		expect(session.areBidsOpen()).toBe(false)
 	})
 })
 
@@ -155,7 +155,7 @@ describe('Session User role in BIDDING state', () => {
 		session.addArticle(article1)
 		session.addArticle(article2)
 
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
 		expect(session.getArticles()).toEqual([article1, article2])
 	})
@@ -169,7 +169,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
@@ -188,7 +188,7 @@ describe('Session User role in BIDDING state', () => {
 
 		session.addArticle(article1)
 		session.addArticle(article2)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article1, 'INTERESTED')
@@ -209,7 +209,7 @@ describe('Session User role in BIDDING state', () => {
 		const article2 = generateRegularArticle()
 		session.addArticle(article1)
 		session.addArticle(article2)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		session.bid(user1, article1, 'INTERESTED')
@@ -231,7 +231,7 @@ describe('Session User role in BIDDING state', () => {
 			defaultDeadlineTomorrow
 		)
 		const article = generateRegularArticle()
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
 		expect(() => {
 			session.bid(dummyBidder1, article, 'INTERESTED')
@@ -247,7 +247,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
@@ -265,7 +265,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		expect('NONE').toBe(session.getBid(user, article))
@@ -280,7 +280,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
@@ -296,7 +296,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'NOT INTERESTED')
@@ -312,7 +312,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user = dummyBidder1
 
 		session.bid(user, article, 'MAYBE')
@@ -328,7 +328,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		session.closeBids()
 
 		expect(() => {
@@ -345,9 +345,9 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 
-		expect(session.getBidsState()).toBe('OPENED')
+		expect(session.areBidsOpen()).toBe(true)
 
 		session.bid(dummyBidder1, article, 'INTERESTED')
 		expect('INTERESTED').toBe(session.getBid(dummyBidder1, article))
@@ -362,7 +362,7 @@ describe('Session User role in BIDDING state', () => {
 		)
 		const article = generateRegularArticle()
 		session.addArticle(article)
-		session.updateState(SessionState.BIDDING)
+		session.startBidding()
 		const user1 = dummyAuthor1
 		expect(() => {
 			session.bid(user1, article, 'INTERESTED')

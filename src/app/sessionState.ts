@@ -94,7 +94,7 @@ export class Reception extends SessionState {
 	}
 
 	public startSelection(): void {
-		throw new Error('')
+		throw new Error('This session is not in ASSIGNMENTANDREVIEW state')
 	}
 }
 
@@ -146,7 +146,7 @@ export class Bidding extends SessionState {
 	}
 
 	public startBidding(): void {
-		throw new Error('Cant start bidding in BIDDING state')
+		throw new Error('This session can not be updated to BIDDING')
 	}
 	public startReviewAndAssignment(): void {
 		this.session.setState(new AssignmentAndReview(this.session))
