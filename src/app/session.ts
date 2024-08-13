@@ -2,7 +2,7 @@ import {Article, RegularArticle} from '@app/article'
 import {Rol, User} from '@app/user'
 import {Review} from './review'
 import {SessionSelection} from './sessionSelection'
-import {iterableIncludes} from './utils'
+import {compareInterests} from './utils'
 
 export class Session {
 	private theme: string
@@ -12,7 +12,7 @@ export class Session {
 	private articles: Article[]
 
 	// BIDDING state
-	private interestInArticles: Map<User, Map<Article, Interest>>
+	private interestInArticles: Map<Article, Map<User, Interest>>
 	private bidsState: BidsState
 	private deadline: Date
 
@@ -142,68 +142,49 @@ export class Session {
 			throw new Error('User must be a reviewer')
 
 		// add bid to the article
-		const userBids: Map<Article, Interest> =
-			this.interestInArticles.get(user) || new Map()
-		userBids.set(article, interest)
-		this.interestInArticles.set(user, userBids)
+		const userBids: Map<User, Interest> =
+			this.interestInArticles.get(article) || new Map()
+		userBids.set(user, interest)
+		this.interestInArticles.set(article, userBids)
 	}
 
-	public getBids(): Map<User, Map<Article, Interest>> {
+	public getBids(): Map<Article, Map<User, Interest>> {
 		return this.interestInArticles
 	}
 
 	public getBid(user: User, article: Article): Interest {
-		const userBids = this.interestInArticles.get(user)
+		const userBids = this.interestInArticles.get(article)
 		if (!userBids) return 'NONE'
-		return userBids.get(article) || 'NONE'
+		return userBids.get(user) || 'NONE'
+	}
+
+	public getBidders(): User[] {
+		return Array.from(this.interestInArticles).flatMap(([_, b]) =>
+			Array.from(b.keys())
+		)
 	}
 
 	//ASIGMENTANDREVIEW STAGE
 	public createAssignment(): void {
-		if (this.interestInArticles.size < 3) {
+		if (this.getBidders().length < 3) {
 			throw new Error('This session must have 3 reviewers minimum')
 		}
 
 		for (let article of this.articles) {
-			let users: User[] = this.getReviewersForArticle(article).slice(0, 3)
+			let users: User[] = this.getOrderedInteresteds(article).slice(0, 3)
 			article.setReviewers(users)
 		}
 	}
 
-	public getFilterInterestTypeUser(
-		article: Article,
-		interest: Interest
-	): User[] {
-		const usersInterested: User[] = []
-		this.interestInArticles.forEach(
-			(value: Map<Article, Interest>, key: User) => {
-				if (
-					(iterableIncludes(value.keys(), article) &&
-						value.get(article) == interest) ||
-					(interest == 'NONE' &&
-						!iterableIncludes(value.keys(), article))
-				)
-					usersInterested.push(key)
-			}
-		)
-		return usersInterested
-	}
+	public getOrderedInteresteds(article: Article): User[] {
+		const interests = this.interestInArticles.get(article)
 
-	public getReviewersForArticle(article: Article): User[] {
-		let usersInterested: User[] = []
-		usersInterested = usersInterested.concat(
-			this.getFilterInterestTypeUser(article, 'INTERESTED')
-		)
-		usersInterested = usersInterested.concat(
-			this.getFilterInterestTypeUser(article, 'MAYBE')
-		)
-		usersInterested = usersInterested.concat(
-			this.getFilterInterestTypeUser(article, 'NONE')
-		)
-		usersInterested = usersInterested.concat(
-			this.getFilterInterestTypeUser(article, 'NOT INTERESTED')
-		)
-		return usersInterested
+		if (!interests)
+			throw new Error('The article has not enough interesteds')
+
+		return Array.from(interests.entries())
+			.sort(([userA, iA], [userB, iB]) => compareInterests(iA, iB))
+			.map(([user, i]) => user)
 	}
 
 	public addReview(article: Article, review: Review): void {

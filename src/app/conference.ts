@@ -1,6 +1,5 @@
 import {Session} from './session'
 import {Rol, User} from './user'
-import {flatMap} from './utils'
 
 export class Conference {
 	private sessions: Session[]
