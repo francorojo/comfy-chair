@@ -102,8 +102,13 @@ describe('Session BIDDING state tests', () => {
 
 		expect(session.getBids()).toEqual(
 			new Map([
-				[user1, new Map([[article, 'INTERESTED']])],
-				[user2, new Map([[article, 'NOT INTERESTED']])]
+				[
+					article,
+					new Map([
+						[user2, 'NOT INTERESTED'],
+						[user1, 'INTERESTED']
+					])
+				]
 			])
 		)
 	})
