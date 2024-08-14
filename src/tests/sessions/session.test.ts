@@ -17,7 +17,7 @@ const defaultDeadlineYesterday = new Date(
 ) //1 day ago
 
 describe('tests session case use', () => {
-	test('Create a new session correctly', () => {
+	test('Should be able to create a new session correctly and access its attributes', () => {
 		const session = new RegularSession(
 			'Test',
 			2,
@@ -25,13 +25,13 @@ describe('tests session case use', () => {
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(regularArticleDummy)
-		expect('Test').toEqual(session.getTheme())
+		expect(session.getTheme()).toEqual('Test')
 		expect(session.isReceptionState()).toBeTruthy()
-		expect(2).toEqual(session.getMaxArticlesAccept())
-		expect(1).toEqual(session.getArticles().length)
+		expect(session.getMaxArticlesAccept()).toEqual(2)
+		expect(session.getArticles().length).toEqual(1)
 	})
 
-	test('Create a new session with more articles allowed', () => {
+	test('Session should throw an exception when adding more articles than allowed', () => {
 		const session = new RegularSession(
 			'Test',
 			0,
@@ -43,7 +43,7 @@ describe('tests session case use', () => {
 		}).toThrow(new Error('The number of items exceeds the maximum allowed'))
 	})
 
-	test('Create a new session, update state and try add new article', () => {
+	test('Session should not be able to receive more articles when its in BIDDING state', () => {
 		const session = new RegularSession(
 			'Test',
 			1,
