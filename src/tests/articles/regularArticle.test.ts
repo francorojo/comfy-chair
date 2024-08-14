@@ -170,7 +170,7 @@ describe('Regular Article tests', () => {
 		expect(article.validate()).toBeFalsy()
 	})
 
-	test('Regular article is valid when it has a user is an author', () => {
+	test('Regular article is valid when it has a user who is an author', () => {
 		const abstract =
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim'
 		const title = 'Sample Article Title'
@@ -189,7 +189,7 @@ describe('Regular Article tests', () => {
 		expect(article.getAuthors().length).toBeGreaterThan(1)
 	})
 
-	test('Regular article is invalid when it doesnt have a user is not an author', () => {
+	test('Regular article is invalid when it doesnt have a user who is not an author', () => {
 		const abstract =
 			'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque orci metus, dignissim'
 		const title = 'Sample Article Title'
