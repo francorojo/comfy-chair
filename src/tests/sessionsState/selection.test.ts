@@ -389,7 +389,7 @@ describe('Selection behaviour tests suite', () => {
 		const session = new PosterSession(
 			'Test',
 			3,
-			new TopN(2),
+			new MinimumValue(5),
 			defaultDeadlineTomorrow
 		)
 		const poster1 = generatePoster()
@@ -526,8 +526,6 @@ describe('Selection behaviour tests suite', () => {
 		session.addReview(article4, new Review(user3, 0, 'Poor'))
 
 		session.startSelection()
-
-		const selection = session.selection()
 
 		expect(session.selection()).toEqual([
 			poster1,
