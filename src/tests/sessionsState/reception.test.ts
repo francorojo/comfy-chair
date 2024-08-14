@@ -36,7 +36,8 @@ describe('RECEPTION state suite', () => {
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(regularArticleDummy)
-		expect(1).toEqual(session.getArticles().length)
+		expect(session.getArticles().length).toEqual(1)
+		expect(session.getArticles()).toEqual([regularArticleDummy])
 	})
 
 	test('Session should not be able to receive a RegularArticle in BIDDING state', () => {
@@ -110,8 +111,10 @@ describe('RECEPTION state suite', () => {
 		)
 		session.addArticle(posterArticleDummy)
 
-		expect(1).toEqual(session.getArticles().length)
-		expect(Poster).toEqual(session.getArticles()[0].constructor)
+		expect(session.getArticles()).toEqual([posterArticleDummy])
+		expect(
+			session.getArticles().every((article) => article.isPoster())
+		).toBeTruthy()
 	})
 
 	test('Session should not be able to receive a PosterArticle in BIDDING state', () => {
@@ -212,7 +215,7 @@ describe('RECEPTION state suite', () => {
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(regularArticleDummy)
-		expect(1).toEqual(session.getArticles().length)
+		expect(session.getArticles()).toEqual([regularArticleDummy])
 	})
 
 	test('Session should be able to receive a PosterArticle when the deadline is not reached', () => {
@@ -223,8 +226,10 @@ describe('RECEPTION state suite', () => {
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(posterArticleDummy)
-		expect(1).toEqual(session.getArticles().length)
-		expect(Poster).toEqual(session.getArticles()[0].constructor)
+		expect(session.getArticles()).toEqual([posterArticleDummy])
+		expect(
+			session.getArticles().every((article) => article.isPoster())
+		).toBeTruthy()
 	})
 
 	test('Session should not be able to get bidders in RECEPTION state', () => {
