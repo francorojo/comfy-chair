@@ -174,7 +174,7 @@ describe('Session User role in BIDDING state', () => {
 		expect(session.getArticles()).toEqual([article1, article2])
 	})
 
-	test('User can bid an existing article', () => {
+	test('User can bid on an existing article', () => {
 		const session = new RegularSession(
 			'Test',
 			1,
@@ -187,7 +187,7 @@ describe('Session User role in BIDDING state', () => {
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
-		expect('INTERESTED').toBe(session.getBid(user, article))
+		expect(session.getBid(user, article)).toBe('INTERESTED')
 	})
 
 	test('User can bid on more than one article', () => {
@@ -208,8 +208,8 @@ describe('Session User role in BIDDING state', () => {
 		session.bid(user, article1, 'INTERESTED')
 		session.bid(user, article2, 'NOT INTERESTED')
 
-		expect('INTERESTED').toBe(session.getBid(user, article1))
-		expect('NOT INTERESTED').toBe(session.getBid(user, article2))
+		expect(session.getBid(user, article1)).toBe('INTERESTED')
+		expect(session.getBid(user, article2)).toBe('NOT INTERESTED')
 	})
 
 	test('Many users can bid on more than one article in BIDDING state', () => {
@@ -265,9 +265,9 @@ describe('Session User role in BIDDING state', () => {
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
-		expect('INTERESTED').toBe(session.getBid(user, article))
+		expect(session.getBid(user, article)).toBe('INTERESTED')
 		session.bid(user, article, 'NOT INTERESTED')
-		expect('NOT INTERESTED').toBe(session.getBid(user, article))
+		expect(session.getBid(user, article)).toBe('NOT INTERESTED')
 	})
 
 	test("User default bid is NONE if it's not set", () => {
@@ -282,7 +282,7 @@ describe('Session User role in BIDDING state', () => {
 		session.startBidding()
 		const user = dummyBidder1
 
-		expect('NONE').toBe(session.getBid(user, article))
+		expect(session.getBid(user, article)).toBe('NONE')
 	})
 
 	test('User can bid as INTERESTED in an article', () => {
@@ -298,7 +298,7 @@ describe('Session User role in BIDDING state', () => {
 		const user = dummyBidder1
 
 		session.bid(user, article, 'INTERESTED')
-		expect('INTERESTED').toBe(session.getBid(user, article))
+		expect(session.getBid(user, article)).toBe('INTERESTED')
 	})
 
 	test('User can bid as NOT INTERESTED in an article', () => {
@@ -314,7 +314,7 @@ describe('Session User role in BIDDING state', () => {
 		const user = dummyBidder1
 
 		session.bid(user, article, 'NOT INTERESTED')
-		expect('NOT INTERESTED').toBe(session.getBid(user, article))
+		expect(session.getBid(user, article)).toBe('NOT INTERESTED')
 	})
 
 	test('User can bid as MAYBE interested in an article', () => {
@@ -330,7 +330,7 @@ describe('Session User role in BIDDING state', () => {
 		const user = dummyBidder1
 
 		session.bid(user, article, 'MAYBE')
-		expect('MAYBE').toBe(session.getBid(user, article))
+		expect(session.getBid(user, article)).toBe('MAYBE')
 	})
 
 	test('User cant bid on an article if bidsState is CLOSED', () => {
