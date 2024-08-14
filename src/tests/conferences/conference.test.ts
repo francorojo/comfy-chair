@@ -1,5 +1,5 @@
 import {Conference} from '@app/conference'
-import {RegularSession} from '@app/session'
+import {RegularSession, Session} from '@app/session'
 import {
 	dummyOrganizer,
 	dummyOrganizer2,
@@ -16,8 +16,8 @@ import {
 import {generateRegularArticle} from '../utils/articleGenerator'
 
 describe('Test conferences use cases', () => {
-	test('Conference sessions should match those added at first', () => {
-		const session = new RegularSession(
+	test('Conference sessions should match those added to the conference', () => {
+		const session1 = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
@@ -29,18 +29,22 @@ describe('Test conferences use cases', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.addArticle(dummyArticle)
-		const sessions = [session]
+		session1.addArticle(dummyArticle)
+
+		const sessions: Session[] = []
 		const chairs = [dummyOrganizer]
 		const conference = new Conference(chairs, sessions)
+
 		conference.addChair(dummyOrganizer2)
+		conference.addSession(session1)
 		conference.addSession(session2)
-		expect(2).toEqual(conference.getSessions().length)
-		expect('Pedro').toEqual(conference.getAuthors()[0].getName())
+
+		expect(conference.getSessions().length).toEqual(2)
+		expect(conference.getAuthors()).toEqual(dummyArticle.getAuthors())
 	})
 
 	test('Get authors should match those added', () => {
-		const session = new RegularSession(
+		const session1 = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
@@ -52,20 +56,24 @@ describe('Test conferences use cases', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		session.addArticle(dummyArticle)
-		const sessions = [session]
+		session1.addArticle(dummyArticle)
+		const sessions = [session1]
 		const chairs = [dummyOrganizer]
 		const conference = new Conference(chairs, sessions)
+
 		conference.addChair(dummyOrganizer2)
 		session2.addArticle(dummyArticle2)
 		conference.addSession(session2)
-		expect(2).toEqual(conference.getSessions().length)
-		expect(['Pedro', 'John', 'Bob']).toEqual(
-			conference.getAuthors().map((author) => author.getName())
+
+		expect(conference.getSessions().length).toEqual(2)
+		expect(conference.getAuthors()).toEqual(
+			[dummyArticle, dummyArticle2].flatMap((article) =>
+				article.getAuthors()
+			)
 		)
 	})
 
-	test('An exception is expected when creating a new conference with a user that does not have the ORGANIZER role', () => {
+	test('An exception is expected when creating a new conference with a chair that does not have the ORGANIZER role', () => {
 		const session = new RegularSession(
 			'Test',
 			2,
@@ -80,7 +88,7 @@ describe('Test conferences use cases', () => {
 		}).toThrow(new Error('All chairs must be organizers'))
 	})
 
-	test('An exception is expected when adding a new organizer other that does not have the ORGANIZER role', () => {
+	test('An exception is expected when adding a new chair that does not have the ORGANIZER role', () => {
 		const session = new RegularSession(
 			'Test',
 			2,
@@ -95,7 +103,7 @@ describe('Test conferences use cases', () => {
 		}).toThrow(new Error('The user must be organizer'))
 	})
 
-	test('Get reviewers from a conference', () => {
+	test('Get reviewers from a conference should return all articles reviewers', () => {
 		const session = new RegularSession(
 			'Test',
 			2,
