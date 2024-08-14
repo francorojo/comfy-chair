@@ -233,7 +233,7 @@ describe('SELECTION state test suite', () => {
 		session.startSelection()
 		expect(() => {
 			session.startSelection()
-		}).toThrow(new Error('This session can not be updated to SELECTION'))
+		}).toThrow(new Error('This session cannot be updated to SELECTION'))
 	})
 })
 

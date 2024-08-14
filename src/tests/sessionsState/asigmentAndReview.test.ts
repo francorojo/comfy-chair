@@ -411,7 +411,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		expect(() => {
 			session.startReviewAndAssignment()
 		}).toThrow(
-			new Error('This session can not be updated to ASSIGNMENTANDREVIEW')
+			new Error('This session cannot be updated to ASSIGNMENTANDREVIEW')
 		)
 	})
 

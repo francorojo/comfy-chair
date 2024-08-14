@@ -51,6 +51,6 @@ describe('tests session case use', () => {
 		session.startBidding()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 })

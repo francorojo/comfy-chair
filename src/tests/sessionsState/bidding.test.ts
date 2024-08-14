@@ -32,7 +32,7 @@ describe('Session BIDDING state tests', () => {
 		expect(session.isBiddingState()).toBeTruthy()
 	})
 
-	test('Session can not be updated to BIDDING if no articles have been added', () => {
+	test('Session cannot be updated to BIDDING if no articles have been added', () => {
 		const session = new RegularSession(
 			'Test',
 			2,
@@ -69,7 +69,7 @@ describe('Session BIDDING state tests', () => {
 
 		expect(() => {
 			session.startBidding()
-		}).toThrow(new Error('This session can not be updated to BIDDING'))
+		}).toThrow(new Error('This session cannot be updated to BIDDING'))
 	})
 
 	test('Session cannot be updated to BIDDING if state is SELECTION', () => {
@@ -93,7 +93,7 @@ describe('Session BIDDING state tests', () => {
 
 		expect(() => {
 			session.startBidding()
-		}).toThrow(new Error('This session can not be updated to BIDDING'))
+		}).toThrow(new Error('This session cannot be updated to BIDDING'))
 	})
 
 	test('Session cannot be updated to BIDDING if state is BIDDING', () => {
@@ -111,7 +111,7 @@ describe('Session BIDDING state tests', () => {
 
 		expect(() => {
 			session.startBidding()
-		}).toThrow(new Error('This session can not be updated to BIDDING'))
+		}).toThrow(new Error('This session cannot be updated to BIDDING'))
 	})
 
 	test("Session must return all users's bids in BIDDING state", () => {
@@ -371,7 +371,7 @@ describe('Session User role in BIDDING state', () => {
 
 		expect(() => {
 			session.bid(dummyBidder1, article, 'INTERESTED')
-		}).toThrow(new Error('The bids are closed, you can not bid anymore'))
+		}).toThrow(new Error('The bids are closed, you cannot bid anymore'))
 	})
 
 	test('User can bid if BidsState is OPENED', () => {

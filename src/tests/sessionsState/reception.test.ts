@@ -53,7 +53,7 @@ describe('RECEPTION state suite', () => {
 		session.startBidding()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle in SELECTION state', () => {
@@ -74,7 +74,7 @@ describe('RECEPTION state suite', () => {
 		session.startSelection()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle in ASIGMENTANDREVIEW state', () => {
@@ -98,7 +98,7 @@ describe('RECEPTION state suite', () => {
 
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should be able to receive a PosterArticle in RECEPTION state', () => {
@@ -128,7 +128,7 @@ describe('RECEPTION state suite', () => {
 		session.startBidding()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a PosterArticle in SELECTION state', () => {
@@ -150,7 +150,7 @@ describe('RECEPTION state suite', () => {
 		session.startSelection()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a PosterArticle in ASIGMENTANDREVIEW state', () => {
@@ -175,7 +175,7 @@ describe('RECEPTION state suite', () => {
 
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle when the deadline is reached', () => {
