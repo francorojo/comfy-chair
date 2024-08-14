@@ -3,12 +3,6 @@ import {Review} from './review'
 import {Session} from './session'
 import {Rol, User} from './user'
 
-export type ValidState =
-	| 'RECEPTION'
-	| 'BIDDING'
-	| 'ASSIGNMENTANDREVIEW'
-	| 'SELECTION'
-
 export type BidsState = 'OPENED' | 'CLOSED'
 
 export type Bids = Map<Article, Map<User, Interest>>
