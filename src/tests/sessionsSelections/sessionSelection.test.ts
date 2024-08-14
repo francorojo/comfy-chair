@@ -42,9 +42,9 @@ describe('test sessionSelection case use', () => {
 		// article3 -- 3
 		// article2 -- 2
 
-		expect([article1, article3, article2]).toEqual(
+		expect(
 			sessionSelectionTop3.selection([article1, article2, article3])
-		)
+		).toEqual([article1, article3, article2])
 	})
 
 	test('TopN selection should return the first 5 articles ordered by its reviews', () => {
@@ -138,9 +138,9 @@ describe('test sessionSelection case use', () => {
 		// article3 -- Out
 		// article2
 
-		expect([article1, article3]).toEqual(
+		expect(
 			sessionSelectionMinimum0.selection([article1, article2, article3])
-		)
+		).toEqual([article1, article3])
 	})
 
 	test('MinimumValue N selection should return only articles whose values are over the N value', () => {
