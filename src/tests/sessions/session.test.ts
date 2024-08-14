@@ -1,5 +1,6 @@
 import {RegularSession} from '@app/session'
 import {
+	defaultDeadlineTomorrow,
 	dummyAuthor1,
 	dummyAuthor2,
 	regularArticleDummy,
@@ -7,14 +8,6 @@ import {
 } from '@tests/utils/dummies'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
-
-const defaultDeadlineTomorrow = new Date(
-	new Date().getTime() + 1000 * 60 * 60 * 24
-) //1 day
-
-const defaultDeadlineYesterday = new Date(
-	new Date().getTime() - 1000 * 60 * 60 * 24
-) //1 day ago
 
 describe('tests session case use', () => {
 	test('Should be able to create a new session correctly and access its attributes', () => {

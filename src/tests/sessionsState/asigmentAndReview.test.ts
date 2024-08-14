@@ -1,5 +1,6 @@
 import {RegularSession, Session} from '@app/session'
 import {
+	defaultDeadlineTomorrow,
 	dummyAuthor1,
 	dummyAuthor2,
 	dummyBidder1,
@@ -14,10 +15,6 @@ import {User} from '@app/user'
 import {compareInterests} from '@app/sessionState'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
-
-const defaultDeadlineTomorrow = new Date(
-	new Date().getTime() + 1000 * 60 * 60 * 24
-) //1 day
 
 describe('ASIGMENTANDREVIEW state suite', () => {
 	test('Session can be updated to ASIGNMENTANDREVIEW if state is BIDDING and state should be ASIGNMENTANDREVIEW', () => {

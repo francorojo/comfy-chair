@@ -1,6 +1,8 @@
 import {Poster} from '@app/article'
 import {PosterSession, RegularSession, Session} from '@app/session'
 import {
+	defaultDeadlineTomorrow,
+	defaultDeadlineYesterday,
 	dummyAuthor1,
 	dummyAuthor2,
 	dummyBidder1,
@@ -14,14 +16,6 @@ import {generatePoster, generateRegularArticle} from '../utils/articleGenerator'
 import {Review} from '@app/review'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
-
-const defaultDeadlineTomorrow = new Date(
-	new Date().getTime() + 1000 * 60 * 60 * 24
-) //1 day
-
-const defaultDeadlineYesterday = new Date(
-	new Date().getTime() - 1000 * 60 * 60 * 24
-) //1 day ago
 
 describe('RECEPTION state suite', () => {
 	test('Session should start with RECEPTION state', () => {

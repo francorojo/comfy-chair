@@ -1,5 +1,6 @@
 import {PosterSession, RegularSession, Session} from '@app/session'
 import {
+	defaultDeadlineTomorrow,
 	dummyAuthor1,
 	dummyAuthor2,
 	dummyBidder1,
@@ -12,10 +13,6 @@ import {generatePoster, generateRegularArticle} from '../utils/articleGenerator'
 import {Review} from '@app/review'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
-
-const defaultDeadlineTomorrow = new Date(
-	new Date().getTime() + 1000 * 60 * 60 * 24
-) //1 day
 
 describe('Session BIDDING state tests', () => {
 	test('Session can be updated to BIDDING if state is RECEPTION', () => {
