@@ -56,9 +56,7 @@ describe('test user case use', () => {
 				Rol.REVIEWER
 			)
 		}).toThrow(
-			new Error(
-				'This value is required and must to be greater 8 caracters'
-			)
+			new Error('This value is required and must be greater 8 caracters')
 		)
 	})
 })

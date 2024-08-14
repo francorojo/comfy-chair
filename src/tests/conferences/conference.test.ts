@@ -77,7 +77,7 @@ describe('Test conferences use cases', () => {
 		const chairs = [dummyAuthor1]
 		expect(() => {
 			new Conference(chairs, sessions)
-		}).toThrow(new Error('All chairs must to be organizers'))
+		}).toThrow(new Error('All chairs must be organizers'))
 	})
 
 	test('An exception is expected when adding a new organizer other that does not have the ORGANIZER role', () => {
@@ -92,7 +92,7 @@ describe('Test conferences use cases', () => {
 		const conference = new Conference(chairs, sessions)
 		expect(() => {
 			conference.addChair(dummyAuthor1)
-		}).toThrow(new Error('The user must to be organizer'))
+		}).toThrow(new Error('The user must be organizer'))
 	})
 
 	test('Get reviewers from a conference', () => {

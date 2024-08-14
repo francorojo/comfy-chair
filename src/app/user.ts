@@ -14,7 +14,7 @@ export class User {
 	) {
 		if (password.length < 8)
 			throw new Error(
-				'This value is required and must to be greater 8 caracters'
+				'This value is required and must be greater 8 caracters'
 			)
 
 		this.name = name
