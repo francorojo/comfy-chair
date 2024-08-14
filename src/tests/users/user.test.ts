@@ -9,11 +9,11 @@ describe('test user case use', () => {
 			'test-2024-UTN',
 			Rol.AUTHOR
 		)
-		expect('Jane').toEqual(user.getName())
-		expect('UTN-FRBA').toEqual(user.getMembership())
-		expect('jane@utn.frba.edu.ar').toEqual(user.getEmail())
-		expect('test-2024-UTN').toEqual(user.getPassword())
-		expect(Rol.AUTHOR).toEqual(user.getRol())
+		expect(user.getName()).toEqual('Jane')
+		expect(user.getMembership()).toEqual('UTN-FRBA')
+		expect(user.getEmail()).toEqual('jane@utn.frba.edu.ar')
+		expect(user.getPassword()).toEqual('test-2024-UTN')
+		expect(user.getRol()).toEqual(Rol.AUTHOR)
 	})
 
 	test('Create a new organizer user correctly', () => {
@@ -24,11 +24,11 @@ describe('test user case use', () => {
 			'test-2024-UTN',
 			Rol.ORGANIZER
 		)
-		expect('Jane').toEqual(user.getName())
-		expect('UTN-FRBA').toEqual(user.getMembership())
-		expect('jane@utn.frba.edu.ar').toEqual(user.getEmail())
-		expect('test-2024-UTN').toEqual(user.getPassword())
-		expect(Rol.ORGANIZER).toEqual(user.getRol())
+		expect(user.getName()).toEqual('Jane')
+		expect(user.getMembership()).toEqual('UTN-FRBA')
+		expect(user.getEmail()).toEqual('jane@utn.frba.edu.ar')
+		expect(user.getPassword()).toEqual('test-2024-UTN')
+		expect(user.getRol()).toEqual(Rol.ORGANIZER)
 	})
 
 	test('Create a new reviewer user correctly', () => {
@@ -39,11 +39,11 @@ describe('test user case use', () => {
 			'test-2024-UTN',
 			Rol.REVIEWER
 		)
-		expect('Jane').toEqual(user.getName())
-		expect('UTN-FRBA').toEqual(user.getMembership())
-		expect('jane@utn.frba.edu.ar').toEqual(user.getEmail())
-		expect('test-2024-UTN').toEqual(user.getPassword())
-		expect(Rol.REVIEWER).toEqual(user.getRol())
+		expect(user.getName()).toEqual('Jane')
+		expect(user.getMembership()).toEqual('UTN-FRBA')
+		expect(user.getEmail()).toEqual('jane@utn.frba.edu.ar')
+		expect(user.getPassword()).toEqual('test-2024-UTN')
+		expect(user.getRol()).toEqual(Rol.REVIEWER)
 	})
 
 	test('Create a new author user with a short password', () => {
@@ -56,7 +56,7 @@ describe('test user case use', () => {
 				Rol.REVIEWER
 			)
 		}).toThrow(
-			new Error('This value is required and must be greater 8 caracters')
+			new Error('This value is required and must be greater 8 characters')
 		)
 	})
 })
