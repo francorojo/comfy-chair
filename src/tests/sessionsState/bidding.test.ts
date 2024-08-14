@@ -24,9 +24,26 @@ describe('Session BIDDING state tests', () => {
 		)
 		expect(session.isReceptionState()).toBeTruthy()
 
+		const article = generateRegularArticle()
+		session.addArticle(article)
+
 		session.startBidding()
 
 		expect(session.isBiddingState()).toBeTruthy()
+	})
+
+	test('Session can not be updated to BIDDING if no articles have been added', () => {
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		expect(session.isReceptionState()).toBeTruthy()
+
+		expect(() => {
+			session.startBidding()
+		}).toThrow(new Error('No articles have been added to this session'))
 	})
 
 	test('Session cannot be updated to BIDDING if state is ASIGMENTANDREVIEW', () => {
@@ -86,6 +103,10 @@ describe('Session BIDDING state tests', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+
+		const article = generateRegularArticle()
+		session.addArticle(article)
+
 		session.startBidding()
 
 		expect(() => {
@@ -244,11 +265,14 @@ describe('Session User role in BIDDING state', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		const article = generateRegularArticle()
+		const nonExistentArticle = generateRegularArticle()
+		const article1 = generateRegularArticle()
+
+		session.addArticle(article1)
 		session.startBidding()
 
 		expect(() => {
-			session.bid(dummyBidder1, article, 'INTERESTED')
+			session.bid(dummyBidder1, nonExistentArticle, 'INTERESTED')
 		}).toThrow(new Error('The article is not part of this session'))
 	})
 

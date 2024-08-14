@@ -46,6 +46,10 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+
+		const article = generateRegularArticle()
+		session.addArticle(article)
+
 		session.startBidding()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
@@ -117,6 +121,10 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+
+		const article = generatePoster()
+		session.addArticle(article)
+
 		session.startBidding()
 		expect(() => {
 			session.addArticle(posterArticleDummy)

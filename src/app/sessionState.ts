@@ -87,7 +87,13 @@ export class Reception extends SessionState {
 	}
 
 	public startBidding(): void {
+		this.validateAtLeastOneArticle()
 		this.session.setState(new Bidding(this.session))
+	}
+
+	private validateAtLeastOneArticle(): void {
+		if (this.session.getArticles().length == 0)
+			throw new Error('No articles have been added to this session')
 	}
 
 	public getBidders(): User[] {

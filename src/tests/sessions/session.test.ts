@@ -1,4 +1,5 @@
 import {RegularSession} from '@app/session'
+import {generateRegularArticle} from '@tests/utils/articleGenerator'
 import {
 	defaultDeadlineTomorrow,
 	dummyAuthor1,
@@ -43,6 +44,10 @@ describe('tests session case use', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+
+		const article = generateRegularArticle()
+		session.addArticle(article)
+
 		session.startBidding()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
