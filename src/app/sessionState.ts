@@ -87,7 +87,13 @@ export class Reception extends SessionState {
 	}
 
 	public startBidding(): void {
+		this.validateAtLeastOneArticle()
 		this.session.setState(new Bidding(this.session))
+	}
+
+	private validateAtLeastOneArticle(): void {
+		if (this.session.getArticles().length == 0)
+			throw new Error('No articles have been added to this session')
 	}
 
 	public getBidders(): User[] {
@@ -138,7 +144,7 @@ export class Bidding extends SessionState {
 	}
 
 	public canReceiveArticle(): void {
-		throw new Error('This session can not receive more articles')
+		throw new Error('This session cannot receive more articles')
 	}
 
 	public getBidders(): User[] {
@@ -156,7 +162,7 @@ export class Bidding extends SessionState {
 	public bid(user: User, article: Article, interest: Interest): void {
 		// cant accept bids in closed state
 		if (!this.areBidsOpen())
-			throw new Error('The bids are closed, you can not bid anymore')
+			throw new Error('The bids are closed, you cannot bid anymore')
 
 		// validate article is in the session
 		if (!this.session.isArticlePresent(article))
@@ -182,7 +188,7 @@ export class Bidding extends SessionState {
 	}
 
 	public startBidding(): void {
-		throw new Error('This session can not be updated to BIDDING')
+		throw new Error('This session cannot be updated to BIDDING')
 	}
 	public startReviewAndAssignment(): void {
 		this.session.setState(new AssignmentAndReview(this.session, this.bids))
@@ -207,7 +213,7 @@ export class AssignmentAndReview extends SessionState {
 	}
 
 	public canReceiveArticle(): void {
-		throw new Error('This session can not receive more articles')
+		throw new Error('This session cannot receive more articles')
 	}
 
 	public getBidders(): User[] {
@@ -235,12 +241,10 @@ export class AssignmentAndReview extends SessionState {
 	}
 
 	public startBidding(): void {
-		throw new Error('This session can not be updated to BIDDING')
+		throw new Error('This session cannot be updated to BIDDING')
 	}
 	public startReviewAndAssignment(): void {
-		throw new Error(
-			'This session can not be updated to ASSIGNMENTANDREVIEW'
-		)
+		throw new Error('This session cannot be updated to ASSIGNMENTANDREVIEW')
 	}
 
 	public createAssignment(): void {
@@ -287,7 +291,7 @@ export class Selection extends SessionState {
 	}
 
 	public canReceiveArticle(): void {
-		throw new Error('This session can not receive more articles')
+		throw new Error('This session cannot receive more articles')
 	}
 
 	public getBidders(): User[] {
@@ -315,12 +319,10 @@ export class Selection extends SessionState {
 	}
 
 	public startBidding(): void {
-		throw new Error('This session can not be updated to BIDDING')
+		throw new Error('This session cannot be updated to BIDDING')
 	}
 	public startReviewAndAssignment(): void {
-		throw new Error(
-			'This session can not be updated to ASSIGNMENTANDREVIEW'
-		)
+		throw new Error('This session cannot be updated to ASSIGNMENTANDREVIEW')
 	}
 
 	public addReview(article: Article, review: Review): void {
@@ -328,6 +330,6 @@ export class Selection extends SessionState {
 	}
 
 	public startSelection(): void {
-		throw new Error('This session can not be updated to SELECTION')
+		throw new Error('This session cannot be updated to SELECTION')
 	}
 }

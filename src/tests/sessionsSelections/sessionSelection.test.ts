@@ -1,4 +1,4 @@
-import {Article, ArticleType} from '@app/article'
+import {ArticleType} from '@app/article'
 import {Review} from '@app/review'
 import {
 	TopN,
@@ -6,12 +6,11 @@ import {
 	SessionSelection,
 	MultiSelection
 } from '@app/sessionSelection'
-import {User} from '@app/user'
 import {generatePoster, generateRegularArticle} from '../utils/articleGenerator'
 import {dummyBidder1, dummyBidder2, dummyBidder3} from '../utils/dummies'
 
 describe('test sessionSelection case use', () => {
-	test('TopN selection should return the first 3 articles ordered by its reviews', () => {
+	test('TopN 3 selection should return the first 3 articles ordered by its reviews', () => {
 		const sessionSelectionTop3 = new TopN(3)
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
@@ -42,13 +41,13 @@ describe('test sessionSelection case use', () => {
 		// article3 -- 3
 		// article2 -- 2
 
-		expect([article1, article3, article2]).toEqual(
+		expect(
 			sessionSelectionTop3.selection([article1, article2, article3])
-		)
+		).toEqual([article1, article3, article2])
 	})
 
-	test('TopN selection should return the first 5 articles ordered by its reviews', () => {
-		const sessionSelectionTop3 = new TopN(5)
+	test('TopN 5 selection should return the first 5 articles ordered by its reviews', () => {
+		const sessionSelectionTop5 = new TopN(5)
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -96,7 +95,7 @@ describe('test sessionSelection case use', () => {
 		article6.addReview(new Review(user3, -3, 'Terrible'))
 
 		expect(
-			sessionSelectionTop3.selection([
+			sessionSelectionTop5.selection([
 				article1,
 				article2,
 				article3,
@@ -135,16 +134,16 @@ describe('test sessionSelection case use', () => {
 		article3.addReview(new Review(user3, 0, 'Normal'))
 
 		// article1
-		// article3 -- Out
+		// article3 --> Out
 		// article2
 
-		expect([article1, article3]).toEqual(
+		expect(
 			sessionSelectionMinimum0.selection([article1, article2, article3])
-		)
+		).toEqual([article1, article3])
 	})
 
 	test('MinimumValue N selection should return only articles whose values are over the N value', () => {
-		const sessionSelectionMinimum0 = new MinimumValue(2)
+		const sessionSelectionMinimum2 = new MinimumValue(2)
 		const user1 = dummyBidder1
 		const user2 = dummyBidder2
 		const user3 = dummyBidder3
@@ -192,7 +191,7 @@ describe('test sessionSelection case use', () => {
 		article6.addReview(new Review(user3, -3, 'Terrible'))
 
 		expect(
-			sessionSelectionMinimum0.selection([
+			sessionSelectionMinimum2.selection([
 				article1,
 				article2,
 				article3,
@@ -203,7 +202,7 @@ describe('test sessionSelection case use', () => {
 		).toEqual([article1, article4, article5])
 	})
 
-	test('MultiSelection should return top 2 articles and top 3 posters', () => {
+	test('MultiSelection with TopN 2 to articles and TopN 3 to posters, should return top 2 articles and top 3 posters', () => {
 		const top2Selection = new TopN(2)
 		const top3Selection = new TopN(3)
 

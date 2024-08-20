@@ -1,5 +1,6 @@
-import {RegularSession, Session} from '@app/session'
+import {RegularSession} from '@app/session'
 import {
+	defaultDeadlineTomorrow,
 	dummyAuthor1,
 	dummyAuthor2,
 	dummyBidder1,
@@ -10,14 +11,9 @@ import {
 } from '@tests/utils/dummies'
 import {generateRegularArticle} from '../utils/articleGenerator'
 import {Review} from '@app/review'
-import {User} from '@app/user'
 import {compareInterests} from '@app/sessionState'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
-
-const defaultDeadlineTomorrow = new Date(
-	new Date().getTime() + 1000 * 60 * 60 * 24
-) //1 day
 
 describe('ASIGMENTANDREVIEW state suite', () => {
 	test('Session can be updated to ASIGNMENTANDREVIEW if state is BIDDING and state should be ASIGNMENTANDREVIEW', () => {
@@ -90,9 +86,11 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.bid(user4, article, 'MAYBE') //2
 		session.startReviewAndAssignment()
 
-		expect([user1, user4, user3]).toEqual(
-			session.getArticles().flatMap((a) => a.getReviewers())
-		)
+		expect(session.getArticles().flatMap((a) => a.getReviewers())).toEqual([
+			user1,
+			user4,
+			user3
+		])
 	})
 
 	test('Session can add one review and ask for your reviews in ASIGMENTANDREVIEW state', () => {
@@ -118,8 +116,8 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.startReviewAndAssignment()
 
 		session.addReview(article, new Review(user1, 3, 'Excelent'))
-		expect(3).toEqual(session.getReview(article, user1)?.getNote())
-		expect('Excelent').toEqual(session.getReview(article, user1)?.getText())
+		expect(session.getReview(article, user1).getNote()).toEqual(3)
+		expect(session.getReview(article, user1).getText()).toEqual('Excelent')
 	})
 
 	test('Session can add two reviews and ask for your reviews in ASIGMENTANDREVIEW state', () => {
@@ -157,12 +155,10 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		session.addReview(article1, new Review(user4, 3, 'Excelent'))
 		session.addReview(article2, new Review(user3, -3, 'Bad'))
 
-		expect(3).toEqual(session.getReview(article1, user4).getNote())
-		expect('Excelent').toEqual(
-			session.getReview(article1, user4)?.getText()
-		)
-		expect(-3).toEqual(session.getReview(article2, user3)?.getNote())
-		expect('Bad').toEqual(session.getReview(article2, user3)?.getText())
+		expect(session.getReview(article1, user4).getNote()).toEqual(3)
+		expect(session.getReview(article1, user4).getText()).toEqual('Excelent')
+		expect(session.getReview(article2, user3).getNote()).toEqual(-3)
+		expect(session.getReview(article2, user3).getText()).toEqual('Bad')
 	})
 
 	test('Should throw an exception when session in ASIGMENTANDREVIEW state add review with a note out of permitted range', () => {
@@ -414,7 +410,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		expect(() => {
 			session.startReviewAndAssignment()
 		}).toThrow(
-			new Error('This session can not be updated to ASSIGNMENTANDREVIEW')
+			new Error('This session cannot be updated to ASSIGNMENTANDREVIEW')
 		)
 	})
 

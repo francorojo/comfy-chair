@@ -1,6 +1,7 @@
-import {Poster} from '@app/article'
-import {PosterSession, RegularSession, Session} from '@app/session'
+import {PosterSession, RegularSession} from '@app/session'
 import {
+	defaultDeadlineTomorrow,
+	defaultDeadlineYesterday,
 	dummyAuthor1,
 	dummyAuthor2,
 	dummyBidder1,
@@ -14,14 +15,6 @@ import {generatePoster, generateRegularArticle} from '../utils/articleGenerator'
 import {Review} from '@app/review'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
-
-const defaultDeadlineTomorrow = new Date(
-	new Date().getTime() + 1000 * 60 * 60 * 24
-) //1 day
-
-const defaultDeadlineYesterday = new Date(
-	new Date().getTime() - 1000 * 60 * 60 * 24
-) //1 day ago
 
 describe('RECEPTION state suite', () => {
 	test('Session should start with RECEPTION state', () => {
@@ -42,7 +35,8 @@ describe('RECEPTION state suite', () => {
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(regularArticleDummy)
-		expect(1).toEqual(session.getArticles().length)
+		expect(session.getArticles().length).toEqual(1)
+		expect(session.getArticles()).toEqual([regularArticleDummy])
 	})
 
 	test('Session should not be able to receive a RegularArticle in BIDDING state', () => {
@@ -52,10 +46,14 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+
+		const article = generateRegularArticle()
+		session.addArticle(article)
+
 		session.startBidding()
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle in SELECTION state', () => {
@@ -76,7 +74,7 @@ describe('RECEPTION state suite', () => {
 		session.startSelection()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle in ASIGMENTANDREVIEW state', () => {
@@ -100,7 +98,7 @@ describe('RECEPTION state suite', () => {
 
 		expect(() => {
 			session.addArticle(regularArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should be able to receive a PosterArticle in RECEPTION state', () => {
@@ -112,8 +110,10 @@ describe('RECEPTION state suite', () => {
 		)
 		session.addArticle(posterArticleDummy)
 
-		expect(1).toEqual(session.getArticles().length)
-		expect(Poster).toEqual(session.getArticles()[0].constructor)
+		expect(session.getArticles()).toEqual([posterArticleDummy])
+		expect(
+			session.getArticles().every((article) => article.isPoster())
+		).toBeTruthy()
 	})
 
 	test('Session should not be able to receive a PosterArticle in BIDDING state', () => {
@@ -123,10 +123,14 @@ describe('RECEPTION state suite', () => {
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
+
+		const article = generatePoster()
+		session.addArticle(article)
+
 		session.startBidding()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a PosterArticle in SELECTION state', () => {
@@ -148,7 +152,7 @@ describe('RECEPTION state suite', () => {
 		session.startSelection()
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a PosterArticle in ASIGMENTANDREVIEW state', () => {
@@ -173,7 +177,7 @@ describe('RECEPTION state suite', () => {
 
 		expect(() => {
 			session.addArticle(posterArticleDummy)
-		}).toThrow(new Error('This session can not receive more articles'))
+		}).toThrow(new Error('This session cannot receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle when the deadline is reached', () => {
@@ -210,7 +214,7 @@ describe('RECEPTION state suite', () => {
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(regularArticleDummy)
-		expect(1).toEqual(session.getArticles().length)
+		expect(session.getArticles()).toEqual([regularArticleDummy])
 	})
 
 	test('Session should be able to receive a PosterArticle when the deadline is not reached', () => {
@@ -221,8 +225,10 @@ describe('RECEPTION state suite', () => {
 			defaultDeadlineTomorrow
 		)
 		session.addArticle(posterArticleDummy)
-		expect(1).toEqual(session.getArticles().length)
-		expect(Poster).toEqual(session.getArticles()[0].constructor)
+		expect(session.getArticles()).toEqual([posterArticleDummy])
+		expect(
+			session.getArticles().every((article) => article.isPoster())
+		).toBeTruthy()
 	})
 
 	test('Session should not be able to get bidders in RECEPTION state', () => {

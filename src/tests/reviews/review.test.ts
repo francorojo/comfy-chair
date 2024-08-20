@@ -1,10 +1,10 @@
 import {Review} from '@app/review'
-import {dummyAuthor1, dummyBidder1} from '@tests/utils/dummies'
+import {dummyBidder1} from '@tests/utils/dummies'
 
 describe('test review case use', () => {
-	test('Create a new review correctly', () => {
+	test('Review attributes should be accessible', () => {
 		const review = new Review(dummyBidder1, 10, 'good')
-		expect(10).toEqual(review.getNote())
-		expect('good').toEqual(review.getText())
+		expect(review.getNote()).toEqual(10)
+		expect(review.getText()).toEqual('good')
 	})
 })
