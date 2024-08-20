@@ -1,4 +1,4 @@
-import {PosterSession, RegularSession, Session} from '@app/session'
+import {PosterSession, RegularSession} from '@app/session'
 import {
 	defaultDeadlineTomorrow,
 	dummyAuthor1,
@@ -6,7 +6,6 @@ import {
 	dummyBidder1,
 	dummyBidder2,
 	dummyBidder3,
-	posterArticleDummy,
 	top3SelectionDummy
 } from '@tests/utils/dummies'
 import {generatePoster, generateRegularArticle} from '../utils/articleGenerator'

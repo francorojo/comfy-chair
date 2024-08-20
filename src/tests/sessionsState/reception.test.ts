@@ -1,5 +1,4 @@
-import {Poster} from '@app/article'
-import {PosterSession, RegularSession, Session} from '@app/session'
+import {PosterSession, RegularSession} from '@app/session'
 import {
 	defaultDeadlineTomorrow,
 	defaultDeadlineYesterday,

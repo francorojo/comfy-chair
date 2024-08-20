@@ -1,4 +1,4 @@
-import {RegularSession, Session} from '@app/session'
+import {RegularSession} from '@app/session'
 import {
 	defaultDeadlineTomorrow,
 	dummyAuthor1,
@@ -11,7 +11,6 @@ import {
 } from '@tests/utils/dummies'
 import {generateRegularArticle} from '../utils/articleGenerator'
 import {Review} from '@app/review'
-import {User} from '@app/user'
 import {compareInterests} from '@app/sessionState'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]

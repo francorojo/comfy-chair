@@ -1,4 +1,4 @@
-import {RegularArticle, Poster} from '@app/article'
+import {RegularArticle} from '@app/article'
 import {User} from '@app/user'
 import {
 	dummyAuthor1,
