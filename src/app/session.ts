@@ -2,7 +2,7 @@ import {Article, Poster, RegularArticle} from '@app/article'
 import {User} from '@app/user'
 import {Bids, Interest, Reception, SessionState} from './sessionState'
 import {Review} from './review'
-import {SessionSelection} from './sessionSelection'
+import {MultiSelection, SessionSelection} from './sessionSelection'
 
 export abstract class Session {
 	protected theme: string
@@ -151,7 +151,7 @@ export class WorkshopSession extends Session {
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
-		selectionCriteria: SessionSelection,
+		selectionCriteria: MultiSelection,
 		deadline: Date
 	) {
 		super(theme, maxArticlesAccept, selectionCriteria, deadline)
