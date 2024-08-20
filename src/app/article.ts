@@ -1,14 +1,20 @@
 import {Rol, User} from '@app/user'
+import {Review} from './review'
 
 export abstract class Article {
 	private title: string
 	private authors: User[]
+	private type: ArticleType
 	private notificationAuthor: User
 	private fileURL: string
+
+	private reviewers: User[]
+	private reviews: Review[]
 
 	constructor(
 		title: string,
 		authors: User[],
+		type: ArticleType,
 		fileURL: string,
 		notificationAuthor: User
 	) {
@@ -21,12 +27,28 @@ export abstract class Article {
 			}
 		})
 		this.authors = authors
+		this.type = type
 		this.fileURL = fileURL
 		this.notificationAuthor = notificationAuthor
+
+		this.reviewers = []
+		this.reviews = []
+	}
+
+	public isPoster(): boolean {
+		return this.type === 'POSTER'
+	}
+
+	public isRegularArticle(): boolean {
+		return this.type === 'REGULAR'
 	}
 
 	getAuthors(): User[] {
 		return this.authors
+	}
+
+	getType() {
+		return this.type
 	}
 
 	public validate(): boolean {
@@ -40,6 +62,44 @@ export abstract class Article {
 
 		return true
 	}
+
+	public getReviewers(): User[] {
+		return this.reviewers
+	}
+
+	public setReviewers(reviewers: User[]): void {
+		this.reviewers = reviewers
+	}
+
+	public isReviewer(reviewer: User): boolean {
+		return this.reviewers.includes(reviewer)
+	}
+
+	public addReview(review: Review): void {
+		// validate reviewer is in the reviewers list
+		this.validateReviewer(review.getReviewer())
+		this.reviews.push(review)
+	}
+
+	private validateReviewer(reviewer: User): void {
+		if (!this.reviewers.includes(reviewer)) {
+			throw new Error('The reviewer is not part of the reviewers list')
+		}
+	}
+
+	public getReviews(): Review[] {
+		return this.reviews
+	}
+
+	public getReview(reviewer: User): Review {
+		return this.reviews.filter(
+			(review) => review.getReviewer() === reviewer
+		)[0]
+	}
+
+	public getReviewsTotalNote(): number {
+		return this.reviews.reduce((sum, review) => sum + review.getNote(), 0)
+	}
 }
 
 export class RegularArticle extends Article {
@@ -52,7 +112,7 @@ export class RegularArticle extends Article {
 		notificationAuthor: User,
 		fileURL: string
 	) {
-		super(title, authors, fileURL, notificationAuthor)
+		super(title, authors, 'REGULAR', fileURL, notificationAuthor)
 		this.abstract = abstract
 	}
 
@@ -79,7 +139,9 @@ export class Poster extends Article {
 		fileURL: string,
 		sourceURL: string
 	) {
-		super(title, authors, fileURL, notificationAuthor)
+		super(title, authors, 'POSTER', fileURL, notificationAuthor)
 		this.sourceURL = sourceURL
 	}
 }
+
+export type ArticleType = 'REGULAR' | 'POSTER'

@@ -1,4 +1,4 @@
-import {RegularArticle} from '@app/article'
+import {Poster, RegularArticle} from '@app/article'
 import {dummyAuthor1, dummyAuthor2, dummyAuthor3} from './dummies'
 
 const abstracts = [
@@ -41,5 +41,17 @@ export function generateRegularArticle(): RegularArticle {
 			Math.floor(Math.random() * notificationAuthors.length)
 		],
 		fileURLs[Math.floor(Math.random() * fileURLs.length)]
+	)
+}
+
+export function generatePoster(): Poster {
+	return new Poster(
+		'Sample Poster Title',
+		authors,
+		notificationAuthors[
+			Math.floor(Math.random() * notificationAuthors.length)
+		],
+		'https://example.com/sample-poster.pdf',
+		'https://example.com/sample-poster.pdf'
 	)
 }

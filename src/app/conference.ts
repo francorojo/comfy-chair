@@ -7,7 +7,7 @@ export class Conference {
 
 	public constructor(chairs: User[], sessions: Session[]) {
 		if (!chairs.every((user) => user.getRol() == Rol.ORGANIZER))
-			throw new Error('All chairs must to be organizers')
+			throw new Error('All chairs must be organizers')
 
 		this.chairs = chairs
 		this.sessions = sessions
@@ -19,7 +19,7 @@ export class Conference {
 
 	public addChair(user: User) {
 		if (user.getRol() != Rol.ORGANIZER)
-			throw new Error('The user must to be organizer')
+			throw new Error('The user must be organizer')
 
 		this.chairs.push(user)
 	}
@@ -42,7 +42,10 @@ export class Conference {
 		)
 	}
 
-	// public getReviewers(): User[] {
-	// 	return this.sessions.flatMap(session => session.getReviews()).map(review => review.getReviewer());
-	// }
+	public getReviewers(): User[] {
+		const users: User[] = this.sessions.flatMap((session) =>
+			session.getArticles().flatMap((article) => article.getReviewers())
+		)
+		return Array.from(new Set(users))
+	}
 }

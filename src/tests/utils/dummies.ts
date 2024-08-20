@@ -1,6 +1,17 @@
-import {Session, SessionSelection, SessionType} from '@app/session'
+import {RegularSession} from '@app/session'
 import {RegularArticle, Poster} from '@app/article'
 import {Rol, User} from '@app/user'
+import {TopN} from '@app/sessionSelection'
+
+// TIME DUMMIES
+
+export const defaultDeadlineTomorrow = new Date(
+	new Date().getTime() + 1000 * 60 * 60 * 24
+) //1 day
+
+export const defaultDeadlineYesterday = new Date(
+	new Date().getTime() - 1000 * 60 * 60 * 24
+) //1 day ago
 
 // USER DUMMIES
 
@@ -78,45 +89,35 @@ export const dummyBidder4 = new User(
 
 // FORM SELECTION DUMMIES
 
-export const defaultDeadlineTomorrow = new Date(
-	new Date().getTime() + 1000 * 60 * 60 * 24
-) //1 day
-
-export const dummyTop3SelectionForm = new Map<SessionType, SessionSelection>([
-	[SessionType.REGULAR, SessionSelection.TOP3]
-])
-
-export const top3SelectionDummy = new Map<SessionType, SessionSelection>([
-	[SessionType.POSTER, SessionSelection.TOP3]
-])
+export const top3SelectionDummy = new TopN(3)
 
 // SESSION DUMMIES
 
-export const dummySession = new Session(
+export const dummySession = new RegularSession(
 	'First Session',
 	5,
-	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
+	top3SelectionDummy,
 	defaultDeadlineTomorrow
 )
 
-export const dummySession2 = new Session(
+export const dummyRegularSession2 = new RegularSession(
 	'Second Session',
 	5,
-	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
+	top3SelectionDummy,
 	defaultDeadlineTomorrow
 )
 
-export const session = new Session(
+export const session = new RegularSession(
 	'First Session',
 	5,
-	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
+	top3SelectionDummy,
 	defaultDeadlineTomorrow
 )
 
-export const session2 = new Session(
+export const session2 = new RegularSession(
 	'Second Session',
 	5,
-	new Map([[SessionType.POSTER, SessionSelection.TOP3]]),
+	top3SelectionDummy,
 	defaultDeadlineTomorrow
 )
 
