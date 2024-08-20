@@ -1,5 +1,5 @@
 import {Conference} from '@app/conference'
-import {Session} from '@app/session'
+import {RegularSession} from '@app/session'
 import {
 	dummyOrganizer,
 	dummyOrganizer2,
@@ -17,13 +17,13 @@ import {generateRegularArticle} from '../utils/articleGenerator'
 
 describe('Test conferences use cases', () => {
 	test('Conference sessions should match those added at first', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		const session2 = new Session(
+		const session2 = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
@@ -40,13 +40,13 @@ describe('Test conferences use cases', () => {
 	})
 
 	test('Get authors should match those added', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
-		const session2 = new Session(
+		const session2 = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
@@ -66,7 +66,7 @@ describe('Test conferences use cases', () => {
 	})
 
 	test('An exception is expected when creating a new conference with a user that does not have the ORGANIZER role', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
@@ -81,7 +81,7 @@ describe('Test conferences use cases', () => {
 	})
 
 	test('An exception is expected when adding a new organizer other that does not have the ORGANIZER role', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
@@ -96,7 +96,7 @@ describe('Test conferences use cases', () => {
 	})
 
 	test('Get reviewers from a conference', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,

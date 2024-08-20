@@ -1,28 +1,30 @@
-import {Article} from '@app/article'
+import {Article, Poster, RegularArticle} from '@app/article'
 import {User} from '@app/user'
-import {Bids, Reception, SessionState} from './sessionState'
+import {Bids, Interest, Reception, SessionState} from './sessionState'
 import {Review} from './review'
 import {SessionSelection} from './sessionSelection'
 
-export class Session {
-	private theme: string
-	private state: SessionState
-	private maxArticlesAccept: number
-	private sessionSelection: SessionSelection
-	private articles: Article[]
+export abstract class Session {
+	protected theme: string
+	protected state: SessionState
+	protected maxArticlesAccept: number
+	protected articles: Article[]
 
 	// BIDDING state
-	private deadline: Date
+	protected deadline: Date
+
+	// SELECTION state
+	protected sessionSelection: SessionSelection
 
 	public constructor(
 		theme: string,
 		maxArticlesAccept: number,
-		sessionSelection: SessionSelection,
+		selection: SessionSelection,
 		deadline: Date
 	) {
 		this.theme = theme
 		this.maxArticlesAccept = maxArticlesAccept
-		this.sessionSelection = sessionSelection
+		this.sessionSelection = selection
 		this.deadline = deadline
 
 		//Init default
@@ -66,9 +68,9 @@ export class Session {
 		return this.deadline
 	}
 
-	public addArticle(article: Article) {
+	public addArticle(article: Article): void {
 		this.state.canReceiveArticle(article)
-		return this.articles.push(article)
+		this.articles.push(article)
 	}
 
 	public isArticlePresent(article: Article): boolean {
@@ -131,4 +133,37 @@ export class Session {
 	}
 }
 
-export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
+export class RegularSession extends Session {
+	public addArticle(article: RegularArticle): void {
+		super.addArticle(article)
+		return
+	}
+}
+
+export class PosterSession extends Session {
+	public addArticle(article: Poster): void {
+		super.addArticle(article)
+		return
+	}
+}
+
+export class WorkshopSession extends Session {
+	public constructor(
+		theme: string,
+		maxArticlesAccept: number,
+		selectionCriteria: SessionSelection,
+		deadline: Date
+	) {
+		super(theme, maxArticlesAccept, selectionCriteria, deadline)
+	}
+
+	public selectPosters(): Poster[] {
+		return this.selection().filter((a) => a.isPoster()) as Poster[]
+	}
+
+	public selectRegularArticles(): RegularArticle[] {
+		return this.selection().filter((a) =>
+			a.isRegularArticle()
+		) as RegularArticle[]
+	}
+}

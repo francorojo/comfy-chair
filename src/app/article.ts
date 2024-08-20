@@ -4,6 +4,7 @@ import {Review} from './review'
 export abstract class Article {
 	private title: string
 	private authors: User[]
+	private type: ArticleType
 	private notificationAuthor: User
 	private fileURL: string
 
@@ -13,6 +14,7 @@ export abstract class Article {
 	constructor(
 		title: string,
 		authors: User[],
+		type: ArticleType,
 		fileURL: string,
 		notificationAuthor: User
 	) {
@@ -25,6 +27,7 @@ export abstract class Article {
 			}
 		})
 		this.authors = authors
+		this.type = type
 		this.fileURL = fileURL
 		this.notificationAuthor = notificationAuthor
 
@@ -32,8 +35,20 @@ export abstract class Article {
 		this.reviews = []
 	}
 
+	public isPoster(): boolean {
+		return this.type === 'POSTER'
+	}
+
+	public isRegularArticle(): boolean {
+		return this.type === 'REGULAR'
+	}
+
 	getAuthors(): User[] {
 		return this.authors
+	}
+
+	getType() {
+		return this.type
 	}
 
 	public validate(): boolean {
@@ -97,7 +112,7 @@ export class RegularArticle extends Article {
 		notificationAuthor: User,
 		fileURL: string
 	) {
-		super(title, authors, fileURL, notificationAuthor)
+		super(title, authors, 'REGULAR', fileURL, notificationAuthor)
 		this.abstract = abstract
 	}
 
@@ -124,7 +139,9 @@ export class Poster extends Article {
 		fileURL: string,
 		sourceURL: string
 	) {
-		super(title, authors, fileURL, notificationAuthor)
+		super(title, authors, 'POSTER', fileURL, notificationAuthor)
 		this.sourceURL = sourceURL
 	}
 }
+
+export type ArticleType = 'REGULAR' | 'POSTER'

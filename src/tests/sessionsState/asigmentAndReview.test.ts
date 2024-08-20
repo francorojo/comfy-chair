@@ -1,4 +1,4 @@
-import {Session} from '@app/session'
+import {RegularSession, Session} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
@@ -11,6 +11,7 @@ import {
 import {generateRegularArticle} from '../utils/articleGenerator'
 import {Review} from '@app/review'
 import {User} from '@app/user'
+import {compareInterests} from '@app/sessionState'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
 
@@ -20,7 +21,7 @@ const defaultDeadlineTomorrow = new Date(
 
 describe('ASIGMENTANDREVIEW state suite', () => {
 	test('Session can be updated to ASIGNMENTANDREVIEW if state is BIDDING and state should be ASIGNMENTANDREVIEW', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
@@ -44,7 +45,31 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session assigns users for review in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
+			'Test',
+			2,
+			top3SelectionDummy,
+			defaultDeadlineTomorrow
+		)
+		const article = generateRegularArticle()
+		session.addArticle(article)
+		session.startBidding()
+		const user1 = dummyBidder1
+		const user2 = dummyBidder2
+		const user3 = dummyBidder3
+		const user4 = dummyBidder4
+
+		session.bid(user1, article, 'INTERESTED') //1
+		session.bid(user2, article, 'NOT INTERESTED') //4 This user is discarded, last in sorting, max 3
+		session.bid(user3, article, 'NONE') //3
+		session.bid(user4, article, 'MAYBE') //2
+		session.startReviewAndAssignment()
+
+		expect(session.isAssignmentAndReviewState()).toBeTruthy()
+	})
+
+	test('Session assigns users for review in ASIGMENTANDREVIEW state', () => {
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -71,7 +96,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session can add one review and ask for your reviews in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -98,7 +123,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session can add two reviews and ask for your reviews in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			2,
 			top3SelectionDummy,
@@ -141,7 +166,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Should throw an exception when session in ASIGMENTANDREVIEW state add review with a note out of permitted range', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -168,7 +193,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Should throw an exception when session in ASIGMENTANDREVIEW state add review with an article without session', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -196,7 +221,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Should throw an exception when session in ASIGMENTANDREVIEW state add review with a user that doesnt belongs to this session', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -225,7 +250,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Should throw an exception when session in RECEPTION try update ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -238,7 +263,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session should not be able to get bids in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -264,7 +289,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session should not be able to get bid in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -290,7 +315,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session should not be able to bid in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -316,7 +341,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session should not be able to close bids in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -342,7 +367,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session should receive bids close in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -366,7 +391,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session should not be able to start ASIGMENTANDREVIEW in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -394,7 +419,7 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 	})
 
 	test('Session should not be able to create assignment if there are less than 3 bidders', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -407,5 +432,19 @@ describe('ASIGMENTANDREVIEW state suite', () => {
 		expect(() => {
 			session.startReviewAndAssignment()
 		}).toThrow(new Error('This session must have 3 reviewers minimum'))
+	})
+})
+
+describe('Utils compare suite tests', () => {
+	test('Should order INTERESTED first to MAYBE', () => {
+		expect(compareInterests('INTERESTED', 'MAYBE')).toBeLessThan(0)
+	})
+
+	test('Should order MAYBE first to NOT INTERESTED', () => {
+		expect(compareInterests('MAYBE', 'NOT INTERESTED')).toBeLessThan(0)
+	})
+
+	test('Should order NONE first to NOT INTERESTED', () => {
+		expect(compareInterests('NOT INTERESTED', 'NONE')).toBeGreaterThan(0)
 	})
 })

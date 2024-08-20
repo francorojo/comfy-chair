@@ -1,5 +1,5 @@
 import {Poster} from '@app/article'
-import {Session} from '@app/session'
+import {PosterSession, RegularSession, Session} from '@app/session'
 import {
 	dummyAuthor1,
 	dummyAuthor2,
@@ -10,7 +10,7 @@ import {
 	regularArticleDummy,
 	top3SelectionDummy
 } from '@tests/utils/dummies'
-import {generateRegularArticle} from '../utils/articleGenerator'
+import {generatePoster, generateRegularArticle} from '../utils/articleGenerator'
 import {Review} from '@app/review'
 
 export const dummyAuthors = [dummyAuthor1, dummyAuthor2]
@@ -25,7 +25,7 @@ const defaultDeadlineYesterday = new Date(
 
 describe('RECEPTION state suite', () => {
 	test('Session should start with RECEPTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -35,7 +35,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should be able to receive a RegularArticle in RECEPTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -46,7 +46,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a RegularArticle in BIDDING state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -59,7 +59,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a RegularArticle in SELECTION state', () => {
-		const session = new Session(
+		const session = new PosterSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -75,12 +75,12 @@ describe('RECEPTION state suite', () => {
 		session.startReviewAndAssignment()
 		session.startSelection()
 		expect(() => {
-			session.addArticle(regularArticleDummy)
+			session.addArticle(posterArticleDummy)
 		}).toThrow(new Error('This session can not receive more articles'))
 	})
 
 	test('Session should not be able to receive a RegularArticle in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			4,
 			top3SelectionDummy,
@@ -104,7 +104,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should be able to receive a PosterArticle in RECEPTION state', () => {
-		const session = new Session(
+		const session = new PosterSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -117,7 +117,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a PosterArticle in BIDDING state', () => {
-		const session = new Session(
+		const session = new PosterSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -130,7 +130,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a PosterArticle in SELECTION state', () => {
-		const session = new Session(
+		const session = new PosterSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -152,14 +152,14 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a PosterArticle in ASIGMENTANDREVIEW state', () => {
-		const session = new Session(
+		const session = new PosterSession(
 			'Test',
 			4,
 			top3SelectionDummy,
 			defaultDeadlineTomorrow
 		)
 
-		const article = generateRegularArticle()
+		const article = generatePoster()
 		session.addArticle(article)
 		session.startBidding()
 		const user1 = dummyBidder1
@@ -177,7 +177,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a RegularArticle when the deadline is reached', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -190,7 +190,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to receive a PosterArticle when the deadline is reached', () => {
-		const session = new Session(
+		const session = new PosterSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -203,7 +203,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should be able to receive a RegularArticle when the deadline is not reached', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -214,7 +214,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should be able to receive a PosterArticle when the deadline is not reached', () => {
-		const session = new Session(
+		const session = new PosterSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -226,7 +226,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to get bidders in RECEPTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -238,7 +238,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to get bids in RECEPTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -250,7 +250,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to get bid in RECEPTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -262,7 +262,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to bid in RECEPTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -274,7 +274,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to close bids in RECEPTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -286,7 +286,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to add a review in RECEPTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,
@@ -303,7 +303,7 @@ describe('RECEPTION state suite', () => {
 	})
 
 	test('Session should not be able to start selection in RECEPTION state', () => {
-		const session = new Session(
+		const session = new RegularSession(
 			'Test',
 			1,
 			top3SelectionDummy,

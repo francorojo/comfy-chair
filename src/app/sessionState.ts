@@ -1,12 +1,23 @@
 import {Article} from './article'
 import {Review} from './review'
-import {Interest, Session} from './session'
+import {Session} from './session'
 import {Rol, User} from './user'
-import {compareInterests} from './utils'
 
 export type BidsState = 'OPENED' | 'CLOSED'
 
 export type Bids = Map<Article, Map<User, Interest>>
+
+export type Interest = 'INTERESTED' | 'NOT INTERESTED' | 'MAYBE' | 'NONE'
+
+export function compareInterests(
+	interestA: Interest,
+	interestB: Interest
+): number {
+	return (
+		['NOT INTERESTED', 'NONE', 'MAYBE', 'INTERESTED'].indexOf(interestB) -
+		['NOT INTERESTED', 'NONE', 'MAYBE', 'INTERESTED'].indexOf(interestA)
+	)
+}
 
 export abstract class SessionState {
 	protected session: Session
@@ -255,7 +266,7 @@ export class AssignmentAndReview extends SessionState {
 	}
 
 	public addReview(article: Article, review: Review): void {
-		if (Math.abs(review.getNote() || 4) > 3)
+		if (Math.abs(review.getNote()) > 3)
 			throw new Error('The note must be greater -3 and lower 3')
 		if (!this.session.isArticlePresent(article))
 			throw new Error('The article is not part of this session')
